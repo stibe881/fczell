@@ -1,0 +1,31 @@
+<% const pageTitle = 'Konto'; const active = 'account'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Konto &amp; Passwort</h1>
+  </div>
+
+  <form class="admin-form admin-form-narrow" action="/admin/account" method="post" autocomplete="off">
+    <p>Eingeloggt als <strong><%= user.username %></strong>. Hier kannst du dein Passwort ändern.</p>
+
+    <label>
+      <span>Aktuelles Passwort *</span>
+      <input type="password" name="current_password" required autocomplete="current-password" />
+    </label>
+    <label>
+      <span>Neues Passwort * (mind. 8 Zeichen)</span>
+      <input type="password" name="new_password" required minlength="8" autocomplete="new-password" />
+    </label>
+    <label>
+      <span>Neues Passwort bestätigen *</span>
+      <input type="password" name="new_password_confirm" required minlength="8" autocomplete="new-password" />
+    </label>
+
+    <div class="form-actions">
+      <button class="btn btn-primary btn-lg" type="submit">Passwort speichern</button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

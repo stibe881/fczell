@@ -1,0 +1,75 @@
+<% const pageTitle = 'Übersicht'; const active = 'dashboard'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <div>
+      <h1>Willkommen, <%= user.displayName || user.username %></h1>
+      <p>Hier verwaltest du News, Termine und Inhalte des FC Zell.</p>
+    </div>
+    <div class="admin-quick-actions">
+      <a class="btn btn-primary" href="/admin/news/new">+ News erfassen</a>
+      <a class="btn btn-outline-dark" href="/admin/events/new">+ Termin erfassen</a>
+    </div>
+  </div>
+
+  <ul class="stat-row">
+    <li>
+      <span class="stat-num"><%= newsCount %></span>
+      <span class="stat-label">News-Beiträge</span>
+      <a href="/admin/news">verwalten →</a>
+    </li>
+    <li>
+      <span class="stat-num"><%= eventsCount %></span>
+      <span class="stat-label">Termine</span>
+      <a href="/admin/events">verwalten →</a>
+    </li>
+    <li>
+      <span class="stat-num"><%= pagesCount %></span>
+      <span class="stat-label">Inhalts-Bausteine</span>
+      <a href="/admin/pages">verwalten →</a>
+    </li>
+  </ul>
+
+  <div class="admin-cols">
+    <section>
+      <h2>Letzte News</h2>
+      <% if (recentNews.length === 0) { %>
+        <p class="empty">Noch keine News erfasst.</p>
+      <% } else { %>
+        <ul class="admin-list">
+          <% recentNews.forEach(n => { %>
+            <li>
+              <div>
+                <strong><%= n.title %></strong>
+                <span class="muted"><%= n.published_at %> · <%= n.category %></span>
+              </div>
+              <a href="/admin/news/<%= n.id %>/edit">bearbeiten</a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+
+    <section>
+      <h2>Kommende Termine</h2>
+      <% if (upcomingEvents.length === 0) { %>
+        <p class="empty">Keine bevorstehenden Termine.</p>
+      <% } else { %>
+        <ul class="admin-list">
+          <% upcomingEvents.forEach(ev => { %>
+            <li>
+              <div>
+                <strong><%= ev.title %></strong>
+                <span class="muted"><%= ev.event_date %><%= ev.event_time ? ' · ' + ev.event_time : '' %></span>
+              </div>
+              <a href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+  </div>
+</div>
+
+<%- include('_admin-footer') %>

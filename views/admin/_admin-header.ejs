@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · <%= typeof pageTitle !== 'undefined' ? pageTitle : 'FC Zell' %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body class="admin">
+<header class="admin-header">
+  <a href="/admin" class="admin-brand">
+    <span class="brand-mark">FCZ</span>
+    <span>Admin-Bereich</span>
+  </a>
+  <nav class="admin-nav">
+    <a href="/admin" class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Übersicht</a>
+    <a href="/admin/news" class="<%= typeof active !== 'undefined' && active === 'news' ? 'active' : '' %>">News</a>
+    <a href="/admin/events" class="<%= typeof active !== 'undefined' && active === 'events' ? 'active' : '' %>">Termine</a>
+    <a href="/admin/pages" class="<%= typeof active !== 'undefined' && active === 'pages' ? 'active' : '' %>">Inhalte</a>
+    <a href="/admin/account" class="<%= typeof active !== 'undefined' && active === 'account' ? 'active' : '' %>">Konto</a>
+  </nav>
+  <div class="admin-meta">
+    <a href="/" target="_blank" class="link-arrow">Webseite ansehen ↗</a>
+    <span class="user-chip"><%= user.displayName || user.username %></span>
+    <form action="/logout" method="post" style="display:inline">
+      <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
+    </form>
+  </div>
+</header>
+
+<% if (typeof flash !== 'undefined' && flash) { %>
+  <div class="flash flash-<%= flash.type %>" role="status">
+    <div class="flash-inner"><%= flash.msg %></div>
+  </div>
+<% } %>
+
+<main class="admin-main">

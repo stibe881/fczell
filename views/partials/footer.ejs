@@ -1,0 +1,71 @@
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>FC Zell</h4>
+      <address>
+        Postfach<br>
+        6144 Zell<br>
+        <a href="mailto:info@fczell.ch">info@fczell.ch</a>
+      </address>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Verein</h4>
+      <ul>
+        <li><a href="/verein#vorstand">Vorstand</a></li>
+        <li><a href="/verein#clubhaus">Clubhaus</a></li>
+        <li><a href="/verein#penaltyclub">Penaltyclub</a></li>
+        <li><a href="/verein#sponsoren">Sponsoren</a></li>
+        <li><a href="/verein#jobs">Jobs</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Mannschaften</h4>
+      <ul>
+        <li><a href="/aktive">1. Mannschaft</a></li>
+        <li><a href="/aktive">2. Mannschaft</a></li>
+        <li><a href="/aktive">Senioren 30+</a></li>
+        <li><a href="/junioren">Junioren</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col footer-admin">
+      <h4>Administration</h4>
+      <% if (user) { %>
+        <p class="logged-in">Eingeloggt als <strong><%= user.displayName || user.username %></strong></p>
+        <div class="footer-admin-actions">
+          <a class="btn btn-light" href="/admin">Admin-Bereich</a>
+          <form action="/logout" method="post" style="display:inline">
+            <button type="submit" class="btn btn-ghost">Logout</button>
+          </form>
+        </div>
+      <% } else { %>
+        <p class="footer-login-hint">Inhalte, News und Termine bearbeiten:</p>
+        <form class="footer-login" action="/login" method="post" autocomplete="on">
+          <label class="sr-only" for="footer-username">Benutzername</label>
+          <input id="footer-username" name="username" placeholder="Benutzername" required autocomplete="username" />
+          <label class="sr-only" for="footer-password">Passwort</label>
+          <input id="footer-password" name="password" type="password" placeholder="Passwort" required autocomplete="current-password" />
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© <%= new Date().getFullYear() %> FC Zell. Alle Rechte vorbehalten.</p>
+    <p class="footer-meta"><a href="/login">Admin-Login</a></p>
+  </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="Nach oben">↑</button>
+<script src="/script.js"></script>
+</body>
+</html>

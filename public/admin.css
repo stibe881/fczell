@@ -1,0 +1,224 @@
+/* FC Zell Admin */
+
+body.admin {
+  background: #f5f5f7;
+  color: var(--fcz-gray-900);
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.85rem clamp(1rem, 3vw, 2.5rem);
+  background: var(--fcz-black);
+  color: #fff;
+  border-bottom: 3px solid var(--fcz-red);
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+}
+.admin-brand:hover { color: #fff; }
+
+.admin-nav {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.admin-nav a {
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+  color: rgba(255,255,255,0.78);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all var(--transition);
+}
+.admin-nav a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.admin-nav a.active { color: #fff; background: var(--fcz-red); }
+
+.admin-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+.admin-meta a { color: rgba(255,255,255,0.78); }
+.admin-meta a:hover { color: #fff; }
+.user-chip {
+  background: rgba(255,255,255,0.1);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.admin-main {
+  padding: 0;
+}
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2.5rem);
+}
+
+.admin-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.admin-page-head h1 {
+  margin: 0 0 0.4rem;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.admin-page-head p { margin: 0; color: var(--fcz-gray-700); }
+.admin-quick-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* stats */
+.stat-row {
+  list-style: none;
+  margin: 0 0 3rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+}
+.stat-row li {
+  padding: 1.5rem;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.stat-row li:last-child { border-right: 0; }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--fcz-red);
+}
+.stat-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fcz-gray-500);
+  font-weight: 600;
+}
+.stat-row a { font-weight: 600; font-size: 0.9rem; }
+
+.admin-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.admin-cols section {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.admin-cols h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  letter-spacing: 0;
+}
+@media (max-width: 800px) { .admin-cols { grid-template-columns: 1fr; } }
+
+.admin-list { list-style: none; margin: 0; padding: 0; }
+.admin-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  gap: 1rem;
+}
+.admin-list li:last-child { border-bottom: 0; }
+.admin-list strong { display: block; font-weight: 600; }
+.muted { color: var(--fcz-gray-500); font-size: 0.88rem; }
+
+/* table */
+.admin-table {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  border-collapse: collapse;
+  overflow: hidden;
+}
+.admin-table th, .admin-table td {
+  padding: 1rem 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  vertical-align: top;
+}
+.admin-table th {
+  background: #fafafa;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fcz-gray-500);
+}
+.admin-table tr:last-child td { border-bottom: 0; }
+.admin-table .actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.admin-table th.actions { text-align: right; }
+.admin-table code {
+  background: #f0f0f0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+/* form */
+.admin-form {
+  background: #fff;
+  padding: 2rem;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 1.2rem;
+  max-width: 880px;
+}
+.admin-form-narrow { max-width: 520px; }
+.admin-form textarea { font-family: 'Inter', sans-serif; line-height: 1.6; resize: vertical; }
+.admin-form code { background: #f0f0f0; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.85rem; }
+.form-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 700px) {
+  .admin-header { grid-template-columns: 1fr; gap: 0.6rem; padding: 1rem; }
+  .admin-meta { justify-content: flex-start; }
+  .admin-table { display: block; overflow-x: auto; }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' · FC Zell' : 'FC Zell' %></title>
+  <meta name="description" content="FC Zell – Fussballverein im Luzerner Hinterland. Aktuelle News, Spielberichte, Events und alle Mannschaften vom Piccolo bis zur 1. Mannschaft." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23c8102e'/%3E%3Ctext x='50' y='62' font-family='Bebas Neue,Arial' font-size='42' font-weight='700' text-anchor='middle' fill='white'%3EFCZ%3C/text%3E%3C/svg%3E" />
+</head>
+<body class="<%= page %>">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="/" class="brand" aria-label="FC Zell Startseite">
+      <span class="brand-mark">FCZ</span>
+      <span class="brand-text">FC&nbsp;Zell</span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mainNav">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="/" class="<%= page === 'home' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/verein" class="<%= page === 'verein' ? 'active' : '' %>">Verein</a></li>
+        <li><a href="/news" class="<%= page === 'news' ? 'active' : '' %>">News</a></li>
+        <li><a href="/aktive" class="<%= page === 'aktive' ? 'active' : '' %>">Aktive</a></li>
+        <li><a href="/junioren" class="<%= page === 'junioren' ? 'active' : '' %>">Junioren</a></li>
+        <li><a href="/events" class="<%= page === 'events' ? 'active' : '' %>">Events</a></li>
+        <li><a href="/kontakt" class="<%= page === 'kontakt' ? 'active' : '' %>">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<% if (typeof flash !== 'undefined' && flash) { %>
+  <div class="flash flash-<%= flash.type %>" role="status">
+    <div class="flash-inner"><%= flash.msg %></div>
+  </div>
+<% } %>
+
+<main id="main">

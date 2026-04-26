@@ -1,0 +1,36 @@
+<% const pageTitle = 'Inhalte verwalten'; const active = 'pages'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <div>
+      <h1>Inhalts-Bausteine</h1>
+      <p>Hier pflegst du wiederkehrende Textblöcke, die auf verschiedenen Seiten erscheinen.</p>
+    </div>
+  </div>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Slug</th>
+        <th>Titel</th>
+        <th>Zuletzt aktualisiert</th>
+        <th class="actions">Aktionen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach(p => { %>
+        <tr>
+          <td><code><%= p.slug %></code></td>
+          <td><strong><%= p.title %></strong></td>
+          <td><%= p.updated_at %></td>
+          <td class="actions">
+            <a class="btn btn-sm btn-primary" href="/admin/pages/<%= p.id %>/edit">bearbeiten</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('_admin-footer') %>

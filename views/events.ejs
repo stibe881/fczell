@@ -1,0 +1,65 @@
+<% const pageTitle = 'Events'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Agenda</p>
+    <h1>Events &amp; Termine</h1>
+    <p>Generalversammlung, Dorfturnier, ProCam-Amtscup und mehr – alle Anlässe rund um den FC Zell.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="band-head">
+    <div>
+      <h2>Kommende Termine</h2>
+    </div>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <p class="empty">Aktuell sind keine Termine geplant.</p>
+  <% } else { %>
+    <ul class="event-list">
+      <% events.forEach(ev => {
+           const d = new Date(ev.event_date);
+      %>
+        <li class="event-row">
+          <div class="event-date">
+            <span class="event-day"><%= d.toLocaleDateString('de-CH', { weekday: 'long' }) %></span>
+            <span class="event-num"><%= d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }) %></span>
+            <% if (ev.event_time) { %><span class="event-time"><%= ev.event_time %> Uhr</span><% } %>
+          </div>
+          <div class="event-body">
+            <h3><%= ev.title %></h3>
+            <% if (ev.location) { %><p class="event-loc">📍 <%= ev.location %></p><% } %>
+            <% if (ev.description) { %><p><%= ev.description %></p><% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="band band-dark">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow eyebrow-light">Tradition</p>
+      <h2>Wiederkehrende Anlässe</h2>
+    </div>
+  </div>
+  <div class="prose prose-on-dark tradition-list">
+    <h3>Dorfturnier</h3>
+    <p>Das traditionelle Dorfturnier findet jeden Sommer auf der Sportanlage Gass statt. In sechs Kategorien spielen Schüler, Vereine, Firmen, Frauen, Männer und Quartiere um den Sieg. Im Vordergrund stehen das gemütliche Beisammensein, der Penaltykiller und natürlich der Fussball – nicht zwingend in dieser Reihenfolge.</p>
+
+    <h3>ProCam-Amtscup</h3>
+    <p>Der traditionelle Vorbereitungs-Cup vor dem Saisonstart. 2023 wurde der FC Wauwil-Egolzwil Amtscupsieger – das Finale fand in Zell statt.</p>
+
+    <h3>Matchballspende</h3>
+    <p>Die Matchbälle der Heimspiele werden jeweils von Sponsoren und Gönnern gespendet. Eine schöne Tradition, die wir sehr schätzen.</p>
+
+    <h3>Ewige Siegerliste</h3>
+    <p>Alle Sieger und Highlights aus der Vereinsgeschichte – ein Stück Zeller Fussballhistorie.</p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

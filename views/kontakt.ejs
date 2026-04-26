@@ -1,0 +1,67 @@
+<% const pageTitle = 'Kontakt'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Kontakt</p>
+    <h1>Schreib uns</h1>
+    <p>Fragen, Feedback oder Lust auf Mitmachen? Melde dich beim FC Zell.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <h2>FC Zell</h2>
+      <address>
+        Postfach<br>
+        6144 Zell
+      </address>
+      <p><a href="mailto:info@fczell.ch">info@fczell.ch</a></p>
+
+      <h3>Adressänderung?</h3>
+      <p>Bitte melde uns Adress- oder Kontaktänderungen direkt per E-Mail an <a href="mailto:info@fczell.ch">info@fczell.ch</a>, damit wir dich auch in Zukunft sicher erreichen können.</p>
+
+      <h3>Direkter Draht zum Vorstand</h3>
+      <ul class="contact-vorstand">
+        <% vorstand.forEach(p => { %>
+          <li>
+            <strong><%= p.name %></strong> – <span><%= p.role %></span><br>
+            <% if (p.phone) { %><a href="tel:<%= p.phone.replace(/\s/g,'') %>"><%= p.phone %></a> · <% } %>
+            <% if (p.email) { %><a href="mailto:<%= p.email %>"><%= p.email %></a><% } %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <form class="contact-form" action="mailto:info@fczell.ch" method="post" enctype="text/plain">
+      <h2>Kontaktformular</h2>
+      <div class="form-row">
+        <label>
+          <span>Vorname *</span>
+          <input name="vorname" required />
+        </label>
+        <label>
+          <span>Name *</span>
+          <input name="name" required />
+        </label>
+      </div>
+      <label>
+        <span>E-Mail *</span>
+        <input type="email" name="email" required />
+      </label>
+      <label>
+        <span>Betreff</span>
+        <input name="betreff" />
+      </label>
+      <label>
+        <span>Nachricht *</span>
+        <textarea name="nachricht" rows="6" required></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg">Senden</button>
+      <p class="form-note">Mit dem Absenden stimmst du der Verarbeitung deiner Angaben zur Bearbeitung der Anfrage zu.</p>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

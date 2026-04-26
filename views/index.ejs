@@ -1,0 +1,118 @@
+<% const pageTitle = 'Home'; %>
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-content">
+    <p class="eyebrow">Fussballclub Zell · seit 1970</p>
+    <h1><%= hero ? hero.title : 'Willkommen beim FC Zell' %></h1>
+    <p class="hero-lead">
+      <%= hero ? hero.body : 'Heimat des Fussballs in Zell – vom Piccolo bis zur 3. Liga.' %>
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary btn-lg" href="/aktive">Unsere Mannschaften</a>
+      <a class="btn btn-outline btn-lg" href="/news">Aktuelle News</a>
+    </div>
+    <div class="hero-meta">
+      <div><span>3. Liga</span>1. Mannschaft</div>
+      <div><span>7</span>Junioren-Teams</div>
+      <div><span>Gass</span>Sportanlage Zell</div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light" id="news">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Aktuell</p>
+      <h2>Neuigkeiten vom FC Zell</h2>
+    </div>
+    <a class="link-arrow" href="/news">Alle News &rarr;</a>
+  </div>
+
+  <ul class="news-list">
+    <% news.forEach(n => { %>
+      <li class="news-row">
+        <div class="news-row-date">
+          <time datetime="<%= n.published_at %>">
+            <strong><%= new Date(n.published_at).toLocaleDateString('de-CH', { day: '2-digit' }) %></strong>
+            <span><%= new Date(n.published_at).toLocaleDateString('de-CH', { month: 'short', year: 'numeric' }) %></span>
+          </time>
+        </div>
+        <div class="news-row-body">
+          <span class="tag"><%= n.category %></span>
+          <h3><a href="/news/<%= n.id %>"><%= n.title %></a></h3>
+          <% if (n.excerpt) { %><p><%= n.excerpt %></p><% } %>
+        </div>
+        <a class="news-row-cta" href="/news/<%= n.id %>" aria-label="Bericht lesen">→</a>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<section class="band band-dark" id="agenda">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow eyebrow-light">Agenda</p>
+      <h2>Kommende Termine</h2>
+    </div>
+    <a class="link-arrow link-arrow-light" href="/events">Alle Termine &rarr;</a>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <p class="empty">Aktuell sind keine Termine geplant.</p>
+  <% } else { %>
+    <ul class="event-list">
+      <% events.forEach(ev => {
+           const d = new Date(ev.event_date);
+      %>
+        <li class="event-row">
+          <div class="event-date">
+            <span class="event-day"><%= d.toLocaleDateString('de-CH', { weekday: 'long' }) %></span>
+            <span class="event-num"><%= d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }) %></span>
+            <% if (ev.event_time) { %><span class="event-time"><%= ev.event_time %> Uhr</span><% } %>
+          </div>
+          <div class="event-body">
+            <h3><%= ev.title %></h3>
+            <% if (ev.location) { %><p class="event-loc">📍 <%= ev.location %></p><% } %>
+            <% if (ev.description) { %><p><%= ev.description %></p><% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="band band-accent">
+  <div class="cta-row">
+    <div>
+      <p class="eyebrow">Mitmachen</p>
+      <h2>Werde Teil des FC Zell</h2>
+      <p>Ob als Spieler, Trainer, Helfer oder Sponsor – beim FCZ ist Platz für alle, die den Fussball lieben.</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-primary btn-lg" href="/kontakt">Kontakt aufnehmen</a>
+      <a class="btn btn-outline-dark btn-lg" href="/verein#jobs">Jobs &amp; Helfer</a>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light" id="sponsoren">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Partner</p>
+      <h2>Unsere Sponsoren</h2>
+      <p class="band-sub">Ein grosses Dankeschön an alle, die den FC Zell unterstützen.</p>
+    </div>
+  </div>
+  <ul class="sponsor-list">
+    <% sponsorenKategorien.forEach(s => { %>
+      <li>
+        <h4><%= s.kategorie %></h4>
+        <p><%= s.text %></p>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<%- include('partials/footer') %>

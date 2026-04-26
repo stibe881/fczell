@@ -1,0 +1,43 @@
+<% const pageTitle = 'Aktive'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Aktive Mannschaften</p>
+    <h1>1. Mannschaft, 2. Mannschaft &amp; Senioren 30+</h1>
+    <p>Drei Aktiv-Teams stehen Woche für Woche für den FC Zell auf dem Platz.</p>
+  </div>
+</section>
+
+<% teams.forEach((team, i) => { %>
+  <section class="band <%= i % 2 === 0 ? 'band-light' : 'band-dark' %>" id="<%= team.slug %>">
+    <div class="team-row">
+      <div class="team-head">
+        <p class="eyebrow <%= i % 2 === 0 ? '' : 'eyebrow-light' %>"><%= team.league %></p>
+        <h2><%= team.name %></h2>
+      </div>
+      <dl class="team-info">
+        <% if (team.trainer) { %>
+          <div><dt>Trainer</dt><dd><%= team.trainer %></dd></div>
+        <% } %>
+        <% if (team.coach) { %>
+          <div><dt>Coach</dt><dd><%= team.coach %></dd></div>
+        <% } %>
+        <% if (team.goalie) { %>
+          <div><dt>Goalie-Trainer</dt><dd><%= team.goalie %></dd></div>
+        <% } %>
+        <% if (team.physio) { %>
+          <div><dt>Physio</dt><dd><%= team.physio %></dd></div>
+        <% } %>
+        <% if (team.times) { %>
+          <div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div>
+        <% } %>
+        <% if (team.location) { %>
+          <div><dt>Trainingsort</dt><dd><%= team.location %></dd></div>
+        <% } %>
+      </dl>
+    </div>
+  </section>
+<% }) %>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,50 @@
+<% const pageTitle = 'Junioren'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Nachwuchs</p>
+    <h1>Unsere Junioren</h1>
+    <p>Von den Piccolos bis zu den B-Junioren – sieben Mannschaften für jede Altersklasse. Spielfreude, Zusammenhalt und Entwicklung stehen im Vordergrund.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <ul class="junior-list">
+    <% teams.forEach(team => { %>
+      <li id="<%= team.slug %>" class="junior-row">
+        <div class="junior-head">
+          <h2><%= team.name %></h2>
+          <% if (team.extra) { %><span class="tag"><%= team.extra %></span><% } %>
+        </div>
+        <dl class="junior-info">
+          <% if (team.trainer) { %>
+            <div><dt>Trainer</dt><dd><%= team.trainer %></dd></div>
+          <% } %>
+          <% if (team.times) { %>
+            <div><dt>Trainings</dt><dd><%= team.times %></dd></div>
+          <% } %>
+          <% if (team.location) { %>
+            <div><dt>Ort</dt><dd><%= team.location %></dd></div>
+          <% } %>
+        </dl>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<section class="band band-accent">
+  <div class="cta-row">
+    <div>
+      <p class="eyebrow">Mitspielen</p>
+      <h2>Lust auf Fussball beim FCZ?</h2>
+      <p>Komm vorbei in einem Schnuppertraining – wir freuen uns auf dich. Melde dich beim Verantwortlichen Junioren oder per Kontaktformular.</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-primary btn-lg" href="mailto:joli-seimen@bluewin.ch">Junioren-Verantwortlicher</a>
+      <a class="btn btn-outline-dark btn-lg" href="/kontakt">Kontaktformular</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

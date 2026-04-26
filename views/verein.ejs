@@ -1,0 +1,96 @@
+<% const pageTitle = 'Verein'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Der Verein</p>
+    <h1><%= intro ? intro.title : 'Über uns' %></h1>
+    <p><%= intro ? intro.body : '' %></p>
+  </div>
+</section>
+
+<section class="band band-light" id="vorstand">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Führung</p>
+      <h2>Unser Vorstand</h2>
+      <p class="band-sub">Acht engagierte Persönlichkeiten leiten den FC Zell ehrenamtlich.</p>
+    </div>
+  </div>
+
+  <ul class="people-list">
+    <% vorstand.forEach(p => { %>
+      <li class="person">
+        <div class="person-name">
+          <h3><%= p.name %></h3>
+          <span class="role"><%= p.role %></span>
+        </div>
+        <div class="person-details">
+          <% if (p.address) { %><span>📍 <%= p.address %></span><% } %>
+          <% if (p.phone) { %><a href="tel:<%= p.phone.replace(/\s/g,'') %>">📞 <%= p.phone %></a><% } %>
+          <% if (p.email) { %><a href="mailto:<%= p.email %>">✉ <%= p.email %></a><% } %>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<section class="band band-dark" id="clubhaus">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow eyebrow-light">Infrastruktur</p>
+      <h2><%= clubhaus.title %></h2>
+    </div>
+  </div>
+  <div class="prose prose-on-dark">
+    <%- mdToHtml(clubhaus.body) %>
+  </div>
+</section>
+
+<section class="band band-light" id="penaltyclub">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Gönner</p>
+      <h2><%= penaltyclub.title %></h2>
+    </div>
+  </div>
+  <div class="prose">
+    <%- mdToHtml(penaltyclub.body) %>
+  </div>
+</section>
+
+<section class="band band-accent" id="jobs">
+  <div class="cta-row">
+    <div>
+      <p class="eyebrow"><%= jobs.title %></p>
+      <h2>Mitanpacken statt nur zuschauen</h2>
+      <div class="prose">
+        <%- mdToHtml(jobs.body) %>
+      </div>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-primary btn-lg" href="mailto:joerg.graber@bithawk.ch">E-Mail senden</a>
+      <a class="btn btn-outline-dark btn-lg" href="tel:0793339759">079 333 97 59</a>
+    </div>
+  </div>
+</section>
+
+<section class="band band-light" id="sponsoren">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Partner</p>
+      <h2>Unsere Sponsoren</h2>
+      <p class="band-sub">Ein grosses Dankeschön an alle, die den FC Zell unterstützen.</p>
+    </div>
+  </div>
+  <ul class="sponsor-list">
+    <% sponsorenKategorien.forEach(s => { %>
+      <li>
+        <h4><%= s.kategorie %></h4>
+        <p><%= s.text %></p>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<%- include('partials/footer') %>

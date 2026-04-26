@@ -1,0 +1,23 @@
+<% const pageTitle = item.title; %>
+<%- include('partials/header') %>
+
+<article class="article-page">
+  <div class="article-head">
+    <a href="/news" class="back-link">← Zurück zu allen News</a>
+    <span class="tag"><%= item.category %></span>
+    <h1><%= item.title %></h1>
+    <p class="article-meta">
+      <time datetime="<%= item.published_at %>">
+        <%= new Date(item.published_at).toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' }) %>
+      </time>
+    </p>
+  </div>
+  <div class="article-body">
+    <% if (item.excerpt) { %><p class="lead"><%= item.excerpt %></p><% } %>
+    <% item.body.split(/\n\n+/).forEach(p => { %>
+      <p><%= p %></p>
+    <% }) %>
+  </div>
+</article>
+
+<%- include('partials/footer') %>

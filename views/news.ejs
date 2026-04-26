@@ -1,0 +1,37 @@
+<% const pageTitle = 'News'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Aktuell</p>
+    <h1>News &amp; Spielberichte</h1>
+    <p>Alle Berichte, Updates und Mitteilungen aus dem FC Zell.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <% if (news.length === 0) { %>
+    <p class="empty">Aktuell sind keine News verfügbar.</p>
+  <% } else { %>
+    <ul class="news-list">
+      <% news.forEach(n => { %>
+        <li class="news-row">
+          <div class="news-row-date">
+            <time datetime="<%= n.published_at %>">
+              <strong><%= new Date(n.published_at).toLocaleDateString('de-CH', { day: '2-digit' }) %></strong>
+              <span><%= new Date(n.published_at).toLocaleDateString('de-CH', { month: 'short', year: 'numeric' }) %></span>
+            </time>
+          </div>
+          <div class="news-row-body">
+            <span class="tag"><%= n.category %></span>
+            <h3><a href="/news/<%= n.id %>"><%= n.title %></a></h3>
+            <% if (n.excerpt) { %><p><%= n.excerpt %></p><% } %>
+          </div>
+          <a class="news-row-cta" href="/news/<%= n.id %>" aria-label="Bericht lesen">→</a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,42 @@
+<% const pageTitle = 'News verwalten'; const active = 'news'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>News &amp; Spielberichte</h1>
+    <a class="btn btn-primary" href="/admin/news/new">+ Neuer Beitrag</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine News erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Titel</th>
+          <th>Kategorie</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(n => { %>
+          <tr>
+            <td><%= n.published_at %></td>
+            <td><strong><%= n.title %></strong><% if (n.excerpt) { %><br><span class="muted"><%= n.excerpt %></span><% } %></td>
+            <td><%= n.category %></td>
+            <td class="actions">
+              <a class="btn btn-sm btn-outline-dark" href="/news/<%= n.id %>" target="_blank">ansehen</a>
+              <a class="btn btn-sm btn-primary" href="/admin/news/<%= n.id %>/edit">bearbeiten</a>
+              <form action="/admin/news/<%= n.id %>/delete" method="post" onsubmit="return confirm('Beitrag wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

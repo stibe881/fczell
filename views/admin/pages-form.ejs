@@ -1,0 +1,29 @@
+<% const pageTitle = 'Inhalt bearbeiten'; const active = 'pages'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Inhalt bearbeiten</h1>
+    <a class="link-arrow" href="/admin/pages">← zurück zur Übersicht</a>
+  </div>
+
+  <form class="admin-form" action="/admin/pages/<%= item.id %>/edit" method="post">
+    <p class="muted">Slug: <code><%= item.slug %></code></p>
+    <label>
+      <span>Titel *</span>
+      <input name="title" required value="<%= item.title %>" />
+    </label>
+    <label>
+      <span>Inhalt *</span>
+      <textarea name="body" rows="18" required><%= item.body %></textarea>
+      <small class="muted">Absätze durch Leerzeile trennen. <code>**fett**</code>, <code>*kursiv*</code> und Listen mit <code>- Eintrag</code>.</small>
+    </label>
+
+    <div class="form-actions">
+      <button class="btn btn-primary btn-lg" type="submit">Speichern</button>
+      <a class="btn btn-ghost" href="/admin/pages">Abbrechen</a>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

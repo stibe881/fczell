@@ -1,0 +1,26 @@
+<% const pageTitle = 'Login'; %>
+<%- include('partials/header') %>
+
+<section class="login-page">
+  <div class="login-card">
+    <p class="eyebrow">Administration</p>
+    <h1>Login</h1>
+    <p class="login-sub">Melde dich an, um Inhalte, News und Termine zu pflegen.</p>
+
+    <form action="/login" method="post" autocomplete="on">
+      <label>
+        <span>Benutzername</span>
+        <input name="username" required autofocus autocomplete="username" />
+      </label>
+      <label>
+        <span>Passwort</span>
+        <input type="password" name="password" required autocomplete="current-password" />
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Einloggen</button>
+    </form>
+
+    <p class="login-back"><a href="/">← Zurück zur Webseite</a></p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
