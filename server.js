@@ -127,12 +127,12 @@ const juniorTeams = [
   { slug: 'piccolos', name: 'Piccolos', trainer: 'Andreas Bernet, Timon Bucher, Matteo Egli, Simon Egli, Sebastian Häfliger, Roli Leuenberger, Severin Brunner, Daniel Bättig', times: 'Mittwoch 18.00 – 19.15 Uhr', location: 'Sportplatz Gass 2' }
 ];
 
-const sponsorenKategorien = [
-  { kategorie: 'Hauptsponsor', text: 'Wir danken unserem Hauptsponsor für die langjährige Treue zum FC Zell.' },
-  { kategorie: 'Co-Sponsoren', text: 'Verlässliche Partner an unserer Seite – herzlichen Dank für die Unterstützung.' },
-  { kategorie: 'Juniorensponsoren', text: 'Sie ermöglichen unserem Nachwuchs Trainings, Lager und Ausrüstung.' },
-  { kategorie: 'Ausrüster', text: 'Top-Material für jede Mannschaft.' },
-  { kategorie: 'Sportfonds', text: 'Förderer des Schweizer Vereinssports.' }
+const sponsorenListe = [
+  { name: 'KKLH', kategorie: 'Hauptsponsor', logo: '/images/sponsoren/kklh.jpg', link: 'https://www.kklh.ch/' },
+  { name: 'Valiant', kategorie: 'Co-Sponsor', logo: '/images/sponsoren/valiant.jpg', link: 'https://www.valiant.ch/' },
+  { name: 'Leuenberger', kategorie: 'Juniorensponsor', logo: '/images/sponsoren/leuenberger.jpg', link: 'https://www.ldilag.ch/' },
+  { name: 'Kunz Sport', kategorie: 'Ausrüster', logo: '/images/sponsoren/kunzsport.png', link: 'https://go-in.ch/kunzsport/' },
+  { name: 'Swisslos', kategorie: 'Sportfonds', logo: '/images/sponsoren/swisslos.jpg', link: 'https://sport.lu.ch/' }
 ];
 
 // ---------- PUBLIC ROUTES ----------
@@ -144,7 +144,7 @@ app.get('/', (req, res) => {
     `SELECT * FROM events WHERE event_date >= date('now') ORDER BY event_date ASC LIMIT 5`
   ).all();
   const hero = db.prepare(`SELECT * FROM pages WHERE slug = 'hero'`).get();
-  res.render('index', { page: 'home', news, events, hero, sponsorenKategorien });
+  res.render('index', { page: 'home', news, events, hero, sponsorenListe });
 });
 
 app.get('/news', (req, res) => {
@@ -162,17 +162,23 @@ app.get('/news/:id', (req, res) => {
 
 app.get('/verein', (req, res) => {
   const intro = db.prepare(`SELECT * FROM pages WHERE slug = 'verein-intro'`).get();
-  const clubhaus = db.prepare(`SELECT * FROM pages WHERE slug = 'clubhaus'`).get();
   const penaltyclub = db.prepare(`SELECT * FROM pages WHERE slug = 'penaltyclub'`).get();
   const jobs = db.prepare(`SELECT * FROM pages WHERE slug = 'jobs'`).get();
   res.render('verein', {
     page: 'verein',
     intro,
-    clubhaus,
     penaltyclub,
     jobs,
     vorstand,
-    sponsorenKategorien
+    sponsorenListe
+  });
+});
+
+app.get('/clubhaus', (req, res) => {
+  const clubhaus = db.prepare(`SELECT * FROM pages WHERE slug = 'clubhaus'`).get();
+  res.render('clubhaus', {
+    page: 'clubhaus',
+    clubhaus
   });
 });
 

@@ -74,7 +74,7 @@
           </div>
           <div class="event-body">
             <h3><%= ev.title %></h3>
-            <% if (ev.location) { %><p class="event-loc">📍 <%= ev.location %></p><% } %>
+            <% if (ev.location) { %><p class="event-loc"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <%= ev.location %></p><% } %>
             <% if (ev.description) { %><p><%= ev.description %></p><% } %>
           </div>
         </li>
@@ -106,10 +106,12 @@
     </div>
   </div>
   <ul class="sponsor-list">
-    <% sponsorenKategorien.forEach(s => { %>
+    <% sponsorenListe.forEach(s => { %>
       <li>
-        <h4><%= s.kategorie %></h4>
-        <p><%= s.text %></p>
+        <a href="<%= s.link %>" target="_blank" rel="noopener noreferrer">
+          <img src="<%= s.logo %>" alt="<%= s.name %>" class="sponsor-logo" loading="lazy" />
+          <h4><%= s.kategorie %></h4>
+        </a>
       </li>
     <% }) %>
   </ul>

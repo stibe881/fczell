@@ -1,0 +1,17 @@
+<% const pageTitle = 'Clubhaus'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Infrastruktur</p>
+    <h1><%= clubhaus ? clubhaus.title : 'Clubhaus' %></h1>
+  </div>
+</section>
+
+<section class="band band-light" id="clubhaus-content">
+  <div class="prose">
+    <%- clubhaus ? mdToHtml(clubhaus.body) : '' %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
