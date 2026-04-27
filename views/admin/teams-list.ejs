@@ -1,0 +1,49 @@
+<% const pageTitle = 'Teams verwalten'; const active = 'teams'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Teams</h1>
+    <a class="btn btn-primary" href="/admin/teams/new">+ Neues Team</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine Teams erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Typ</th>
+          <th>Name</th>
+          <th>Liga</th>
+          <th>Trainer</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(t => { %>
+          <tr>
+            <td>
+              <% if (t.type === 'aktive') { %>
+                <span class="tag">Aktive</span>
+              <% } else { %>
+                <span class="tag" style="background: rgba(26, 128, 182, 0.1); color: var(--fcz-black);">Junioren</span>
+              <% } %>
+            </td>
+            <td><strong><%= t.name %></strong><br><small class="muted"><%= t.slug %></small></td>
+            <td><%= t.league %></td>
+            <td><%= t.trainer %></td>
+            <td class="actions">
+              <a class="btn btn-sm btn-primary" href="/admin/teams/<%= t.id %>/edit">bearbeiten</a>
+              <form action="/admin/teams/<%= t.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

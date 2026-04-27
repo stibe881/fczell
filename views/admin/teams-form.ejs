@@ -1,0 +1,80 @@
+<% const pageTitle = item ? 'Team bearbeiten' : 'Neues Team'; const active = 'teams'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1><%= pageTitle %></h1>
+    <a href="/admin/teams" class="link-arrow">← Zurück zur Übersicht</a>
+  </div>
+
+  <form class="admin-form" action="/admin/teams/<%= item ? item.id + '/edit' : 'new' %>" method="post">
+    <div class="form-group">
+      <label for="type">Team Typ *</label>
+      <select id="type" name="type" required>
+        <option value="aktive" <%= item && item.type === 'aktive' ? 'selected' : '' %>>Aktive</option>
+        <option value="junioren" <%= item && item.type === 'junioren' ? 'selected' : '' %>>Junioren</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Name (z.B. 1. Mannschaft) *</label>
+      <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="slug">Slug (URL-Pfad, z.B. 1-mannschaft) *</label>
+      <input type="text" id="slug" name="slug" value="<%= item ? item.slug : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="league">Liga (z.B. 3. Liga, Gruppe 3)</label>
+      <input type="text" id="league" name="league" value="<%= item ? item.league : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="extra">Zusatz (z.B. IFV) / Kontakt bei Junioren</label>
+      <input type="text" id="extra" name="extra" value="<%= item ? item.extra : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="trainer">Trainer</label>
+      <input type="text" id="trainer" name="trainer" value="<%= item ? item.trainer : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="coach">Coach / Assistent</label>
+      <input type="text" id="coach" name="coach" value="<%= item ? item.coach : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="goalie">Torhütertrainer</label>
+      <input type="text" id="goalie" name="goalie" value="<%= item ? item.goalie : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="physio">Physiotherapeut/Masseur</label>
+      <input type="text" id="physio" name="physio" value="<%= item ? item.physio : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="times">Trainingszeiten</label>
+      <textarea id="times" name="times" rows="3"><%= item ? item.times : '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="location">Trainingsort</label>
+      <input type="text" id="location" name="location" value="<%= item ? item.location : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="sort_order">Reihenfolge (Sortierung, kleine Zahl zuerst)</label>
+      <input type="number" id="sort_order" name="sort_order" value="<%= item ? item.sort_order : '0' %>" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-lg"><%= item ? 'Aktualisieren' : 'Speichern' %></button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

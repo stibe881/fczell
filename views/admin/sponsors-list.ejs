@@ -1,0 +1,49 @@
+<% const pageTitle = 'Sponsoren verwalten'; const active = 'sponsors'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Sponsoren</h1>
+    <a class="btn btn-primary" href="/admin/sponsors/new">+ Neuer Sponsor</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine Sponsoren erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Reihenfolge</th>
+          <th>Logo</th>
+          <th>Name</th>
+          <th>Kategorie</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(s => { %>
+          <tr>
+            <td><%= s.sort_order %></td>
+            <td>
+              <% if (s.logo) { %>
+                <img src="<%= s.logo %>" alt="Logo" style="height: 30px; object-fit: contain;" />
+              <% } else { %>
+                <span class="muted">Kein Logo</span>
+              <% } %>
+            </td>
+            <td><strong><%= s.name %></strong></td>
+            <td><%= s.category %></td>
+            <td class="actions">
+              <a class="btn btn-sm btn-primary" href="/admin/sponsors/<%= s.id %>/edit">bearbeiten</a>
+              <form action="/admin/sponsors/<%= s.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

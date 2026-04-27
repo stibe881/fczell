@@ -1,0 +1,46 @@
+<% const pageTitle = 'Vorstand verwalten'; const active = 'vorstand'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Vorstand</h1>
+    <a class="btn btn-primary" href="/admin/vorstand/new">+ Neues Mitglied</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine Vorstandsmitglieder erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Reihenfolge</th>
+          <th>Name</th>
+          <th>Rolle</th>
+          <th>Kontakt</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(v => { %>
+          <tr>
+            <td><%= v.sort_order %></td>
+            <td><strong><%= v.name %></strong></td>
+            <td><%= v.role %></td>
+            <td>
+              <%= v.phone %><br>
+              <small class="muted"><%= v.email %></small>
+            </td>
+            <td class="actions">
+              <a class="btn btn-sm btn-primary" href="/admin/vorstand/<%= v.id %>/edit">bearbeiten</a>
+              <form action="/admin/vorstand/<%= v.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

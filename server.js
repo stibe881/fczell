@@ -60,6 +60,7 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.flash = req.session.flash || null;
   res.locals.path = req.path;
+  res.locals.globalSponsors = db.prepare(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`).all();
   delete req.session.flash;
   next();
 });
@@ -72,68 +73,6 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// Static club data (Vorstand, Teams, Sponsoren) — these don't change often
-const vorstand = [
-  { name: 'Jörg Graber', role: 'Präsident', address: 'Grünenbodenweid 2, 6144 Zell', phone: '079 333 97 59', email: 'joerg.graber@bithawk.ch' },
-  { name: 'Martin Werder', role: 'Vize-Präsident', phone: '078 600 83 36', email: 'martin@werder.lu' },
-  { name: 'Patrick Albisser', role: 'Verantwortlicher Events', address: 'Hoger 9, 6130 Willisau', phone: '079 756 46 29', email: 'patrick.albisser@bluewin.ch' },
-  { name: 'Heinz Beck', role: 'Infrastruktur / Platz', address: 'Luzernstrasse 8, 6144 Zell', phone: '079 343 09 40', email: 'info@buag-kuechen.ch' },
-  { name: 'Simon Egli', role: 'Junioren', phone: '079 208 57 00', email: 'joli-seimen@bluewin.ch' },
-  { name: 'Nicole Mehr', role: 'Finanzen', phone: '077 429 20 30', email: 'nicole_mehr@hotmail.com' },
-  { name: 'Othmar Meyer', role: 'Spiko-Präsident', address: 'Neuhushof 3, 6144 Zell', phone: '079 796 61 19', email: 'othmar.meyer58@bluewin.ch' },
-  { name: 'Dominic Hecht', role: 'Material', phone: '079 195 22 24', email: 'dominic-2000@gmx.ch' }
-];
-
-const aktiveTeams = [
-  {
-    slug: '1-mannschaft',
-    name: '1. Mannschaft',
-    league: '3. Liga',
-    trainer: 'Lucas De Jesus',
-    coach: 'Patrick de Jesus',
-    goalie: 'Pascal Gerber',
-    times: 'Dienstag & Donnerstag: 19.30 – 21.00 Uhr',
-    location: 'Sportplatz Gass'
-  },
-  {
-    slug: '2-mannschaft',
-    name: '2. Mannschaft',
-    league: '5. Liga',
-    trainer: 'Daniel Schwegler',
-    coach: 'Paulo Cerejo',
-    goalie: 'Pascal Gerber',
-    physio: 'Paul Steinmann',
-    times: 'Montag 19.30 – 21.00 Uhr & Donnerstag 19.45 – 21.15 Uhr',
-    location: 'Sportplatz Gass'
-  },
-  {
-    slug: 'senioren-30',
-    name: 'Senioren 30+',
-    league: 'SG mit FC Willisau',
-    trainer: 'Adrian Bossert',
-    coach: 'Pascal Gertsch / Martin Steiner',
-    times: 'Dienstag 19.30 – 21.00 Uhr',
-    location: 'Schlossfeld Willisau'
-  }
-];
-
-const juniorTeams = [
-  { slug: 'b', name: 'B-Junioren', extra: 'SG Algro-Zell', trainer: 'Petrick Marti', times: 'Mo: Aengelehr Altbüron 19.45–21.15 / Mi: Gass 19.30–21.00' },
-  { slug: 'c', name: 'C-Junioren', trainer: 'Sandro Mehr, Roderic Bucher, Flavio Peter, Lorin Bättig', times: 'Di & Do: 18.00 – 19.30 Uhr', location: 'Sportplatz Gass 2' },
-  { slug: 'da', name: 'Da-Junioren', trainer: 'Jörg Graber, Fabio Bucher', times: 'Mo & Mi: 18.00 – 19.30 Uhr', location: 'Trainingsplatz Gass 1' },
-  { slug: 'db', name: 'Db-Junioren', trainer: 'Roland Bucher, Lionel Bieri', times: 'Mo & Mi: 18.00 – 19.30 Uhr', location: 'Trainingsplatz Gass' },
-  { slug: 'd7', name: 'D7-Junioren', trainer: 'Besnik Musaj & Nils Leuneberger', times: 'Mo & Do: 18.00 – 19.30 Uhr', location: 'Trainingsplatz Gass 1' },
-  { slug: 'e', name: 'E-Junioren', trainer: 'Martin Dubach, Matthias Bürli, Janis Bangerter', times: 'Di & Do: 18.00 – 19.30 Uhr', location: 'Sportplatz Gass 2' },
-  { slug: 'piccolos', name: 'Piccolos', trainer: 'Andreas Bernet, Timon Bucher, Matteo Egli, Simon Egli, Sebastian Häfliger, Roli Leuenberger, Severin Brunner, Daniel Bättig', times: 'Mittwoch 18.00 – 19.15 Uhr', location: 'Sportplatz Gass 2' }
-];
-
-const sponsorenListe = [
-  { name: 'KKLH', kategorie: 'Hauptsponsor', logo: '/images/sponsoren/kklh.jpg', link: 'https://www.kklh.ch/' },
-  { name: 'Valiant', kategorie: 'Co-Sponsor', logo: '/images/sponsoren/valiant.jpg', link: 'https://www.valiant.ch/' },
-  { name: 'Leuenberger', kategorie: 'Juniorensponsor', logo: '/images/sponsoren/leuenberger.jpg', link: 'https://www.ldilag.ch/' },
-  { name: 'Kunz Sport', kategorie: 'Ausrüster', logo: '/images/sponsoren/kunzsport.png', link: 'https://go-in.ch/kunzsport/' },
-  { name: 'Swisslos', kategorie: 'Sportfonds', logo: '/images/sponsoren/swisslos.jpg', link: 'https://sport.lu.ch/' }
-];
 
 // ---------- PUBLIC ROUTES ----------
 app.get('/', (req, res) => {
@@ -144,6 +83,7 @@ app.get('/', (req, res) => {
     `SELECT * FROM events WHERE event_date >= date('now') ORDER BY event_date ASC LIMIT 5`
   ).all();
   const hero = db.prepare(`SELECT * FROM pages WHERE slug = 'hero'`).get();
+  const sponsorenListe = db.prepare(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`).all();
   res.render('index', { page: 'home', news, events, hero, sponsorenListe });
 });
 
@@ -164,13 +104,19 @@ app.get('/verein', (req, res) => {
   const intro = db.prepare(`SELECT * FROM pages WHERE slug = 'verein-intro'`).get();
   const penaltyclub = db.prepare(`SELECT * FROM pages WHERE slug = 'penaltyclub'`).get();
   const jobs = db.prepare(`SELECT * FROM pages WHERE slug = 'jobs'`).get();
+  
+  const vorstand = db.prepare(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`).all();
+  const sponsorenListe = db.prepare(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`).all();
+  const bandenwerber = db.prepare(`SELECT * FROM advertisers ORDER BY sort_order ASC, name ASC`).all();
+
   res.render('verein', {
     page: 'verein',
     intro,
     penaltyclub,
     jobs,
     vorstand,
-    sponsorenListe
+    sponsorenListe,
+    bandenwerber
   });
 });
 
@@ -183,10 +129,12 @@ app.get('/clubhaus', (req, res) => {
 });
 
 app.get('/aktive', (req, res) => {
+  const aktiveTeams = db.prepare(`SELECT * FROM teams WHERE type = 'aktive' ORDER BY sort_order ASC, id ASC`).all();
   res.render('aktive', { page: 'aktive', teams: aktiveTeams });
 });
 
 app.get('/junioren', (req, res) => {
+  const juniorTeams = db.prepare(`SELECT * FROM teams WHERE type = 'junioren' ORDER BY sort_order ASC, id ASC`).all();
   res.render('junioren', { page: 'junioren', teams: juniorTeams });
 });
 
@@ -198,6 +146,7 @@ app.get('/events', (req, res) => {
 });
 
 app.get('/kontakt', (req, res) => {
+  const vorstand = db.prepare(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`).all();
   res.render('kontakt', { page: 'kontakt', vorstand });
 });
 
@@ -227,17 +176,27 @@ app.get('/admin', requireAuth, (req, res) => {
   const newsCount = db.prepare(`SELECT COUNT(*) AS c FROM news`).get().c;
   const eventsCount = db.prepare(`SELECT COUNT(*) AS c FROM events`).get().c;
   const pagesCount = db.prepare(`SELECT COUNT(*) AS c FROM pages`).get().c;
+  const vorstandCount = db.prepare(`SELECT COUNT(*) AS c FROM vorstand`).get().c;
+  const sponsorsCount = db.prepare(`SELECT COUNT(*) AS c FROM sponsors`).get().c;
+  const advertisersCount = db.prepare(`SELECT COUNT(*) AS c FROM advertisers`).get().c;
+  const teamsCount = db.prepare(`SELECT COUNT(*) AS c FROM teams`).get().c;
+
   const upcomingEvents = db.prepare(
     `SELECT * FROM events WHERE event_date >= date('now') ORDER BY event_date ASC LIMIT 5`
   ).all();
   const recentNews = db.prepare(
     `SELECT * FROM news ORDER BY published_at DESC, id DESC LIMIT 5`
   ).all();
+  
   res.render('admin/dashboard', {
     page: 'admin',
     newsCount,
     eventsCount,
     pagesCount,
+    vorstandCount,
+    sponsorsCount,
+    advertisersCount,
+    teamsCount,
     upcomingEvents,
     recentNews
   });
@@ -368,6 +327,158 @@ app.post('/admin/account', requireAuth, (req, res) => {
   db.prepare(`UPDATE users SET password_hash = ? WHERE id = ?`).run(hash, user.id);
   req.session.flash = { type: 'success', msg: 'Passwort wurde aktualisiert.' };
   res.redirect('/admin/account');
+});
+
+// --- Vorstand CRUD ---
+app.get('/admin/vorstand', requireAuth, (req, res) => {
+  const items = db.prepare(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`).all();
+  res.render('admin/vorstand-list', { page: 'admin', items });
+});
+
+app.get('/admin/vorstand/new', requireAuth, (req, res) => {
+  res.render('admin/vorstand-form', { page: 'admin', item: null });
+});
+
+app.post('/admin/vorstand/new', requireAuth, (req, res) => {
+  const { name, role, address, phone, email, sort_order } = req.body;
+  db.prepare(`INSERT INTO vorstand (name, role, address, phone, email, sort_order) VALUES (?, ?, ?, ?, ?, ?)`).run(name, role||'', address||'', phone||'', email||'', sort_order||0);
+  req.session.flash = { type: 'success', msg: 'Vorstandsmitglied hinzugefügt.' };
+  res.redirect('/admin/vorstand');
+});
+
+app.get('/admin/vorstand/:id/edit', requireAuth, (req, res) => {
+  const item = db.prepare(`SELECT * FROM vorstand WHERE id = ?`).get(req.params.id);
+  if (!item) return res.redirect('/admin/vorstand');
+  res.render('admin/vorstand-form', { page: 'admin', item });
+});
+
+app.post('/admin/vorstand/:id/edit', requireAuth, (req, res) => {
+  const { name, role, address, phone, email, sort_order } = req.body;
+  db.prepare(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=? WHERE id=?`).run(name, role||'', address||'', phone||'', email||'', sort_order||0, req.params.id);
+  req.session.flash = { type: 'success', msg: 'Vorstandsmitglied aktualisiert.' };
+  res.redirect('/admin/vorstand');
+});
+
+app.post('/admin/vorstand/:id/delete', requireAuth, (req, res) => {
+  db.prepare(`DELETE FROM vorstand WHERE id = ?`).run(req.params.id);
+  req.session.flash = { type: 'success', msg: 'Vorstandsmitglied gelöscht.' };
+  res.redirect('/admin/vorstand');
+});
+
+// --- Sponsors CRUD ---
+app.get('/admin/sponsors', requireAuth, (req, res) => {
+  const items = db.prepare(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`).all();
+  res.render('admin/sponsors-list', { page: 'admin', items });
+});
+
+app.get('/admin/sponsors/new', requireAuth, (req, res) => {
+  res.render('admin/sponsors-form', { page: 'admin', item: null });
+});
+
+app.post('/admin/sponsors/new', requireAuth, (req, res) => {
+  const { name, category, logo, link, sort_order } = req.body;
+  db.prepare(`INSERT INTO sponsors (name, category, logo, link, sort_order) VALUES (?, ?, ?, ?, ?)`).run(name, category||'', logo||'', link||'', sort_order||0);
+  req.session.flash = { type: 'success', msg: 'Sponsor hinzugefügt.' };
+  res.redirect('/admin/sponsors');
+});
+
+app.get('/admin/sponsors/:id/edit', requireAuth, (req, res) => {
+  const item = db.prepare(`SELECT * FROM sponsors WHERE id = ?`).get(req.params.id);
+  if (!item) return res.redirect('/admin/sponsors');
+  res.render('admin/sponsors-form', { page: 'admin', item });
+});
+
+app.post('/admin/sponsors/:id/edit', requireAuth, (req, res) => {
+  const { name, category, logo, link, sort_order } = req.body;
+  db.prepare(`UPDATE sponsors SET name=?, category=?, logo=?, link=?, sort_order=? WHERE id=?`).run(name, category||'', logo||'', link||'', sort_order||0, req.params.id);
+  req.session.flash = { type: 'success', msg: 'Sponsor aktualisiert.' };
+  res.redirect('/admin/sponsors');
+});
+
+app.post('/admin/sponsors/:id/delete', requireAuth, (req, res) => {
+  db.prepare(`DELETE FROM sponsors WHERE id = ?`).run(req.params.id);
+  req.session.flash = { type: 'success', msg: 'Sponsor gelöscht.' };
+  res.redirect('/admin/sponsors');
+});
+
+// --- Advertisers CRUD ---
+app.get('/admin/advertisers', requireAuth, (req, res) => {
+  const items = db.prepare(`SELECT * FROM advertisers ORDER BY sort_order ASC, name ASC`).all();
+  res.render('admin/advertisers-list', { page: 'admin', items });
+});
+
+app.get('/admin/advertisers/new', requireAuth, (req, res) => {
+  res.render('admin/advertisers-form', { page: 'admin', item: null });
+});
+
+app.post('/admin/advertisers/new', requireAuth, (req, res) => {
+  const { name, link, location, sort_order } = req.body;
+  db.prepare(`INSERT INTO advertisers (name, link, location, sort_order) VALUES (?, ?, ?, ?)`).run(name, link||'', location||'', sort_order||0);
+  req.session.flash = { type: 'success', msg: 'Bandenwerber hinzugefügt.' };
+  res.redirect('/admin/advertisers');
+});
+
+app.get('/admin/advertisers/:id/edit', requireAuth, (req, res) => {
+  const item = db.prepare(`SELECT * FROM advertisers WHERE id = ?`).get(req.params.id);
+  if (!item) return res.redirect('/admin/advertisers');
+  res.render('admin/advertisers-form', { page: 'admin', item });
+});
+
+app.post('/admin/advertisers/:id/edit', requireAuth, (req, res) => {
+  const { name, link, location, sort_order } = req.body;
+  db.prepare(`UPDATE advertisers SET name=?, link=?, location=?, sort_order=? WHERE id=?`).run(name, link||'', location||'', sort_order||0, req.params.id);
+  req.session.flash = { type: 'success', msg: 'Bandenwerber aktualisiert.' };
+  res.redirect('/admin/advertisers');
+});
+
+app.post('/admin/advertisers/:id/delete', requireAuth, (req, res) => {
+  db.prepare(`DELETE FROM advertisers WHERE id = ?`).run(req.params.id);
+  req.session.flash = { type: 'success', msg: 'Bandenwerber gelöscht.' };
+  res.redirect('/admin/advertisers');
+});
+
+// --- Teams CRUD ---
+app.get('/admin/teams', requireAuth, (req, res) => {
+  const items = db.prepare(`SELECT * FROM teams ORDER BY type ASC, sort_order ASC, id ASC`).all();
+  res.render('admin/teams-list', { page: 'admin', items });
+});
+
+app.get('/admin/teams/new', requireAuth, (req, res) => {
+  res.render('admin/teams-form', { page: 'admin', item: null });
+});
+
+app.post('/admin/teams/new', requireAuth, (req, res) => {
+  const { slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order } = req.body;
+  try {
+    db.prepare(`INSERT INTO teams (slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(slug||'', type||'aktive', name, league||'', extra||'', trainer||'', coach||'', goalie||'', physio||'', times||'', location||'', sort_order||0);
+    req.session.flash = { type: 'success', msg: 'Team hinzugefügt.' };
+  } catch (e) {
+    req.session.flash = { type: 'error', msg: 'Fehler beim Speichern (Slug bereits vorhanden?).' };
+  }
+  res.redirect('/admin/teams');
+});
+
+app.get('/admin/teams/:id/edit', requireAuth, (req, res) => {
+  const item = db.prepare(`SELECT * FROM teams WHERE id = ?`).get(req.params.id);
+  if (!item) return res.redirect('/admin/teams');
+  res.render('admin/teams-form', { page: 'admin', item });
+});
+
+app.post('/admin/teams/:id/edit', requireAuth, (req, res) => {
+  const { slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order } = req.body;
+  try {
+    db.prepare(`UPDATE teams SET slug=?, type=?, name=?, league=?, extra=?, trainer=?, coach=?, goalie=?, physio=?, times=?, location=?, sort_order=? WHERE id=?`).run(slug||'', type||'aktive', name, league||'', extra||'', trainer||'', coach||'', goalie||'', physio||'', times||'', location||'', sort_order||0, req.params.id);
+    req.session.flash = { type: 'success', msg: 'Team aktualisiert.' };
+  } catch (e) {
+    req.session.flash = { type: 'error', msg: 'Fehler beim Aktualisieren (Slug bereits vorhanden?).' };
+  }
+  res.redirect('/admin/teams');
+});
+
+app.post('/admin/teams/:id/delete', requireAuth, (req, res) => {
+  db.prepare(`DELETE FROM teams WHERE id = ?`).run(req.params.id);
+  req.session.flash = { type: 'success', msg: 'Team gelöscht.' };
+  res.redirect('/admin/teams');
 });
 
 // 404

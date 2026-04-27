@@ -1,0 +1,47 @@
+<% const pageTitle = item ? 'Vorstandsmitglied bearbeiten' : 'Neues Vorstandsmitglied'; const active = 'vorstand'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1><%= pageTitle %></h1>
+    <a href="/admin/vorstand" class="link-arrow">← Zurück zur Übersicht</a>
+  </div>
+
+  <form class="admin-form" action="/admin/vorstand/<%= item ? item.id + '/edit' : 'new' %>" method="post">
+    <div class="form-group">
+      <label for="name">Name *</label>
+      <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="role">Funktion/Rolle</label>
+      <input type="text" id="role" name="role" value="<%= item ? item.role : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="address">Adresse</label>
+      <input type="text" id="address" name="address" value="<%= item ? item.address : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Telefon</label>
+      <input type="text" id="phone" name="phone" value="<%= item ? item.phone : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" name="email" value="<%= item ? item.email : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="sort_order">Reihenfolge (Sortierung, kleine Zahl zuerst)</label>
+      <input type="number" id="sort_order" name="sort_order" value="<%= item ? item.sort_order : '0' %>" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-lg"><%= item ? 'Aktualisieren' : 'Speichern' %></button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

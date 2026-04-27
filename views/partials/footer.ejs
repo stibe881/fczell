@@ -59,6 +59,23 @@
     </div>
   </div>
 
+  <% if (locals.globalSponsors && globalSponsors.length > 0) { %>
+    <div class="footer-sponsors">
+      <% globalSponsors.forEach(sponsor => { %>
+        <div class="footer-sponsor-item">
+          <span class="footer-sponsor-cat"><%= sponsor.category %></span>
+          <% if (sponsor.link) { %>
+            <a href="<%= sponsor.link %>" target="_blank" rel="noopener">
+              <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
+            </a>
+          <% } else { %>
+            <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
   <div class="footer-bottom">
     <p>© <%= new Date().getFullYear() %> FC Zell. Alle Rechte vorbehalten.</p>
     <p class="footer-meta"><a href="/login">Admin-Login</a></p>

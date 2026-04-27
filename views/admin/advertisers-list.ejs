@@ -1,0 +1,47 @@
+<% const pageTitle = 'Bandenwerber verwalten'; const active = 'advertisers'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Bandenwerber</h1>
+    <a class="btn btn-primary" href="/admin/advertisers/new">+ Neuer Bandenwerber</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine Bandenwerber erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Ort</th>
+          <th>Link</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(a => { %>
+          <tr>
+            <td><strong><%= a.name %></strong></td>
+            <td><%= a.location %></td>
+            <td>
+              <% if (a.link) { %>
+                <a href="<%= a.link %>" target="_blank" rel="noopener">Link öffnen</a>
+              <% } else { %>
+                <span class="muted">–</span>
+              <% } %>
+            </td>
+            <td class="actions">
+              <a class="btn btn-sm btn-primary" href="/admin/advertisers/<%= a.id %>/edit">bearbeiten</a>
+              <form action="/admin/advertisers/<%= a.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

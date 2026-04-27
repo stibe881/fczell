@@ -44,6 +44,49 @@ db.exec(`
     body TEXT NOT NULL,
     updated_at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS vorstand (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    role TEXT,
+    address TEXT,
+    phone TEXT,
+    email TEXT,
+    sort_order INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS sponsors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    category TEXT,
+    logo TEXT,
+    link TEXT,
+    sort_order INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS advertisers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    link TEXT,
+    location TEXT,
+    sort_order INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS teams (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    league TEXT,
+    extra TEXT,
+    trainer TEXT,
+    coach TEXT,
+    goalie TEXT,
+    physio TEXT,
+    times TEXT,
+    location TEXT,
+    sort_order INTEGER DEFAULT 0
+  );
 `);
 
 function seed() {

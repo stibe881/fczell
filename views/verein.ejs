@@ -9,13 +9,29 @@
   </div>
 </section>
 
-<section class="band band-light" id="vorstand">
-  <div class="band-head">
-    <div>
-      <p class="eyebrow">Führung</p>
-      <h2>Unser Vorstand</h2>
-      <p class="band-sub">Acht engagierte Persönlichkeiten leiten den FC Zell ehrenamtlich.</p>
+  <div class="geschichte-section" style="margin-bottom: 5rem;">
+    <div class="prose" style="max-width: 800px; margin: 0 auto; text-align: center; color: var(--fcz-gray-700); font-size: 1.1rem; line-height: 1.8;">
+      <h2 style="color: var(--fcz-black); margin-bottom: 1.5rem; font-size: 2rem;">Unsere Geschichte</h2>
+      <p>Der FC Zell ist ein Fussballclub im Luzerner Hinterland. Er wurde 1960 gegründet.</p>
+      <p>Wir verfügen über gut 300 Vereinsmitglieder, davon etwa 140 JuniorInnen. Am Meisterschaftsbetrieb nehmen wir mit neun Mannschaften teil. Unser schönes Clubhaus lädt zum Fussballspiele schauen und verweilen ein und kann auch für private Anlässe gemietet werden. Alle zwei Jahre führen wir ein Juniorenlager durch.</p>
+      
+      <div style="margin-top: 3rem; background: #fff; padding: 2rem; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06);">
+        <h4 style="color: var(--fcz-black); margin-bottom: 1rem; text-transform: uppercase;">Gründermannschaft FC Zell 1960</h4>
+        <img src="/images/gruendung1960.png" alt="Gründermannschaft 1960" style="width: 100%; max-width: 600px; height: auto; border-radius: var(--radius); margin-bottom: 1.5rem;" loading="lazy" />
+        <p style="font-size: 0.95rem; line-height: 1.6; text-align: center; margin: 0;">
+          <strong>Obere Reihe von links:</strong> Pfister Guido, Greber Toni, Ruckstuhl Peter, Grüter Edwin, Jurt Paul, Kunz Werner, Rupert Peter<br>
+          <strong>Untere Reihe von links:</strong> Kammermann Walter, Graber Hans, Graber Alfred, Lütolf Toni, Bossardt Thomas, Trachsel Hans
+        </p>
+      </div>
     </div>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <span class="badge" style="margin-bottom: 1rem;">Führung</span>
+    <h2 style="font-size: 2.5rem; color: var(--fcz-black); margin-bottom: 1rem;">Unser Vorstand</h2>
+    <p style="font-size: 1.1rem; color: var(--fcz-text); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+      Acht engagierte Persönlichkeiten leiten den FC Zell ehrenamtlich.
+    </p>
   </div>
 
   <ul class="people-list">
@@ -65,7 +81,7 @@
 </section>
 
 <section class="band band-light" id="sponsoren">
-  <div class="band-head">
+  <div class="band-head" style="justify-content: center; text-align: center;">
     <div>
       <p class="eyebrow">Partner</p>
       <h2>Unsere Sponsoren</h2>
@@ -82,6 +98,28 @@
       </li>
     <% }) %>
   </ul>
+
+  <div class="bandenwerber-section" style="margin-top: 4rem;">
+    <div class="band-head" style="margin-bottom: 2rem; justify-content: center; text-align: center;">
+      <div>
+        <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Vielen Dank unseren Bandenwerbern</h3>
+        <p class="band-sub" style="margin: 0 auto;">und allen weiteren Sponsoren für die grossartige Unterstützung!</p>
+      </div>
+    </div>
+    
+    <ul class="bandenwerber-list">
+      <% bandenwerber.forEach(b => { %>
+        <li>
+          <% if (b.link) { %>
+            <a href="<%= b.link %>" target="_blank" rel="noopener noreferrer" class="b-name"><%= b.name %></a>
+          <% } else { %>
+            <span class="b-name"><%= b.name %></span>
+          <% } %>
+          <span class="b-loc"><%= b.location %></span>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
 </section>
 
 <%- include('partials/footer') %>
