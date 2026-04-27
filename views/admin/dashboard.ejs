@@ -5,25 +5,44 @@
   <div class="admin-page-head">
     <div>
       <h1>Willkommen, <%= user.displayName || user.username %></h1>
-      <p>Hier verwaltest du News, Termine und Inhalte des FC Zell.</p>
+      <p>Hier verwaltest du Inhalte des FC Zell.</p>
     </div>
+    <%
+      let roles = [];
+      try { roles = JSON.parse(user.roles || '[]'); } catch (e) {}
+      const isAdmin = roles.includes('admin');
+    %>
     <div class="admin-quick-actions">
-      <a class="btn btn-primary" href="/admin/news/new">+ News erfassen</a>
-      <a class="btn btn-outline-dark" href="/admin/events/new">+ Termin erfassen</a>
+      <% if (isAdmin || roles.includes('news')) { %>
+        <a class="btn btn-primary" href="/admin/news/new">+ News erfassen</a>
+      <% } %>
+      <% if (isAdmin || roles.includes('teams')) { %>
+        <a class="btn btn-outline-dark" href="/admin/events/new">+ Termin erfassen</a>
+      <% } %>
     </div>
   </div>
 
   <ul class="stat-row">
+    <% if (isAdmin || roles.includes('news')) { %>
     <li>
       <span class="stat-num"><%= newsCount %></span>
       <span class="stat-label">News-Beiträge</span>
       <a href="/admin/news">verwalten →</a>
     </li>
+    <% } %>
+    <% if (isAdmin || roles.includes('teams')) { %>
     <li>
       <span class="stat-num"><%= eventsCount %></span>
       <span class="stat-label">Termine</span>
       <a href="/admin/events">verwalten →</a>
     </li>
+    <li>
+      <span class="stat-num"><%= teamsCount %></span>
+      <span class="stat-label">Teams</span>
+      <a href="/admin/teams">verwalten →</a>
+    </li>
+    <% } %>
+    <% if (isAdmin || roles.includes('content')) { %>
     <li>
       <span class="stat-num"><%= pagesCount %></span>
       <span class="stat-label">Inhalts-Bausteine</span>
@@ -34,6 +53,8 @@
       <span class="stat-label">Vorstand</span>
       <a href="/admin/vorstand">verwalten →</a>
     </li>
+    <% } %>
+    <% if (isAdmin || roles.includes('sponsoring')) { %>
     <li>
       <span class="stat-num"><%= sponsorsCount %></span>
       <span class="stat-label">Sponsoren</span>
@@ -44,14 +65,11 @@
       <span class="stat-label">Bandenwerber</span>
       <a href="/admin/advertisers">verwalten →</a>
     </li>
-    <li>
-      <span class="stat-num"><%= teamsCount %></span>
-      <span class="stat-label">Teams</span>
-      <a href="/admin/teams">verwalten →</a>
-    </li>
+    <% } %>
   </ul>
 
   <div class="admin-cols">
+    <% if (isAdmin || roles.includes('news')) { %>
     <section>
       <h2>Letzte News</h2>
       <% if (recentNews.length === 0) { %>
@@ -70,7 +88,9 @@
         </ul>
       <% } %>
     </section>
+    <% } %>
 
+    <% if (isAdmin || roles.includes('teams')) { %>
     <section>
       <h2>Kommende Termine</h2>
       <% if (upcomingEvents.length === 0) { %>
@@ -89,6 +109,7 @@
         </ul>
       <% } %>
     </section>
+    <% } %>
   </div>
 </div>
 

@@ -15,7 +15,7 @@
   <% } else { %>
     <ul class="news-list">
       <% news.forEach(n => { %>
-        <li class="news-row">
+        <li class="news-row" style="cursor: pointer;" onclick="window.location.href='/news/<%= n.id %>'">
           <div class="news-row-date">
             <time datetime="<%= n.published_at %>">
               <strong><%= new Date(n.published_at).toLocaleDateString('de-CH', { day: '2-digit' }) %></strong>
@@ -24,10 +24,9 @@
           </div>
           <div class="news-row-body">
             <span class="tag"><%= n.category %></span>
-            <h3><a href="/news/<%= n.id %>"><%= n.title %></a></h3>
+            <h3><a href="/news/<%= n.id %>" style="color: inherit; text-decoration: none;"><%= n.title %></a></h3>
             <% if (n.excerpt) { %><p><%= n.excerpt %></p><% } %>
           </div>
-          <a class="news-row-cta" href="/news/<%= n.id %>" aria-label="Bericht lesen">→</a>
         </li>
       <% }) %>
     </ul>

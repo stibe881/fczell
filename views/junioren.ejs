@@ -10,28 +10,28 @@
 </section>
 
 <section class="band band-light">
-  <ul class="junior-list">
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <a href="https://www.fczell.ch/wp-content/uploads/2024/08/2024-Verhaltenskodex-FC-Zell.pdf" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Verhaltenskodex herunterladen
+    </a>
+  </div>
+
+  <div class="teams-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; max-width: var(--max-w); margin: 0 auto;">
     <% teams.forEach(team => { %>
-      <li id="<%= team.slug %>" class="junior-row">
-        <div class="junior-head">
-          <h2><%= team.name %></h2>
-          <% if (team.extra) { %><span class="tag"><%= team.extra %></span><% } %>
-        </div>
-        <dl class="junior-info">
-          <% if (team.trainer) { %>
-            <div><dt>Trainer</dt><dd><%= team.trainer %></dd></div>
-          <% } %>
-          <% if (team.times) { %>
-            <div><dt>Trainings</dt><dd><%= team.times %></dd></div>
-          <% } %>
-          <% if (team.location) { %>
-            <div><dt>Ort</dt><dd><%= team.location %></dd></div>
-          <% } %>
-        </dl>
-      </li>
+      <a href="/junioren/<%= team.slug %>" class="team-tile" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; text-align: center;">
+        <h2 style="margin: 0; font-size: 1.5rem;"><%= team.name %></h2>
+        <span style="display: inline-block; margin-top: 1rem; color: var(--fcz-blue); font-weight: 600; font-size: 0.9rem;">Team Details &rarr;</span>
+      </a>
     <% }) %>
-  </ul>
+  </div>
 </section>
+<style>
+  .team-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  }
+</style>
 
 <section class="band band-accent">
   <div class="cta-row">

@@ -1,0 +1,48 @@
+<%- include('partials/header', { pageTitle: 'Jobs', page: 'jobs' }) %>
+
+<main class="site-main">
+  <section class="page-hero">
+    <div class="hero-bg-accent"></div>
+    <div class="page-hero-inner">
+      <h1>Jobs beim FC Zell</h1>
+      <p class="hero-sub">Engagiere dich in unserem Verein und werde Teil der FC Zell Familie. Wir suchen motivierte Leute, die uns neben dem Platz unterstützen!</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="content-wrapper" style="max-width: 900px; margin: 0 auto;">
+      
+      <% if (jobs.length === 0) { %>
+        <div class="card" style="text-align: center; padding: 4rem 2rem;">
+          <h3 style="margin-bottom: 1rem;">Aktuell keine offenen Stellen</h3>
+          <p style="color: var(--fcz-gray-500);">Zurzeit sind alle Ämter besetzt. Schau doch später wieder vorbei!</p>
+        </div>
+      <% } else { %>
+        <div class="jobs-grid" style="display: flex; flex-direction: column; gap: 2rem;">
+          <% jobs.forEach(job => { %>
+            <div class="job-card" style="background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow);">
+              <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--fcz-red-dark);"><%= job.title %></h2>
+                <span style="font-size: 0.85rem; color: var(--fcz-gray-500); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Ausschreibung</span>
+              </div>
+              
+              <div class="job-description" style="line-height: 1.6; color: var(--fcz-gray-700); margin-bottom: 2rem;">
+                <%- job.description %>
+              </div>
+              
+              <% if (job.contact_info) { %>
+                <div class="job-contact" style="background: var(--fcz-cream); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--fcz-accent);">
+                  <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Kontakt</h4>
+                  <p style="margin: 0; line-height: 1.5;"><%- job.contact_info %></p>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

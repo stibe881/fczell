@@ -1,0 +1,45 @@
+<% const pageTitle = 'Archiv - Events'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Historie</p>
+    <h1>Event-Archiv</h1>
+    <p>Vergangene Anlässe und Events des FC Zell.</p>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="band-head">
+    <div>
+      <h2>Vergangene Termine</h2>
+    </div>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <p class="empty">Es sind keine vergangenen Events im Archiv.</p>
+  <% } else { %>
+    <ul class="event-list">
+      <% events.forEach(ev => {
+           const d = new Date(ev.event_date);
+      %>
+        <li class="event-row" style="opacity: 0.8; cursor: pointer;" onclick="window.location.href='/events/<%= ev.id %>'">
+          <div class="event-date">
+            <span class="event-day"><%= d.toLocaleDateString('de-CH', { weekday: 'long' }) %></span>
+            <span class="event-num"><%= d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }) %></span>
+            <% if (ev.event_time) { %><span class="event-time"><%= ev.event_time %> Uhr</span><% } %>
+          </div>
+          <div class="event-body">
+            <h3><a href="/events/<%= ev.id %>" style="color: inherit; text-decoration: none;"><%= ev.title %></a></h3>
+            <% if (ev.location) { %><p class="event-loc"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <%= ev.location %></p><% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+  <div style="margin-top: 3rem; text-align: center;">
+    <a href="/events" class="btn btn-outline">Zurück zu den kommenden Events</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -12,6 +12,7 @@ db.exec(`
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     display_name TEXT,
+    roles TEXT DEFAULT '["admin"]',
     created_at TEXT DEFAULT (datetime('now'))
   );
 
@@ -85,17 +86,48 @@ db.exec(`
     physio TEXT,
     times TEXT,
     location TEXT,
+    photo TEXT,
+    sponsor_logo TEXT,
     sort_order INTEGER DEFAULT 0
   );
+
+  CREATE TABLE IF NOT EXISTS jobs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    contact_info TEXT,
+    is_active INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+  );
 `);
+
+// Migration for existing tables
+try {
+  db.exec("ALTER TABLE events ADD COLUMN is_match INTEGER DEFAULT 0;");
+} catch (err) {
+  // Column already exists, ignore
+}
+
+try {
+  db.exec("ALTER TABLE events ADD COLUMN live_ticker TEXT;");
+} catch (err) {
+  // Column already exists, ignore
+}
+
+try {
+  db.exec("ALTER TABLE users ADD COLUMN roles TEXT DEFAULT '[\"admin\"]';");
+} catch (err) {
+  // Column already exists, ignore
+}
 
 function seed() {
   const userCount = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
   if (userCount === 0) {
     const hash = bcrypt.hashSync('fczell2026', 10);
     db.prepare(
-      'INSERT INTO users (username, password_hash, display_name) VALUES (?, ?, ?)'
-    ).run('admin', hash, 'Administrator');
+      'INSERT INTO users (username, password_hash, display_name, roles) VALUES (?, ?, ?, ?)'
+    ).run('admin', hash, 'Administrator', '["admin"]');
     console.log('-> Standard-Admin angelegt: admin / fczell2026');
   }
 
@@ -234,6 +266,24 @@ Damit wir unsere Matchbesucher an den Spielen unserer 1. Mannschaft auch kulinar
 Kannst du dir vorstellen, an einem Heimspiel pro Halbjahr bei uns am Grill mitzuhelfen? Dann komm in unsere neue „Grillmannschaft".
 
 Kontakt: joerg.graber@bithawk.ch · 079 333 97 59`
+    );
+  }
+
+  const jobCount = db.prepare('SELECT COUNT(*) AS c FROM jobs').get().c;
+  if (jobCount === 0) {
+    db.prepare(`
+      INSERT INTO jobs (title, description, contact_info) 
+      VALUES (?, ?, ?)
+    `).run(
+      'WIR SUCHEN DICH als Grillmeister/in',
+      `<ul>
+  <li>Bist du gerne in guter Gesellschaft?</li>
+  <li>Der FC Zell liegt dir am Herzen?</li>
+  <li>Du möchtest den FC Zell gerne unterstützen?</li>
+</ul>
+<p><strong>DANN BIST DU UNSERE WAHL!</strong></p>
+<p>Wir suchen für die Spiele der 1. Mannschaft Unterstützung am Grill.<br>Hast du Interesse?</p>`,
+      'Dann melde dich gerne bei unserem Präsi Jörg Graber Tel.: 079 333 97 59'
     );
   }
 }

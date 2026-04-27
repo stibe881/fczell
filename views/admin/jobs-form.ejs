@@ -1,0 +1,41 @@
+<%- include('_admin-header', { pageTitle: job.id ? 'Job bearbeiten' : 'Neuer Job', active: 'jobs' }) %>
+
+<div class="admin-head">
+  <div>
+    <h1><%= job.id ? 'Job bearbeiten' : 'Neuer Job' %></h1>
+    <p>Hier kannst du Job-Details anpassen. HTML-Tags in der Beschreibung sind erlaubt.</p>
+  </div>
+  <a href="/admin/jobs" class="btn btn-outline">&larr; Zurück</a>
+</div>
+
+<div class="admin-card">
+  <form action="<%= job.id ? '/admin/jobs/' + job.id + '/edit' : '/admin/jobs' %>" method="post" class="admin-form">
+    
+    <div class="form-group">
+      <label for="title">Titel</label>
+      <input type="text" id="title" name="title" value="<%= job.title || '' %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Beschreibung (HTML erlaubt)</label>
+      <textarea id="description" name="description" rows="10"><%= job.description || '' %></textarea>
+      <small>Verwende <code>&lt;ul&gt;&lt;li&gt;Text&lt;/li&gt;&lt;/ul&gt;</code> für Listen oder <code>&lt;strong&gt;Text&lt;/strong&gt;</code> für fett.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="contact_info">Kontaktinformationen (HTML erlaubt)</label>
+      <textarea id="contact_info" name="contact_info" rows="3"><%= job.contact_info || '' %></textarea>
+    </div>
+
+    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+      <input type="checkbox" id="is_active" name="is_active" value="1" <%= (job.is_active || !job.id) ? 'checked' : '' %> style="width: auto;">
+      <label for="is_active" style="margin: 0;">Job ist aktiv und wird auf der Webseite angezeigt</label>
+    </div>
+
+    <div class="form-actions" style="margin-top: 2rem;">
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

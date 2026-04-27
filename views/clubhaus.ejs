@@ -9,9 +9,162 @@
 </section>
 
 <section class="band band-light" id="clubhaus-content">
-  <div class="prose">
-    <%- clubhaus ? mdToHtml(clubhaus.body) : '' %>
+  <div class="clubhaus-section">
+    <div class="clubhaus-intro">
+      <h2 style="font-size: 2.5rem; color: var(--fcz-black); margin-bottom: 1rem;">Miete unser Clubhaus</h2>
+      <p style="font-size: 1.15rem; color: var(--fcz-gray-700); max-width: 700px; margin: 0 auto; line-height: 1.6;">
+        Unser Clubhaus auf der Sportanlage Gass bietet die ideale Location für private Anlässe, Vereinsversammlungen oder Feste. Geniesse die tolle Atmosphäre direkt am Spielfeldrand.
+      </p>
+    </div>
+
+    <div class="clubhaus-grid">
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Tarife pro Tag</h3>
+        </div>
+        <ul class="pricing-list">
+          <li><span>Vereinsmitglieder</span> <strong>CHF 200.–</strong></li>
+          <li><span>Nichtmitglieder</span> <strong>CHF 350.–</strong></li>
+          <li><span>Vereine & Organisationen</span> <strong>CHF 350.–</strong></li>
+          <li><span>Vorstands-, Ehren-, und Freimitglieder, Donatoren und Bandenwerber</span> <strong>CHF 200.00</strong></li>
+        </ul>
+        <div class="pricing-footer">
+          <a href="/kontakt?grund=Miete+Clubhaus" class="btn btn-primary" style="width: 100%; text-align: center;">Anfrage senden</a>
+        </div>
+      </div>
+
+      <div class="features-card">
+        <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--fcz-black);">Im Mietpreis inbegriffen</h3>
+        <ul class="feature-list">
+          <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Benützung des Clubhauses und der grossen Terrasse
+          </li>
+          <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Benützung der WC-Anlagen
+          </li>
+          <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Kosten für Strom und Wasser
+          </li>
+          <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-gray-500);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <strong>Zusatzoption:</strong> Grill / Friteuse (Zusatzkosten CHF 50.–, muss komplett gereinigt werden)
+          </li>
+        </ul>
+        <div class="info-box">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Getränke-Regelung</h4>
+          <p style="margin: 0; font-size: 0.95rem; color: rgba(255,255,255,0.9); line-height: 1.5;">
+            Sämtliche Getränke (ausser Wein) werden durch den FC Zell geliefert. Der Verbrauch wird gemäss der internen Preisliste verrechnet.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+
+<style>
+/* ---------- CLUBHAUS SECTION ---------- */
+.clubhaus-section {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 2rem var(--pad-x);
+}
+.clubhaus-intro {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.clubhaus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
+@media (max-width: 900px) {
+  .clubhaus-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Pricing Card */
+.pricing-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.pricing-header {
+  background: var(--fcz-black);
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+}
+.pricing-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.pricing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pricing-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 1.05rem;
+  color: var(--fcz-gray-700);
+}
+.pricing-list li:last-child {
+  border-bottom: none;
+}
+.pricing-list li strong {
+  color: var(--fcz-black);
+  font-size: 1.15rem;
+}
+.pricing-footer {
+  padding: 2rem;
+  background: #fafafa;
+}
+
+/* Features Card */
+.features-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem 0;
+}
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--fcz-gray-700);
+  line-height: 1.5;
+}
+.feature-list li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.info-box {
+  background: var(--fcz-red);
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: #fff;
+}
+</style>
 
 <%- include('partials/footer') %>

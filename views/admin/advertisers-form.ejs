@@ -1,35 +1,51 @@
-<% const pageTitle = item ? 'Bandenwerber bearbeiten' : 'Neuer Bandenwerber'; const active = 'advertisers'; %>
+<% 
+  const isEdit = !!item;
+  const pageTitle = isEdit ? 'Bandenwerber bearbeiten' : 'Neuer Bandenwerber';
+  const active = 'advertisers';
+%>
 <%- include('_admin-header') %>
 
-<div class="admin-content">
+<div class="admin-content" style="max-width: 600px;">
   <div class="admin-page-head">
     <h1><%= pageTitle %></h1>
-    <a href="/admin/advertisers" class="link-arrow">← Zurück zur Übersicht</a>
   </div>
 
-  <form class="admin-form" action="/admin/advertisers/<%= item ? item.id + '/edit' : 'new' %>" method="post">
+  <form class="admin-form" action="/admin/advertisers/<%= isEdit ? item.id + '/edit' : 'new' %>" method="post" enctype="multipart/form-data">
     <div class="form-group">
-      <label for="name">Name der Firma / Person *</label>
-      <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
+      <label>Name des Bandenwerbers (Pflichtfeld)</label>
+      <input type="text" name="name" value="<%= isEdit ? item.name : '' %>" required />
     </div>
 
     <div class="form-group">
-      <label for="location">Ort</label>
-      <input type="text" id="location" name="location" value="<%= item ? item.location : '' %>" />
+      <label>Webseite (Link, optional)</label>
+      <input type="url" name="link" value="<%= isEdit ? item.link : '' %>" placeholder="https://..." />
     </div>
 
     <div class="form-group">
-      <label for="link">Webseite Link (inkl. https://)</label>
-      <input type="url" id="link" name="link" value="<%= item ? item.link : '' %>" />
+      <label>Ort (optional)</label>
+      <input type="text" name="location" value="<%= isEdit ? item.location : '' %>" />
     </div>
 
     <div class="form-group">
-      <label for="sort_order">Reihenfolge (Sortierung, kleine Zahl zuerst)</label>
-      <input type="number" id="sort_order" name="sort_order" value="<%= item ? item.sort_order : '0' %>" />
+      <label>Logo (Bilddatei, optional)</label>
+      <% if (isEdit && item.logo) { %>
+        <div style="margin-bottom: 0.5rem;">
+          <img src="<%= item.logo %>" alt="Aktuelles Logo" style="max-height: 80px; object-fit: contain; border: 1px solid #ddd; padding: 4px; border-radius: 4px;" />
+        </div>
+        <p class="muted" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Aktuelles Logo wird beibehalten, wenn kein neues hochgeladen wird.</p>
+        <input type="hidden" name="existing_logo" value="<%= item.logo %>" />
+      <% } %>
+      <input type="file" name="logo" accept="image/*" />
+    </div>
+
+    <div class="form-group">
+      <label>Reihenfolge (Zahl, je tiefer desto weiter oben)</label>
+      <input type="number" name="sort_order" value="<%= isEdit ? item.sort_order : 0 %>" />
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary btn-lg"><%= item ? 'Aktualisieren' : 'Speichern' %></button>
+      <a class="btn btn-outline" href="/admin/advertisers">Abbrechen</a>
+      <button class="btn btn-primary" type="submit">Speichern</button>
     </div>
   </form>
 </div>

@@ -1,0 +1,60 @@
+<% const pageTitle = 'Benutzerverwaltung'; const active = 'users'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <div>
+      <h1>Benutzer & Rollen</h1>
+      <p>Hier kannst du Administratoren und Redakteure verwalten und ihnen Rollen zuweisen.</p>
+    </div>
+    <a class="btn btn-primary" href="/admin/users/new">+ Neuer Benutzer</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Keine Benutzer vorhanden.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Benutzername</th>
+          <th>Anzeigename</th>
+          <th>Rollen</th>
+          <th>Erstellt am</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(u => { 
+             let roles = [];
+             try { roles = JSON.parse(u.roles || '[]'); } catch (e) {}
+             const displayRoles = roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+        %>
+          <tr>
+            <td><strong><%= u.username %></strong></td>
+            <td><%= u.display_name || '–' %></td>
+            <td>
+              <% if (roles.includes('admin')) { %>
+                <span style="color: var(--fcz-red); font-weight: 600;">Admin</span>
+              <% } else if (roles.length > 0) { %>
+                <span class="muted"><%= displayRoles %></span>
+              <% } else { %>
+                <span class="muted" style="font-style: italic;">Keine Rollen</span>
+              <% } %>
+            </td>
+            <td><%= new Date(u.created_at).toLocaleDateString('de-CH') %></td>
+            <td class="actions">
+              <a class="btn btn-sm btn-outline-dark" href="/admin/users/<%= u.id %>/edit">Bearbeiten</a>
+              <% if (u.id !== user.id) { %>
+                <form action="/admin/users/<%= u.id %>/delete" method="post" onsubmit="return confirm('Möchtest du diesen Benutzer wirklich löschen?');" style="display:inline">
+                  <button class="btn btn-sm btn-ghost" type="submit" style="color:var(--fcz-red);">Löschen</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

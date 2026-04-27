@@ -1,0 +1,71 @@
+<% const pageTitle = item ? 'Benutzer bearbeiten' : 'Neuer Benutzer'; const active = 'users'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <div>
+      <h1><%= item ? 'Benutzer bearbeiten' : 'Neuer Benutzer' %></h1>
+      <p>Hier kannst du den Benutzernamen, das Passwort und die Rollen des Redakteurs anpassen.</p>
+    </div>
+    <a href="/admin/users" class="btn btn-outline-dark">&larr; Zurück</a>
+  </div>
+
+  <div class="admin-card" style="max-width: 600px;">
+    <form action="<%= item ? '/admin/users/' + item.id + '/edit' : '/admin/users/new' %>" method="post" class="admin-form">
+      
+      <div class="form-group">
+        <label for="username">Benutzername</label>
+        <input type="text" id="username" name="username" value="<%= item ? item.username : '' %>" required autocomplete="new-password">
+      </div>
+
+      <div class="form-group">
+        <label for="display_name">Anzeigename (z.B. Vor- und Nachname)</label>
+        <input type="text" id="display_name" name="display_name" value="<%= item ? item.display_name : '' %>">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Passwort <%= item ? '(Nur ausfüllen, um es zu ändern)' : '*' %></label>
+        <input type="password" id="password" name="password" autocomplete="new-password" <%= !item ? 'required' : '' %>>
+      </div>
+
+      <div class="form-group" style="margin-top: 2rem;">
+        <label style="font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem;">Berechtigungen / Rollen</label>
+        <% 
+          let roles = [];
+          if (item) {
+            try { roles = JSON.parse(item.roles || '[]'); } catch(e){}
+          }
+        %>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin: 0;">
+            <input type="checkbox" name="roles" value="admin" <%= roles.includes('admin') ? 'checked' : '' %>>
+            <strong>Admin</strong> (Voller Zugriff auf alle Bereiche)
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin: 0;">
+            <input type="checkbox" name="roles" value="news" <%= roles.includes('news') ? 'checked' : '' %>>
+            <strong>News</strong> (News-Beiträge)
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin: 0;">
+            <input type="checkbox" name="roles" value="content" <%= roles.includes('content') ? 'checked' : '' %>>
+            <strong>Inhalte</strong> (Inhalts-Bausteine, Jobs, Vorstand)
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin: 0;">
+            <input type="checkbox" name="roles" value="sponsoring" <%= roles.includes('sponsoring') ? 'checked' : '' %>>
+            <strong>Sponsoring</strong> (Sponsoren, Bandenwerber)
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin: 0;">
+            <input type="checkbox" name="roles" value="teams" <%= roles.includes('teams') ? 'checked' : '' %>>
+            <strong>Teams</strong> (Teams und Termine)
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 2rem;">
+        <button type="submit" class="btn btn-primary">Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('_admin-footer') %>

@@ -1,0 +1,61 @@
+<% const pageTitle = team.name; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">Junioren</p>
+    <h1><%= team.name %></h1>
+    <% if (team.league) { %><p><%= team.league %></p><% } %>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="team-detail-card" style="max-width: var(--max-w); margin: 0 auto; background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
+    
+    <% if (team.photo) { %>
+      <div class="team-photo" style="width: 100%; background: #f4f4f4;">
+        <img src="<%= team.photo %>" alt="<%= team.name %>" style="width: 100%; height: auto; display: block;" />
+      </div>
+    <% } %>
+
+    <div style="padding: 2rem;">
+      <dl class="team-info">
+      <% if (team.trainer) { %>
+        <div><dt>Trainer</dt><dd><%= team.trainer %></dd></div>
+      <% } %>
+      <% if (team.coach) { %>
+        <div><dt>Coach</dt><dd><%= team.coach %></dd></div>
+      <% } %>
+      <% if (team.goalie) { %>
+        <div><dt>Goalie-Trainer</dt><dd><%= team.goalie %></dd></div>
+      <% } %>
+      <% if (team.physio) { %>
+        <div><dt>Physio</dt><dd><%= team.physio %></dd></div>
+      <% } %>
+      <% if (team.times) { %>
+        <div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div>
+      <% } %>
+      <% if (team.location) { %>
+        <div><dt>Trainingsort</dt><dd><%= team.location %></dd></div>
+      <% } %>
+    </dl>
+    
+    <% if (!team.trainer && !team.times && !team.location) { %>
+      <p style="color: var(--fcz-gray-500); text-align: center;">Die Team-Details werden in Kürze aktualisiert.</p>
+    <% } %>
+
+    <% if (team.sponsor_logo) { %>
+      <div class="team-sponsor" style="margin-top: 3rem; text-align: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 2.5rem;">
+        <p style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">Dresssponsor</p>
+        <img src="<%= team.sponsor_logo %>" alt="Dresssponsor <%= team.name %>" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+      </div>
+    <% } %>
+
+    <div style="margin-top: 3rem; text-align: center;">
+      <a href="/junioren" class="btn btn-outline">&larr; Zurück zur Übersicht</a>
+    </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -7,7 +7,7 @@
     <a href="/admin/sponsors" class="link-arrow">← Zurück zur Übersicht</a>
   </div>
 
-  <form class="admin-form" action="/admin/sponsors/<%= item ? item.id + '/edit' : 'new' %>" method="post">
+  <form class="admin-form" action="/admin/sponsors/<%= item ? item.id + '/edit' : 'new' %>" method="post" enctype="multipart/form-data">
     <div class="form-group">
       <label for="name">Name *</label>
       <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
@@ -19,8 +19,15 @@
     </div>
 
     <div class="form-group">
-      <label for="logo">Logo URL / Pfad (z.B. /images/sponsoren/logo.png)</label>
-      <input type="text" id="logo" name="logo" value="<%= item ? item.logo : '' %>" />
+      <label for="logo_file">Logo hochladen</label>
+      <input type="file" id="logo_file" name="logo_file" accept="image/*" />
+      <small>Oder URL angeben (wird überschrieben wenn Datei hochgeladen):</small>
+      <input type="text" id="logo" name="logo" value="<%= item ? item.logo : '' %>" style="margin-top:0.5rem;" />
+      <% if (item && item.logo) { %>
+        <div style="margin-top:0.5rem;">
+          <img src="<%= item.logo %>" alt="Aktuelles Logo" style="max-height: 50px; background: #eee; padding: 5px; border-radius: 4px;" />
+        </div>
+      <% } %>
     </div>
 
     <div class="form-group">

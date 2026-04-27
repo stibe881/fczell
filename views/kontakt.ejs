@@ -34,8 +34,19 @@
       </ul>
     </div>
 
-    <form class="contact-form" action="mailto:info@fczell.ch" method="post" enctype="text/plain">
+    <form class="contact-form" action="mailto:info@fczell.ch" method="post" enctype="text/plain" id="dynamicContactForm">
       <h2>Kontaktformular</h2>
+      
+      <label>
+        <span>Grund der Kontaktaufnahme *</span>
+        <select name="grund" id="grundSelect" required style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;">
+          <option value="sonstiges">Sonstiges</option>
+          <option value="adressanderung">Adressänderung</option>
+          <option value="sponsor">Anfrage Sponsor / Bandenwerber</option>
+          <option value="clubhaus">Miete Clubhaus</option>
+        </select>
+      </label>
+
       <div class="form-row">
         <label>
           <span>Vorname *</span>
@@ -50,10 +61,48 @@
         <span>E-Mail *</span>
         <input type="email" name="email" required />
       </label>
-      <label>
-        <span>Betreff</span>
-        <input name="betreff" />
-      </label>
+
+      <!-- Dynamische Felder: Adressänderung -->
+      <div id="fieldsAdressanderung" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+        <label>
+          <span>Alte Adresse</span>
+          <input type="text" name="alte_adresse" placeholder="Strasse, PLZ, Ort" />
+        </label>
+        <label>
+          <span>Neue Adresse</span>
+          <input type="text" name="neue_adresse" placeholder="Strasse, PLZ, Ort" />
+        </label>
+      </div>
+
+      <!-- Dynamische Felder: Sponsor -->
+      <div id="fieldsSponsor" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+        <label>
+          <span>Firmenname</span>
+          <input type="text" name="firma" />
+        </label>
+        <label>
+          <span>Gewünschte Art des Sponsorings</span>
+          <select name="sponsoring_art" style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;">
+            <option value="Bandenwerbung">Bandenwerbung</option>
+            <option value="Matchball">Matchball</option>
+            <option value="Hauptsponsor">Hauptsponsor / Co-Sponsor</option>
+            <option value="Sonstiges">Sonstiges</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Dynamische Felder: Clubhaus -->
+      <div id="fieldsClubhaus" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+        <label>
+          <span>Gewünschtes Datum</span>
+          <input type="date" name="clubhaus_datum" style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;" />
+        </label>
+        <label>
+          <span>Ungefähre Anzahl Personen</span>
+          <input type="number" name="clubhaus_personen" min="1" max="200" />
+        </label>
+      </div>
+
       <label>
         <span>Nachricht *</span>
         <textarea name="nachricht" rows="6" required></textarea>
@@ -61,6 +110,51 @@
       <button type="submit" class="btn btn-primary btn-lg">Senden</button>
       <p class="form-note">Mit dem Absenden stimmst du der Verarbeitung deiner Angaben zur Bearbeitung der Anfrage zu.</p>
     </form>
+
+    <script>
+      const select = document.getElementById('grundSelect');
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const preselect = urlParams.get('grund');
+      if (preselect) {
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].text === preselect || select.options[i].value === preselect) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      const fieldsAd = document.getElementById('fieldsAdressanderung');
+      const fieldsSp = document.getElementById('fieldsSponsor');
+      const fieldsCl = document.getElementById('fieldsClubhaus');
+      
+      const disableInputs = (container) => {
+        container.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+      };
+      const enableInputs = (container) => {
+        container.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+      };
+
+      function updateFields() {
+        // Hide all and disable inputs so they aren't sent in the mailto form
+        fieldsAd.style.display = 'none'; disableInputs(fieldsAd);
+        fieldsSp.style.display = 'none'; disableInputs(fieldsSp);
+        fieldsCl.style.display = 'none'; disableInputs(fieldsCl);
+
+        const val = select.value;
+        if (val === 'adressanderung') {
+          fieldsAd.style.display = 'block'; enableInputs(fieldsAd);
+        } else if (val === 'sponsor') {
+          fieldsSp.style.display = 'block'; enableInputs(fieldsSp);
+        } else if (val === 'clubhaus') {
+          fieldsCl.style.display = 'block'; enableInputs(fieldsCl);
+        }
+      }
+
+      select.addEventListener('change', updateFields);
+      updateFields(); // Init
+    </script>
   </div>
 </section>
 
