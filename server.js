@@ -725,6 +725,10 @@ app.use((req, res) => {
   res.status(404).render('404', { page: '404' });
 });
 
-app.listen(PORT, () => {
-  console.log(`FC Zell Webseite läuft auf http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`FC Zell Webseite läuft auf http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
