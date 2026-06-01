@@ -305,19 +305,19 @@
     <ul class="bandenwerber-list">
       <% bandenwerber.forEach(b => { %>
         <li>
-          <% if (b.link) { %>
-            <a href="<%= b.link %>" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
+            <% if (b.link) { %>
+              <a href="<%= b.link %>" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
+                <% if (b.logo) { %>
+                  <img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(this.alt) + '&background=random&color=fff&size=200&font-size=0.33&bold=true';" />
+                <% } %>
+                <span class="b-name"><%= b.name %></span>
+                <span class="b-loc"><%= b.location %></span>
+              </a>
+            <% } else { %>
               <% if (b.logo) { %>
-                <img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy" />
+                <img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(this.alt) + '&background=random&color=fff&size=200&font-size=0.33&bold=true';" />
               <% } %>
               <span class="b-name"><%= b.name %></span>
-              <span class="b-loc"><%= b.location %></span>
-            </a>
-          <% } else { %>
-            <% if (b.logo) { %>
-              <img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy" />
-            <% } %>
-            <span class="b-name"><%= b.name %></span>
             <span class="b-loc"><%= b.location %></span>
           <% } %>
         </li>
