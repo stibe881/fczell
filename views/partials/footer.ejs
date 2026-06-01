@@ -18,67 +18,68 @@
     <div class="footer-col">
       <h4>Verein</h4>
       <ul>
+        <li><a href="/verein#portrait">Portrait</a></li>
         <li><a href="/verein#vorstand">Vorstand</a></li>
+        <li><a href="/verein#mannschaften">Mannschaften</a></li>
         <li><a href="/verein#clubhaus">Clubhaus</a></li>
         <li><a href="/verein#penaltyclub">Penaltyclub</a></li>
         <li><a href="/verein#sponsoren">Sponsoren</a></li>
-        <li><a href="/jobs">Jobs</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h4>Mannschaften</h4>
+      <h4>Links</h4>
       <ul>
-        <li><a href="/aktive">1. Mannschaft</a></li>
-        <li><a href="/aktive">2. Mannschaft</a></li>
-        <li><a href="/aktive">Senioren 30+</a></li>
-        <li><a href="/junioren">Junioren</a></li>
+        <li><a href="https://www.football.ch" target="_blank" rel="noopener">IFV / football.ch</a></li>
+        <li><a href="https://www.regiofussball.ch" target="_blank" rel="noopener">Regiofussball</a></li>
+        <li><a href="https://www.instagram.com/fczell_1960/" target="_blank" rel="noopener">Instagram FC Zell</a></li>
+        <li><a href="/anlaesse">Anlässe</a></li>
+        <li><a href="/kontakt">Kontakt</a></li>
       </ul>
     </div>
 
-    <div class="footer-col footer-admin">
-      <h4>Administration</h4>
-      <% if (user) { %>
-        <p class="logged-in">Eingeloggt als <strong><%= user.displayName || user.username %></strong></p>
-        <div class="footer-admin-actions">
-          <a class="btn btn-light" href="/admin">Admin-Bereich</a>
-          <form action="/logout" method="post" style="display:inline">
-            <button type="submit" class="btn btn-ghost">Logout</button>
-          </form>
-        </div>
-      <% } else { %>
-        <p class="footer-login-hint">Inhalte, News und Termine bearbeiten:</p>
-        <form class="footer-login" action="/login" method="post" autocomplete="on">
-          <label class="sr-only" for="footer-username">Benutzername</label>
-          <input id="footer-username" name="username" placeholder="Benutzername" required autocomplete="username" />
-          <label class="sr-only" for="footer-password">Passwort</label>
-          <input id="footer-password" name="password" type="password" placeholder="Passwort" required autocomplete="current-password" />
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-      <% } %>
+
+  </div>
+
+  <div class="footer-sponsors">
+    <div class="footer-sponsor-item">
+      <span class="footer-sponsor-cat">Hauptsponsor</span>
+      <a href="https://www.kklh.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/kklh.jpg" alt="KKLH" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item">
+      <span class="footer-sponsor-cat">CO-Sponsor</span>
+      <a href="https://www.valiant.ch/de/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/valiant.jpg" alt="Valiant" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item">
+      <span class="footer-sponsor-cat">Juniorensponsor</span>
+      <a href="https://www.ldilag.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/leuenberger.jpg" alt="Leuenberger" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item">
+      <span class="footer-sponsor-cat">Ausrüster</span>
+      <a href="https://go-in.ch/kunzsport/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/kunz.jpg" alt="Kunz Sport" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item">
+      <span class="footer-sponsor-cat">Sportfonds</span>
+      <a href="https://sport.lu.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/swisslos.jpg" alt="Swisslos Sportfonds" class="footer-sponsor-logo" loading="lazy" />
+      </a>
     </div>
   </div>
 
-  <% if (locals.globalSponsors && globalSponsors.length > 0) { %>
-    <div class="footer-sponsors">
-      <% globalSponsors.forEach(sponsor => { %>
-        <div class="footer-sponsor-item">
-          <span class="footer-sponsor-cat"><%= sponsor.category %></span>
-          <% if (sponsor.link) { %>
-            <a href="<%= sponsor.link %>" target="_blank" rel="noopener">
-              <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
-            </a>
-          <% } else { %>
-            <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
-          <% } %>
-        </div>
-      <% }) %>
-    </div>
-  <% } %>
-
   <div class="footer-bottom">
     <p>© <%= new Date().getFullYear() %> FC Zell. Alle Rechte vorbehalten.</p>
-    <p class="footer-meta"><a href="/login">Admin-Login</a></p>
+    <p class="footer-meta">
+      <a href="/datenschutz">Datenschutz</a> · 
+      <a href="/login">Admin-Login</a>
+    </p>
   </div>
 </footer>
 

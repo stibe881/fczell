@@ -1,149 +1,307 @@
-<% const pageTitle = 'Verein'; %>
+<% const pageTitle = 'Unser Verein'; %>
 <%- include('partials/header') %>
 
+<!-- ============ HERO ============ -->
 <section class="page-hero">
   <div class="page-hero-inner">
-    <p class="eyebrow">Der Verein</p>
-    <h1><%= intro ? intro.title : 'Über uns' %></h1>
-    <p><%= intro ? intro.body : '' %></p>
+    <p class="eyebrow">FC Zell · seit 1960</p>
+    <h1>Unser Verein</h1>
+    <p>Vom Piccolo bis zur 3. Liga – der FC Zell ist Heimat des Fussballs in Zell. Entdecke unseren Verein, unsere Mannschaften und alles rund um den FCZ.</p>
   </div>
 </section>
 
-  <div class="history-section" style="margin-bottom: 6rem; margin-top: 2rem;">
-    <div class="history-grid">
-      <div class="history-content">
-        <h2 class="history-title">Unsere Geschichte</h2>
-        <div class="history-text">
-          <p>Der FC Zell ist ein Fussballclub im Luzerner Hinterland. Er wurde <strong>1960 gegründet</strong>.</p>
-          <p>Wir verfügen über gut <strong>300 Vereinsmitglieder</strong>, davon etwa 140 JuniorInnen. Am Meisterschaftsbetrieb nehmen wir mit neun Mannschaften teil. Unser schönes Clubhaus lädt zum Fussballspiele schauen und verweilen ein und kann auch für private Anlässe gemietet werden. Alle zwei Jahre führen wir ein Juniorenlager durch.</p>
+<!-- ============ SECTION NAV ============ -->
+<nav class="section-nav" id="sectionNav">
+  <div class="section-nav-inner">
+    <a href="#portrait" class="section-nav-link active">Portrait</a>
+    <a href="#vorstand" class="section-nav-link">Vorstand</a>
+    <a href="#verhaltenscodex" class="section-nav-link">Verhaltenscodex</a>
+    <a href="#clubhaus" class="section-nav-link">Clubhaus</a>
+    <a href="#penaltyclub" class="section-nav-link">Penaltyclub</a>
+    <a href="#sponsoren" class="section-nav-link">Sponsoren</a>
+  </div>
+</nav>
+
+
+<!-- ============ #portrait ============ -->
+<section class="band band-light" id="portrait">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Kurzportrait</p>
+      <h2><%= intro ? intro.title : 'Über uns' %></h2>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="verein-stats">
+    <div class="verein-stat">
+      <span class="verein-stat-value">3. Liga</span>
+      <span class="verein-stat-label">Höchste Mannschaft</span>
+    </div>
+    <div class="verein-stat">
+      <span class="verein-stat-value">1960</span>
+      <span class="verein-stat-label">Gründungsjahr</span>
+    </div>
+    <div class="verein-stat">
+      <span class="verein-stat-value">~300</span>
+      <span class="verein-stat-label">Mitglieder</span>
+    </div>
+    <div class="verein-stat">
+      <span class="verein-stat-value">9</span>
+      <span class="verein-stat-label">Mannschaften</span>
+    </div>
+  </div>
+
+  <div class="history-grid">
+    <div class="history-content">
+      <% if (intro && intro.body) { %>
+        <div class="prose">
+          <%- mdToHtml(intro.body) %>
         </div>
-      </div>
-      
-      <div class="history-card">
-        <div class="history-card-inner">
-          <span class="history-badge">Gründermannschaft FC Zell 1960</span>
-          <div class="history-image-wrapper" onclick="openLightbox('/images/gruendung1960.png')">
-            <img src="/images/gruendung1960.png" alt="Gründermannschaft 1960" loading="lazy" />
+      <% } %>
+    </div>
+    <div class="history-card">
+      <div class="history-card-inner">
+        <span class="history-badge">Gründermannschaft FC Zell 1960</span>
+        <div class="history-image-wrapper" onclick="openLightbox('/images/gruendung1960.png')">
+          <img src="/images/gruendung1960.png" alt="Gründermannschaft 1960" loading="lazy" />
+        </div>
+        <div class="history-names">
+          <div class="name-row">
+            <span class="name-label">Obere Reihe:</span>
+            <span class="name-list">Pfister Guido, Greber Toni, Ruckstuhl Peter, Grüter Edwin, Jurt Paul, Kunz Werner, Rupert Peter</span>
           </div>
-          <div class="history-names">
-            <div class="name-row">
-              <span class="name-label">Obere Reihe:</span>
-              <span class="name-list">Pfister Guido, Greber Toni, Ruckstuhl Peter, Grüter Edwin, Jurt Paul, Kunz Werner, Rupert Peter</span>
-            </div>
-            <div class="name-row">
-              <span class="name-label">Untere Reihe:</span>
-              <span class="name-list">Kammermann Walter, Graber Hans, Graber Alfred, Lütolf Toni, Bossardt Thomas, Trachsel Hans</span>
-            </div>
+          <div class="name-row">
+            <span class="name-label">Untere Reihe:</span>
+            <span class="name-list">Kammermann Walter, Graber Hans, Graber Alfred, Lütolf Toni, Bossardt Thomas, Trachsel Hans</span>
           </div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="vorstand-section" id="vorstand">
-    <div style="text-align: center; margin-bottom: 4rem;">
-      <span class="badge" style="margin-bottom: 1rem;">Führung</span>
-      <h2 style="font-size: clamp(2.5rem, 5vw, 3.5rem); color: var(--fcz-black); margin-bottom: 1rem; position: relative; display: inline-block;">
-        Unser Vorstand
-        <span style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--fcz-red); border-radius: 2px;"></span>
-      </h2>
-      <p style="font-size: 1.15rem; color: var(--fcz-gray-700); max-width: 600px; margin: 2rem auto 0; line-height: 1.6;">
-        Acht engagierte Persönlichkeiten leiten den FC Zell ehrenamtlich mit viel Herzblut und Leidenschaft.
-      </p>
-    </div>
 
-    <div class="vorstand-grid">
-      <% vorstand.forEach(p => { %>
-        <div class="vorstand-card">
-          <div class="vorstand-avatar">
-            <% const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2); %>
-            <%= initials %>
-          </div>
-          <div class="vorstand-info">
-            <h3 class="vorstand-name"><%= p.name %></h3>
-            <span class="vorstand-role"><%= p.role %></span>
-          </div>
-          <div class="vorstand-contact">
-            <% if (p.address) { %>
-              <div class="contact-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span><%= p.address %></span>
-              </div>
-            <% } %>
-            <% if (p.phone) { %>
-              <a href="tel:<%= p.phone.replace(/\s/g,'') %>" class="contact-item link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <span><%= p.phone %></span>
-              </a>
-            <% } %>
-            <% if (p.email) { %>
-              <a href="mailto:<%= p.email %>" class="contact-item link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-                <span><%= p.email %></span>
-              </a>
-            <% } %>
-          </div>
-        </div>
-      <% }) %>
+<!-- ============ #vorstand ============ -->
+<section class="band band-cream" id="vorstand">
+  <div class="band-head" style="justify-content: center; text-align: center;">
+    <div>
+      <p class="eyebrow">Führung</p>
+      <h2>Unser Vorstand</h2>
+      <p class="band-sub" style="margin: 1rem auto 0;">Engagierte Persönlichkeiten leiten den FC Zell ehrenamtlich mit viel Herzblut und Leidenschaft.</p>
     </div>
   </div>
 
+  <div class="vorstand-grid">
+    <% vorstand.forEach(p => { %>
+      <div class="vorstand-card">
+        <div class="vorstand-avatar">
+          <% const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2); %>
+          <%= initials %>
+        </div>
+        <div class="vorstand-info">
+          <h3 class="vorstand-name"><%= p.name %></h3>
+          <span class="vorstand-role"><%= p.role %></span>
+        </div>
+        <div class="vorstand-contact">
+          <% if (p.address) { %>
+            <div class="contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span><%= p.address %></span>
+            </div>
+          <% } %>
+          <% if (p.phone) { %>
+            <a href="tel:<%= p.phone.replace(/\s/g,'') %>" class="contact-item link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span><%= p.phone %></span>
+            </a>
+          <% } %>
+          <% if (p.email) { %>
+            <a href="mailto:<%= p.email %>" class="contact-item link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              <span><%= p.email %></span>
+            </a>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
 
+
+<!-- ============ #verhaltenscodex ============ -->
+<% if (typeof verhaltenscodex !== 'undefined' && verhaltenscodex) { %>
+<section class="band band-dark" id="verhaltenscodex">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow eyebrow-light">Werte</p>
+      <h2><%= verhaltenscodex.title %></h2>
+    </div>
+  </div>
+  <div class="prose prose-on-dark">
+    <%- mdToHtml(verhaltenscodex.body) %>
+  </div>
+</section>
+<% } %>
+
+
+<!-- Mannschaften sind jetzt unter /mannschaften -->
+
+
+
+<!-- ============ #clubhaus ============ -->
+<section class="band band-dark" id="clubhaus">
+  <div class="band-head" style="justify-content: center; text-align: center;">
+    <div>
+      <p class="eyebrow eyebrow-light">Infrastruktur</p>
+      <h2>Clubhaus</h2>
+      <p class="band-sub">Unser Clubhaus auf der Sportanlage Gass bietet die ideale Location für private Anlässe, Vereinsversammlungen oder Feste.</p>
+    </div>
+  </div>
+
+  <% if (typeof clubhaus !== 'undefined' && clubhaus && clubhaus.body) { %>
+    <div class="prose prose-on-dark" style="margin-bottom: 3rem;">
+      <%- mdToHtml(clubhaus.body) %>
+    </div>
+  <% } %>
+
+  <div class="clubhaus-grid">
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h3>Tarife pro Tag</h3>
+      </div>
+      <ul class="pricing-list">
+        <li><span>Vereinsmitglieder</span> <strong>CHF 200.–</strong></li>
+        <li><span>Nichtmitglieder</span> <strong>CHF 350.–</strong></li>
+        <li><span>Vereine &amp; Organisationen</span> <strong>CHF 350.–</strong></li>
+        <li><span>Vorstands-, Ehren-, Freimitglieder, Donatoren &amp; Bandenwerber</span> <strong>CHF 200.–</strong></li>
+      </ul>
+      <div class="pricing-footer">
+        <a href="/kontakt?grund=Clubhausbuchung" class="btn btn-primary" style="width: 100%; text-align: center;">Anfrage senden</a>
+      </div>
+    </div>
+
+    <div class="features-card">
+      <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--fcz-black);">Im Mietpreis inbegriffen</h3>
+      <ul class="feature-list">
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Benützung des Clubhauses und der grossen Terrasse
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Benützung der WC-Anlagen
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-red);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Kosten für Strom und Wasser
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--fcz-gray-500);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <strong>Zusatzoption:</strong> Grill / Friteuse (Zusatzkosten CHF 50.–, muss komplett gereinigt werden)
+        </li>
+      </ul>
+      <div class="info-box">
+        <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Getränke-Regelung</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: rgba(255,255,255,0.9); line-height: 1.5;">
+          Sämtliche Getränke (ausser Wein) werden durch den FC Zell geliefert. Der Verbrauch wird gemäss der internen Preisliste verrechnet.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ #penaltyclub ============ -->
 <section class="band band-light" id="penaltyclub">
   <div class="band-head">
     <div>
       <p class="eyebrow">Gönner</p>
-      <h2><%= penaltyclub.title %></h2>
+      <h2><%= penaltyclub ? penaltyclub.title : 'Penalty-Club' %></h2>
     </div>
   </div>
-  <div class="prose">
-    <%- mdToHtml(penaltyclub.body) %>
-  </div>
+  <% if (penaltyclub) { %>
+    <div class="prose">
+      <%- mdToHtml(penaltyclub.body) %>
+    </div>
+  <% } %>
 </section>
 
-<section class="band band-accent" id="jobs">
-  <div class="cta-row">
-    <div>
-      <p class="eyebrow"><%= jobs.title %></p>
-      <h2>Mitanpacken statt nur zuschauen</h2>
-      <div class="prose">
-        <%- mdToHtml(jobs.body) %>
-      </div>
-    </div>
-    <div class="cta-actions">
-      <a class="btn btn-primary btn-lg" href="mailto:joerg.graber@bithawk.ch">E-Mail senden</a>
-      <a class="btn btn-outline-dark btn-lg" href="tel:0793339759">079 333 97 59</a>
-    </div>
-  </div>
-</section>
 
-<section class="band band-light" id="sponsoren">
+<!-- ============ #sponsoren ============ -->
+<section class="band band-cream" id="sponsoren">
   <div class="band-head" style="justify-content: center; text-align: center;">
     <div>
       <p class="eyebrow">Partner</p>
       <h2>Unsere Sponsoren</h2>
-      <p class="band-sub">Ein grosses Dankeschön an alle, die den FC Zell unterstützen.</p>
+      <% if (typeof sponsorenDank !== 'undefined' && sponsorenDank) { %>
+        <div class="band-sub" style="margin: 1rem auto 0; max-width: 700px;">
+          <%- mdToHtml(sponsorenDank.body) %>
+        </div>
+      <% } else { %>
+        <p class="band-sub" style="margin: 1rem auto 0;">Ein grosses Dankeschön an alle, die den FC Zell unterstützen.</p>
+      <% } %>
     </div>
   </div>
-  <ul class="sponsor-list">
-    <% sponsorenListe.forEach(s => { %>
-      <li>
-        <a href="<%= s.link %>" target="_blank" rel="noopener noreferrer">
-          <img src="<%= s.logo %>" alt="<%= s.name %>" class="sponsor-logo" loading="lazy" />
-          <h4><%= s.kategorie %></h4>
-        </a>
-      </li>
-    <% }) %>
-  </ul>
 
-  <div class="bandenwerber-section" style="margin-top: 4rem;">
-    <div class="band-head" style="margin-bottom: 2rem; justify-content: center; text-align: center;">
-      <div>
-        <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Vielen Dank unseren Bandenwerbern</h3>
-        <p class="band-sub" style="margin: 0 auto;">und allen weiteren Sponsoren für die grossartige Unterstützung!</p>
+  <!-- Hauptsponsoren / Footer-Sponsoren -->
+  <h3 style="text-align: center; margin-bottom: 2rem;">Unsere Premium Partner</h3>
+  <div class="footer-sponsors" style="border-bottom: none; padding-top: 0; margin-bottom: 3rem;">
+    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <span class="footer-sponsor-cat">Hauptsponsor</span>
+      <a href="https://www.kklh.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/kklh.jpg" alt="KKLH" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <span class="footer-sponsor-cat">CO-Sponsor</span>
+      <a href="https://www.valiant.ch/de/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/valiant.jpg" alt="Valiant" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <span class="footer-sponsor-cat">Juniorensponsor</span>
+      <a href="https://www.ldilag.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/leuenberger.jpg" alt="Leuenberger" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <span class="footer-sponsor-cat">Ausrüster</span>
+      <a href="https://go-in.ch/kunzsport/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/kunz.jpg" alt="Kunz Sport" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <span class="footer-sponsor-cat">Sportfonds</span>
+      <a href="https://sport.lu.ch/" target="_blank" rel="noopener">
+        <img src="/images/sponsors/swisslos.jpg" alt="Swisslos Sportfonds" class="footer-sponsor-logo" loading="lazy" />
+      </a>
+    </div>
+  </div>
+
+  <!-- Sponsorentafel Photos -->
+  <% if (typeof sponsorentafelPhotos !== 'undefined' && sponsorentafelPhotos && sponsorentafelPhotos.length > 0) { %>
+    <div style="margin-top: 4rem; text-align: center;">
+      <h3 style="margin-bottom: 2rem;">Sponsorentafel</h3>
+      <div class="sponsorentafel-gallery">
+        <% sponsorentafelPhotos.forEach(photo => { %>
+          <div class="sponsorentafel-photo" onclick="openLightbox('<%= photo.image_path %>')">
+            <img src="<%= photo.image_path %>" alt="<%= photo.caption || 'Sponsorentafel' %>" loading="lazy" />
+            <% if (photo.caption) { %>
+              <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--fcz-gray-500);"><%= photo.caption %></p>
+            <% } %>
+          </div>
+        <% }) %>
       </div>
     </div>
-    
+  <% } %>
+
+  <!-- Bandenwerber -->
+  <div style="margin-top: 4rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Vielen Dank unseren Bandenwerbern</h3>
+      <p class="band-sub" style="margin: 0 auto;">und allen weiteren Sponsoren für die grossartige Unterstützung!</p>
+    </div>
     <ul class="bandenwerber-list">
       <% bandenwerber.forEach(b => { %>
         <li>
@@ -168,18 +326,457 @@
   </div>
 </section>
 
+
+<!-- ============ LIGHTBOX ============ -->
 <div id="imageLightbox" class="lightbox" onclick="closeLightbox()">
   <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
   <img class="lightbox-content" id="lightboxImg">
 </div>
+
+
+<!-- ============ PAGE STYLES ============ -->
+<style>
+/* ---------- SECTION NAV ---------- */
+.section-nav {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 90;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.section-nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.section-nav-inner::-webkit-scrollbar { display: none; }
+.section-nav-link {
+  display: inline-block;
+  padding: 1rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fcz-gray-700);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+.section-nav-link:hover {
+  color: var(--fcz-red);
+}
+.section-nav-link.active {
+  color: var(--fcz-red);
+  border-bottom-color: var(--fcz-red);
+}
+
+/* ---------- STATS BAR ---------- */
+.verein-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.verein-stat {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.verein-stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--fcz-red);
+  letter-spacing: 0.02em;
+}
+.verein-stat-label {
+  font-size: 0.85rem;
+  color: var(--fcz-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  .verein-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* ---------- TEAMS ACCORDION ---------- */
+.teams-accordion-group {
+  margin-bottom: 1rem;
+}
+.teams-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.3rem;
+  color: var(--fcz-black);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--fcz-red);
+}
+.teams-group-title svg {
+  color: var(--fcz-red);
+  flex-shrink: 0;
+}
+.team-accordion {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: box-shadow var(--transition);
+}
+.team-accordion:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.team-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background var(--transition);
+}
+.team-accordion-summary::-webkit-details-marker { display: none; }
+.team-accordion-summary::marker { display: none; content: ''; }
+.team-accordion-summary:hover {
+  background: rgba(26, 128, 182, 0.03);
+}
+.team-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.team-accordion-title strong {
+  font-size: 1.15rem;
+  color: var(--fcz-black);
+}
+.team-accordion-chevron {
+  transition: transform 0.3s ease;
+  color: var(--fcz-gray-500);
+  flex-shrink: 0;
+}
+.team-accordion[open] .team-accordion-chevron {
+  transform: rotate(180deg);
+}
+.team-accordion-body {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.team-accordion-body .team-info {
+  border-top: none;
+  margin-top: 1rem;
+}
+.team-accordion-photo {
+  margin: 1rem 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.team-accordion-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.team-accordion-sponsor {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  text-align: center;
+}
+.team-accordion-sponsor span {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fcz-gray-500);
+  margin-bottom: 1rem;
+}
+.team-accordion-sponsor img {
+  max-height: 60px;
+  max-width: 180px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+/* ---------- TEAM PHOTOS GRID ---------- */
+.team-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.team-photo-thumb {
+  cursor: zoom-in;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.team-photo-thumb:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+.team-photo-thumb img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+.team-photo-caption {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--fcz-gray-700);
+  background: #fff;
+}
+
+/* ---------- EXTERNAL LINKS ---------- */
+.teams-external-links {
+  margin-top: 3rem;
+}
+.responsive-iframe-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+  margin-bottom: 2rem;
+}
+.responsive-iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.teams-link-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ---------- CLUBHAUS ON DARK ---------- */
+.band-dark .clubhaus-grid {
+  max-width: var(--max-w);
+}
+.band-dark .pricing-card {
+  background: #fff;
+}
+.band-dark .features-card {
+  background: #fff;
+}
+
+/* Clubhaus grid */
+.clubhaus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
+@media (max-width: 900px) {
+  .clubhaus-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Pricing Card */
+.pricing-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.pricing-header {
+  background: var(--fcz-black);
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+}
+.pricing-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.pricing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pricing-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 1.05rem;
+  color: var(--fcz-gray-700);
+}
+.pricing-list li:last-child {
+  border-bottom: none;
+}
+.pricing-list li strong {
+  color: var(--fcz-black);
+  font-size: 1.15rem;
+}
+.pricing-footer {
+  padding: 2rem;
+  background: #fafafa;
+}
+
+/* Features Card */
+.features-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem 0;
+}
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--fcz-gray-700);
+  line-height: 1.5;
+}
+.feature-list li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.info-box {
+  background: var(--fcz-red);
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: #fff;
+}
+
+/* ---------- SPONSORENTAFEL ---------- */
+.sponsorentafel-gallery {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.sponsorentafel-photo {
+  cursor: zoom-in;
+  max-width: 600px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform var(--transition);
+}
+.sponsorentafel-photo:hover {
+  transform: scale(1.02);
+}
+.sponsorentafel-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
+}
+</style>
+
+
+<!-- ============ SCRIPTS ============ -->
 <script>
+// Lightbox
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('imageLightbox').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 function closeLightbox() {
   document.getElementById('imageLightbox').classList.remove('show');
+  document.body.style.overflow = '';
 }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// Section nav active state on scroll
+(function() {
+  const navLinks = document.querySelectorAll('.section-nav-link');
+  const sections = [];
+  navLinks.forEach(link => {
+    const id = link.getAttribute('href').replace('#', '');
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+
+  function updateActive() {
+    const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76;
+    const navH = document.getElementById('sectionNav') ? document.getElementById('sectionNav').offsetHeight : 50;
+    const offset = headerH + navH + 20;
+    let current = sections[0];
+
+    for (const s of sections) {
+      if (s.el.getBoundingClientRect().top <= offset) {
+        current = s;
+      }
+    }
+
+    navLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        updateActive();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  updateActive();
+
+  // Smooth scroll with offset
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const id = this.getAttribute('href').replace('#', '');
+      const target = document.getElementById(id);
+      if (!target) return;
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76;
+      const navH = document.getElementById('sectionNav') ? document.getElementById('sectionNav').offsetHeight : 50;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - headerH - navH;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+})();
 </script>
 
 <%- include('partials/footer') %>

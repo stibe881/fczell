@@ -1,0 +1,54 @@
+<%- include('_admin-header', { pageTitle: 'Anlässe verwalten', active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1>Anlässe verwalten</h1>
+  <a href="/admin/anlaesse/new" class="btn btn-primary">+ Neuer Anlass</a>
+</div>
+
+<div class="admin-card">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Titel</th>
+        <th>Slug</th>
+        <th>Anmeldeformular?</th>
+        <th>Anmeldeschluss</th>
+        <th>Sortierung</th>
+        <th class="actions">Aktionen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% anlaesse.forEach(a => { %>
+        <tr>
+          <td><strong><%= a.title %></strong></td>
+          <td><code><%= a.slug %></code></td>
+          <td>
+            <% if (a.has_form) { %>
+              <span class="tag" style="background: #e8f5e9; color: #2e7d32;">Ja (<%= a.form_type %>)</span>
+            <% } else { %>
+              <span class="tag" style="background: #ffebee; color: #c62828;">Nein</span>
+            <% } %>
+          </td>
+          <td><%= a.deadline || '-' %></td>
+          <td><%= a.sort_order %></td>
+          <td class="actions">
+            <% if (a.has_form) { %>
+              <a href="/admin/anlaesse/<%= a.id %>/registrations" class="btn btn-ghost btn-sm" style="color:var(--fcz-black);">Anmeldungen</a>
+            <% } %>
+            <a href="/admin/anlaesse/<%= a.id %>/edit" class="btn btn-ghost btn-sm">Bearbeiten</a>
+            <form action="/admin/anlaesse/<%= a.id %>/delete" method="POST" onsubmit="return confirm('Wirklich löschen?');" style="display:inline;">
+              <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--fcz-red);">Löschen</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (anlaesse.length === 0) { %>
+        <tr>
+          <td colspan="6" style="text-align:center; padding:2rem;">Keine Anlässe vorhanden.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('_admin-footer') %>

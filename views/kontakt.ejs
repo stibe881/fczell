@@ -3,159 +3,129 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <p class="eyebrow">Kontakt</p>
     <h1>Schreib uns</h1>
-    <p>Fragen, Feedback oder Lust auf Mitmachen? Melde dich beim FC Zell.</p>
   </div>
 </section>
 
 <section class="band band-light">
   <div class="contact-grid">
     <div class="contact-info">
-      <h2>FC Zell</h2>
-      <address>
-        Postfach<br>
-        6144 Zell
-      </address>
-      <p><a href="mailto:info@fczell.ch">info@fczell.ch</a></p>
+      <div class="card">
+        <h3>FC Zell</h3>
+        <address>
+          Postfach<br>
+          6144 Zell LU<br><br>
+          <a href="mailto:info@fczell.ch">info@fczell.ch</a>
+        </address>
+      </div>
 
-      <h3>Adressänderung?</h3>
-      <p>Bitte melde uns Adress- oder Kontaktänderungen direkt per E-Mail an <a href="mailto:info@fczell.ch">info@fczell.ch</a>, damit wir dich auch in Zukunft sicher erreichen können.</p>
+      <div class="card" style="margin-top: 1.5rem;">
+        <h3>Adressänderung</h3>
+        <p>Bitte teile uns Adressänderungen über das Kontaktformular mit (Grund: «Adressänderung» auswählen).</p>
+      </div>
 
-      <h3>Direkter Draht zum Vorstand</h3>
-      <ul class="contact-vorstand">
-        <% vorstand.forEach(p => { %>
-          <li>
-            <strong><%= p.name %></strong> – <span><%= p.role %></span><br>
-            <% if (p.phone) { %><a href="tel:<%= p.phone.replace(/\s/g,'') %>"><%= p.phone %></a> · <% } %>
-            <% if (p.email) { %><a href="mailto:<%= p.email %>"><%= p.email %></a><% } %>
-          </li>
-        <% }) %>
-      </ul>
+      <% if (vorstand && vorstand.length > 0) { %>
+        <div class="card" style="margin-top: 1.5rem;">
+          <h3>Vorstand</h3>
+          <ul class="contact-vorstand-list">
+            <% vorstand.forEach(v => { %>
+              <li>
+                <strong><%= v.name %></strong><% if (v.role) { %> – <%= v.role %><% } %>
+                <% if (v.phone) { %><br><a href="tel:<%= v.phone %>"><%= v.phone %></a><% } %>
+                <% if (v.email) { %><br><a href="mailto:<%= v.email %>"><%= v.email %></a><% } %>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
     </div>
 
-    <form class="contact-form" action="mailto:info@fczell.ch" method="post" enctype="text/plain" id="dynamicContactForm">
-      <h2>Kontaktformular</h2>
-      
-      <label>
-        <span>Grund der Kontaktaufnahme *</span>
-        <select name="grund" id="grundSelect" required style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;">
-          <option value="sonstiges">Sonstiges</option>
-          <option value="adressanderung">Adressänderung</option>
-          <option value="sponsor">Anfrage Sponsor / Bandenwerber</option>
-          <option value="clubhaus">Miete Clubhaus</option>
-        </select>
-      </label>
+    <div class="contact-form-wrap">
+      <div class="card">
+        <h3>Kontaktformular</h3>
+        <form class="contact-form" method="post" action="/kontakt" id="contactForm">
+          <div class="form-group">
+            <label class="form-label" for="cf-grund">Grund der Anfrage *</label>
+            <select class="form-control" id="cf-grund" name="subject" required>
+              <option value="">Bitte wählen…</option>
+              <option value="Allgemeiner Kontakt" <%= (typeof preselect !== 'undefined' && preselect === 'Allgemeiner Kontakt') ? 'selected' : '' %>>Allgemeiner Kontakt</option>
+              <option value="Adressänderung" <%= (typeof preselect !== 'undefined' && preselect === 'Adressänderung') ? 'selected' : '' %>>Adressänderung</option>
+              <option value="Clubhausbuchung" <%= (typeof preselect !== 'undefined' && preselect === 'Clubhausbuchung') ? 'selected' : '' %>>Clubhausbuchung</option>
+            </select>
+          </div>
 
-      <div class="form-row">
-        <label>
-          <span>Vorname *</span>
-          <input name="vorname" required />
-        </label>
-        <label>
-          <span>Name *</span>
-          <input name="name" required />
-        </label>
+          <div class="form-group">
+            <label class="form-label" for="cf-name">Name *</label>
+            <input class="form-control" type="text" id="cf-name" name="name" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-email">E-Mail *</label>
+            <input class="form-control" type="email" id="cf-email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-phone">Telefon</label>
+            <input class="form-control" type="tel" id="cf-phone" name="phone" />
+          </div>
+
+          <!-- Dynamic fields for Adressänderung -->
+          <div id="fields-adresse" class="dynamic-fields" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="cf-alte-adresse">Alte Adresse</label>
+              <textarea class="form-control" id="cf-alte-adresse" name="alte_adresse" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-neue-adresse">Neue Adresse *</label>
+              <textarea class="form-control" id="cf-neue-adresse" name="neue_adresse" rows="2"></textarea>
+            </div>
+          </div>
+
+          <!-- Dynamic fields for Clubhausbuchung -->
+          <div id="fields-clubhaus" class="dynamic-fields" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="cf-datum">Gewünschtes Datum *</label>
+              <input class="form-control" type="date" id="cf-datum" name="datum" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-personen">Anzahl Personen</label>
+              <input class="form-control" type="number" id="cf-personen" name="personen" min="1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-anlass">Anlass / Bemerkungen</label>
+              <input class="form-control" type="text" id="cf-anlass" name="anlass" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-message">Nachricht *</label>
+            <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg">Nachricht senden</button>
+        </form>
       </div>
-      <label>
-        <span>E-Mail *</span>
-        <input type="email" name="email" required />
-      </label>
-
-      <!-- Dynamische Felder: Adressänderung -->
-      <div id="fieldsAdressanderung" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
-        <label>
-          <span>Alte Adresse</span>
-          <input type="text" name="alte_adresse" placeholder="Strasse, PLZ, Ort" />
-        </label>
-        <label>
-          <span>Neue Adresse</span>
-          <input type="text" name="neue_adresse" placeholder="Strasse, PLZ, Ort" />
-        </label>
-      </div>
-
-      <!-- Dynamische Felder: Sponsor -->
-      <div id="fieldsSponsor" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
-        <label>
-          <span>Firmenname</span>
-          <input type="text" name="firma" />
-        </label>
-        <label>
-          <span>Gewünschte Art des Sponsorings</span>
-          <select name="sponsoring_art" style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;">
-            <option value="Bandenwerbung">Bandenwerbung</option>
-            <option value="Matchball">Matchball</option>
-            <option value="Hauptsponsor">Hauptsponsor / Co-Sponsor</option>
-            <option value="Sonstiges">Sonstiges</option>
-          </select>
-        </label>
-      </div>
-
-      <!-- Dynamische Felder: Clubhaus -->
-      <div id="fieldsClubhaus" class="dynamic-fields" style="display: none; background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
-        <label>
-          <span>Gewünschtes Datum</span>
-          <input type="date" name="clubhaus_datum" style="width:100%; padding: 0.8rem; border: 1px solid rgba(0,0,0,0.15); border-radius: var(--radius); font-size: 1rem;" />
-        </label>
-        <label>
-          <span>Ungefähre Anzahl Personen</span>
-          <input type="number" name="clubhaus_personen" min="1" max="200" />
-        </label>
-      </div>
-
-      <label>
-        <span>Nachricht *</span>
-        <textarea name="nachricht" rows="6" required></textarea>
-      </label>
-      <button type="submit" class="btn btn-primary btn-lg">Senden</button>
-      <p class="form-note">Mit dem Absenden stimmst du der Verarbeitung deiner Angaben zur Bearbeitung der Anfrage zu.</p>
-    </form>
-
-    <script>
-      const select = document.getElementById('grundSelect');
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const preselect = urlParams.get('grund');
-      if (preselect) {
-        for (let i = 0; i < select.options.length; i++) {
-          if (select.options[i].text === preselect || select.options[i].value === preselect) {
-            select.selectedIndex = i;
-            break;
-          }
-        }
-      }
-
-      const fieldsAd = document.getElementById('fieldsAdressanderung');
-      const fieldsSp = document.getElementById('fieldsSponsor');
-      const fieldsCl = document.getElementById('fieldsClubhaus');
-      
-      const disableInputs = (container) => {
-        container.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
-      };
-      const enableInputs = (container) => {
-        container.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
-      };
-
-      function updateFields() {
-        // Hide all and disable inputs so they aren't sent in the mailto form
-        fieldsAd.style.display = 'none'; disableInputs(fieldsAd);
-        fieldsSp.style.display = 'none'; disableInputs(fieldsSp);
-        fieldsCl.style.display = 'none'; disableInputs(fieldsCl);
-
-        const val = select.value;
-        if (val === 'adressanderung') {
-          fieldsAd.style.display = 'block'; enableInputs(fieldsAd);
-        } else if (val === 'sponsor') {
-          fieldsSp.style.display = 'block'; enableInputs(fieldsSp);
-        } else if (val === 'clubhaus') {
-          fieldsCl.style.display = 'block'; enableInputs(fieldsCl);
-        }
-      }
-
-      select.addEventListener('change', updateFields);
-      updateFields(); // Init
-    </script>
+    </div>
   </div>
 </section>
+
+<script>
+  const grundSelect = document.getElementById('cf-grund');
+  const fieldsAdresse = document.getElementById('fields-adresse');
+  const fieldsClubhaus = document.getElementById('fields-clubhaus');
+
+  function updateFields() {
+    const val = grundSelect.value;
+    fieldsAdresse.style.display = val === 'Adressänderung' ? 'block' : 'none';
+    fieldsClubhaus.style.display = val === 'Clubhausbuchung' ? 'block' : 'none';
+    
+    // Toggle required
+    document.getElementById('cf-neue-adresse').required = (val === 'Adressänderung');
+    document.getElementById('cf-datum').required = (val === 'Clubhausbuchung');
+  }
+
+  grundSelect.addEventListener('change', updateFields);
+  updateFields();
+</script>
 
 <%- include('partials/footer') %>

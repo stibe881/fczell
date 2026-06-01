@@ -1,0 +1,20 @@
+<% const pageTitle = 'Datenschutz'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1><%= datenschutz ? datenschutz.title : 'Datenschutzerklärung' %></h1>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="container content-page">
+    <% if (datenschutz) { %>
+      <%- mdToHtml(datenschutz.body) %>
+    <% } else { %>
+      <p>Die Datenschutzerklärung wird in Kürze veröffentlicht.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

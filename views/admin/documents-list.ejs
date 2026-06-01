@@ -1,0 +1,42 @@
+<% const pageTitle = 'Dokumente'; const active = 'documents'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Dokumente</h1>
+    <a class="btn btn-primary" href="/admin/documents/new">+ Neues Dokument</a>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <p class="empty">Noch keine Dokumente erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Titel</th>
+          <th>Kategorie</th>
+          <th>Datei</th>
+          <th>Datum</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(d => { %>
+          <tr>
+            <td><strong><%= d.title %></strong></td>
+            <td><%= d.category %></td>
+            <td><a href="<%= d.file_path %>" target="_blank" class="link-arrow">Datei ↗</a></td>
+            <td><%= formatDate(d.upload_date) %></td>
+            <td class="actions">
+              <form action="/admin/documents/<%= d.id %>/delete" method="post" onsubmit="return confirm('Dokument wirklich löschen?');" style="display:inline">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

@@ -1,0 +1,51 @@
+<% const isEdit = !!registration; %>
+<%- include('_admin-header', { pageTitle: isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung', active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1><%= isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung' %></h1>
+  <a href="<%= anlassId ? '/admin/anlaesse/' + anlassId + '/registrations' : '/admin/anlaesse' %>" class="btn btn-ghost">Abbrechen</a>
+</div>
+
+<div class="admin-card">
+  <form action="/admin/registrations/dorfturnier/<%= isEdit ? registration.id + '/edit' : 'new' %>" method="POST" class="admin-form">
+    <input type="hidden" name="anlass_id" value="<%= anlassId %>">
+    
+    <div class="form-group">
+      <label for="team_name">Teamname</label>
+      <input type="text" id="team_name" name="team_name" value="<%= isEdit ? registration.team_name : '' %>" required />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="contact_name">Kontaktperson</label>
+        <input type="text" id="contact_name" name="contact_name" value="<%= isEdit ? registration.contact_name : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="contact_email">E-Mail</label>
+        <input type="email" id="contact_email" name="contact_email" value="<%= isEdit ? registration.contact_email : '' %>" required />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="contact_phone">Telefon</label>
+        <input type="text" id="contact_phone" name="contact_phone" value="<%= isEdit ? registration.contact_phone : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="player_count">Anzahl Spieler</label>
+        <input type="number" id="player_count" name="player_count" value="<%= isEdit ? registration.player_count : '' %>" min="1" required />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Bemerkungen</label>
+      <textarea id="notes" name="notes" rows="3"><%= isEdit ? registration.notes : '' %></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

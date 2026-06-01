@@ -1,0 +1,78 @@
+<%- include('_admin-header', { pageTitle: anlass ? 'Anlass bearbeiten' : 'Neuer Anlass', active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1><%= anlass ? 'Anlass bearbeiten: ' + anlass.title : 'Neuer Anlass' %></h1>
+  <a href="/admin/anlaesse" class="btn btn-ghost">Abbrechen</a>
+</div>
+
+<div class="admin-card">
+  <form action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" class="admin-form">
+    
+    <div class="form-group">
+      <label for="title">Titel</label>
+      <input type="text" id="title" name="title" value="<%= anlass ? anlass.title : '' %>" required oninput="document.getElementById('slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')" />
+    </div>
+
+    <div class="form-group">
+      <label for="slug">URL-Slug (z.B. juniorenlager)</label>
+      <input type="text" id="slug" name="slug" value="<%= anlass ? anlass.slug : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="sort_order">Reihenfolge (Sortierung)</label>
+      <input type="number" id="sort_order" name="sort_order" value="<%= anlass ? anlass.sort_order : '0' %>" />
+      <small>Kleinere Zahlen werden zuerst angezeigt.</small>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label" style="font-weight: 600;">
+        <input type="checkbox" id="has_form" name="has_form" value="1" <%= anlass && anlass.has_form ? 'checked' : '' %> onchange="document.getElementById('form-options').style.display = this.checked ? 'block' : 'none'" />
+        Anmeldeformular aktivieren
+      </label>
+    </div>
+
+    <div id="form-options" style="display: <%= anlass && anlass.has_form ? 'block' : 'none' %>; padding: 1.5rem; background: #f9fafb; border-radius: 8px; margin-bottom: 1.5rem;">
+      <div class="form-group">
+        <label for="form_type">Formular-Typ</label>
+        <select id="form_type" name="form_type">
+          <option value="standard" <%= anlass && anlass.form_type === 'standard' ? 'selected' : '' %>>Standard (Name, E-Mail, Telefon, Bemerkungen)</option>
+          <option value="juniorenlager" <%= anlass && anlass.form_type === 'juniorenlager' ? 'selected' : '' %>>Juniorenlager Spezial-Formular</option>
+          <option value="dorfturnier" <%= anlass && anlass.form_type === 'dorfturnier' ? 'selected' : '' %>>Dorfturnier Spezial-Formular</option>
+        </select>
+        <small>Wähle aus, welches Formular-Schema verwendet werden soll.</small>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label for="deadline">Anmeldeschluss (optional)</label>
+        <input type="date" id="deadline" name="deadline" value="<%= anlass && anlass.deadline ? anlass.deadline : '' %>" />
+        <small>Wenn ein Datum gesetzt ist, wird das Formular nach diesem Tag nicht mehr angezeigt.</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="body">Inhalt (Informationen zum Anlass)</label>
+      <small style="display:block; margin-bottom:0.5rem;">Du kannst Markdown verwenden (*kursiv*, **fett**, # Überschrift).</small>
+      <textarea id="body" name="body" rows="15" required style="font-family: monospace;"><%= anlass ? anlass.body : '' %></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </div>
+  </form>
+</div>
+
+<!-- EasyMDE -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new EasyMDE({
+      element: document.getElementById('body'),
+      spellChecker: false,
+      hideIcons: ['image', 'side-by-side', 'fullscreen'],
+      status: false
+    });
+  });
+</script>
+
+<%- include('_admin-footer') %>

@@ -66,6 +66,30 @@
       <a href="/admin/advertisers">verwalten →</a>
     </li>
     <% } %>
+    <% if (isAdmin || roles.includes('content')) { %>
+    <li>
+      <span class="stat-num"><%= documentsCount %></span>
+      <span class="stat-label">Dokumente</span>
+      <a href="/admin/documents">verwalten →</a>
+    </li>
+    <li>
+      <span class="stat-num"><%= galleryCount %></span>
+      <span class="stat-label">Galerie-Fotos</span>
+      <a href="/admin/gallery">verwalten →</a>
+    </li>
+    <% } %>
+    <% if (isAdmin) { %>
+    <li>
+      <span class="stat-num"><%= regJuniorenlager %></span>
+      <span class="stat-label">Anmeldungen Lager</span>
+      <a href="/admin/registrations/juniorenlager">ansehen →</a>
+    </li>
+    <li>
+      <span class="stat-num"><%= regDorfturnier %></span>
+      <span class="stat-label">Anmeldungen Turnier</span>
+      <a href="/admin/registrations/dorfturnier">ansehen →</a>
+    </li>
+    <% } %>
   </ul>
 
   <div class="admin-cols">
@@ -80,7 +104,7 @@
             <li>
               <div>
                 <strong><%= n.title %></strong>
-                <span class="muted"><%= n.published_at %> · <%= n.category %></span>
+                <span class="muted"><%= formatDate(n.published_at) %> · <%= n.category %></span>
               </div>
               <a href="/admin/news/<%= n.id %>/edit">bearbeiten</a>
             </li>
@@ -101,7 +125,7 @@
             <li>
               <div>
                 <strong><%= ev.title %></strong>
-                <span class="muted"><%= ev.event_date %><%= ev.event_time ? ' · ' + ev.event_time : '' %></span>
+                <span class="muted"><%= formatDate(ev.event_date) %><%= ev.event_time ? ' · ' + ev.event_time : '' %></span>
               </div>
               <a href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
             </li>

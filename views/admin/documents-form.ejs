@@ -1,0 +1,45 @@
+<% const pageTitle = 'Neues Dokument'; const active = 'documents'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Neues Dokument</h1>
+    <a class="link-arrow" href="/admin/documents">← zurück zur Übersicht</a>
+  </div>
+
+  <form class="admin-form" action="/admin/documents/new" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="title">Titel *</label>
+      <input type="text" id="title" name="title" required />
+    </div>
+
+    <div class="form-group">
+      <label for="category">Kategorie *</label>
+      <select id="category" name="category" required>
+        <option value="">– bitte wählen –</option>
+        <option value="gv-protokoll">GV-Protokoll</option>
+        <option value="amtscup">Amtscup</option>
+        <option value="dorfturnier">Dorfturnier</option>
+        <option value="juniorenlager">Juniorenlager</option>
+        <option value="allgemein">Allgemein</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="file">Datei hochladen *</label>
+      <input type="file" id="file" name="file" required />
+    </div>
+
+    <div class="form-group">
+      <label for="upload_date">Datum</label>
+      <input type="date" id="upload_date" name="upload_date" value="<%= new Date().toISOString().slice(0,10) %>" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-lg">Hochladen</button>
+      <a class="btn btn-ghost" href="/admin/documents">Abbrechen</a>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

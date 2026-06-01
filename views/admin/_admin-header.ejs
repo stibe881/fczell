@@ -36,8 +36,11 @@
     
     <% if (isAdmin || roles.includes('content')) { %>
       <a href="/admin/pages" class="<%= typeof active !== 'undefined' && active === 'pages' ? 'active' : '' %>">Inhalte</a>
+      <a href="/admin/anlaesse" class="<%= typeof active !== 'undefined' && active === 'anlaesse' ? 'active' : '' %>">Anlässe</a>
       <a href="/admin/vorstand" class="<%= typeof active !== 'undefined' && active === 'vorstand' ? 'active' : '' %>">Vorstand</a>
       <a href="/admin/jobs" class="<%= typeof active !== 'undefined' && active === 'jobs' ? 'active' : '' %>">Jobs</a>
+      <a href="/admin/documents" class="<%= typeof active !== 'undefined' && active === 'documents' ? 'active' : '' %>">Dokumente</a>
+      <a href="/admin/gallery" class="<%= typeof active !== 'undefined' && active === 'gallery' ? 'active' : '' %>">Galerie</a>
     <% } %>
     
     <% if (isAdmin || roles.includes('sponsoring')) { %>

@@ -23,12 +23,12 @@
 
     <div class="header-ticker" style="display: flex; flex: 1; justify-content: center; align-items: center; padding: 0 0.5rem; text-align: center; max-width: 600px; overflow: hidden;">
       <% if (locals.activeMatch) { %>
-        <a href="/events/<%= activeMatch.id %>" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <a href="/mannschaften" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <span style="display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; animation: pulse-small 2s infinite; flex-shrink: 0;"></span>
           <span class="ticker-text">LIVE: <%= activeMatch.title %></span>
         </a>
       <% } else if (locals.nextMatch) { %>
-        <a href="/events/<%= nextMatch.id %>" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <a href="/mannschaften" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <span class="ticker-text">Spiel: <%= new Date(nextMatch.event_date).toLocaleDateString('de-CH', {day: '2-digit', month: '2-digit'}) %></span>
         </a>
@@ -51,13 +51,10 @@
 
     <nav class="main-nav" id="mainNav">
       <ul>
-        <li><a href="/" class="<%= page === 'home' ? 'active' : '' %>">Home</a></li>
-        <li><a href="/verein" class="<%= page === 'verein' ? 'active' : '' %>">Verein</a></li>
-        <li><a href="/clubhaus" class="<%= page === 'clubhaus' ? 'active' : '' %>">Clubhaus</a></li>
         <li><a href="/news" class="<%= page === 'news' ? 'active' : '' %>">News</a></li>
-        <li><a href="/aktive" class="<%= page === 'aktive' ? 'active' : '' %>">Aktive</a></li>
-        <li><a href="/junioren" class="<%= page === 'junioren' ? 'active' : '' %>">Junioren</a></li>
-        <li><a href="/events" class="<%= page === 'events' ? 'active' : '' %>">Events</a></li>
+        <li><a href="/verein" class="<%= page === 'verein' ? 'active' : '' %>">Verein</a></li>
+        <li><a href="/mannschaften" class="<%= page === 'mannschaften' ? 'active' : '' %>">Mannschaften</a></li>
+        <li><a href="/anlaesse" class="<%= page === 'anlaesse' ? 'active' : '' %>">Anlässe</a></li>
         <li><a href="/kontakt" class="<%= page === 'kontakt' ? 'active' : '' %>">Kontakt</a></li>
       </ul>
     </nav>

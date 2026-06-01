@@ -22,7 +22,7 @@
       <tbody>
         <% items.forEach(n => { %>
           <tr>
-            <td><%= n.published_at %></td>
+            <td><%= formatDate(n.published_at) %></td>
             <td><strong><%= n.title %></strong><% if (n.excerpt) { %><br><span class="muted"><%= n.excerpt %></span><% } %></td>
             <td><%= n.category %></td>
             <td class="actions">

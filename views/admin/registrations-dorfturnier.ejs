@@ -1,0 +1,55 @@
+<%- include('_admin-header', { pageTitle: 'Anmeldungen: ' + anlass.title, active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1>Anmeldungen: <%= anlass.title %></h1>
+  <div style="display:flex; gap:1rem;">
+    <a href="/admin/registrations/dorfturnier/new?anlass_id=<%= anlass.id %>" class="btn btn-primary">+ Neue Anmeldung erfassen</a>
+    <a href="/admin/anlaesse" class="btn btn-ghost">Zurück zu Anlässe</a>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Teamname</th>
+          <th>Kontaktperson</th>
+          <th>E-Mail</th>
+          <th>Telefon</th>
+          <th>Spieleranzahl</th>
+          <th>Bemerkungen</th>
+          <th>Datum</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% registrations.forEach(r => { %>
+          <tr>
+            <td><strong><%= r.team_name %></strong></td>
+            <td><%= r.contact_name %></td>
+            <td><a href="mailto:<%= r.contact_email %>"><%= r.contact_email %></a></td>
+            <td><%= r.contact_phone %></td>
+            <td><%= r.player_count %></td>
+            <td><%= r.notes ? r.notes.substring(0, 20) + '...' : '-' %></td>
+            <td><%= formatDateTime(r.created_at) %></td>
+            <td class="actions">
+              <a href="/admin/registrations/dorfturnier/<%= r.id %>/edit?anlass_id=<%= anlass.id %>" class="btn btn-ghost btn-sm">Bearbeiten</a>
+              <form action="/admin/registrations/dorfturnier/<%= r.id %>/delete" method="POST" onsubmit="return confirm('Wirklich löschen?');" style="display:inline;">
+                <input type="hidden" name="anlass_id" value="<%= anlass.id %>">
+                <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--fcz-red);">Löschen</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (registrations.length === 0) { %>
+          <tr>
+            <td colspan="8" style="text-align:center; padding:2rem;">Noch keine Anmeldungen.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_admin-footer') %>

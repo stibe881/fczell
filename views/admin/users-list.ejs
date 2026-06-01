@@ -41,7 +41,7 @@
                 <span class="muted" style="font-style: italic;">Keine Rollen</span>
               <% } %>
             </td>
-            <td><%= new Date(u.created_at).toLocaleDateString('de-CH') %></td>
+            <td><%= formatDate(u.created_at) %></td>
             <td class="actions">
               <a class="btn btn-sm btn-outline-dark" href="/admin/users/<%= u.id %>/edit">Bearbeiten</a>
               <% if (u.id !== user.id) { %>

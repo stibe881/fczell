@@ -1,0 +1,39 @@
+<% const isEdit = !!registration; %>
+<%- include('_admin-header', { pageTitle: isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung', active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1><%= isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung' %></h1>
+  <a href="<%= anlassId ? '/admin/anlaesse/' + anlassId + '/registrations' : '/admin/anlaesse' %>" class="btn btn-ghost">Abbrechen</a>
+</div>
+
+<div class="admin-card">
+  <form action="/admin/registrations/standard/<%= isEdit ? registration.id + '/edit' : 'new' %>" method="POST" class="admin-form">
+    <input type="hidden" name="anlass_id" value="<%= anlassId %>">
+    
+    <div class="form-group">
+      <label for="name">Name / Kontaktperson</label>
+      <input type="text" id="name" name="name" value="<%= isEdit ? registration.name : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" name="email" value="<%= isEdit ? registration.email : '' %>" required />
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Telefon</label>
+      <input type="text" id="phone" name="phone" value="<%= isEdit ? registration.phone : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Bemerkungen</label>
+      <textarea id="notes" name="notes" rows="4"><%= isEdit ? registration.notes : '' %></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

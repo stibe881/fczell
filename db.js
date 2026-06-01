@@ -1,293 +1,203 @@
-const Database = require('better-sqlite3');
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
-const path = require('path');
 
-const db = new Database(path.join(__dirname, 'fczell.db'));
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+// Create MySQL connection pool
+const db = mysql.createPool({
+  host: process.env.DB_HOST || 'lguh.your-database.de',
+  user: process.env.DB_USER || 'fczell',
+  password: process.env.DB_PASSWORD || '!LeliBist.1561!',
+  database: process.env.DB_NAME || 'fczell',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  multipleStatements: true
+});
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    display_name TEXT,
-    roles TEXT DEFAULT '["admin"]',
-    created_at TEXT DEFAULT (datetime('now'))
-  );
+// Initialize Database Schema
+async function initDb() {
+  const schema = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      display_name VARCHAR(255),
+      roles TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
 
-  CREATE TABLE IF NOT EXISTS news (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    excerpt TEXT,
-    body TEXT NOT NULL,
-    category TEXT DEFAULT 'Allgemein',
-    published_at TEXT DEFAULT (date('now')),
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  );
+    CREATE TABLE IF NOT EXISTS news (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      excerpt TEXT,
+      body TEXT NOT NULL,
+      category VARCHAR(255) DEFAULT 'Allgemein',
+      published_at DATE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
 
-  CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    event_date TEXT NOT NULL,
-    event_time TEXT,
-    location TEXT,
-    description TEXT,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  );
+    CREATE TABLE IF NOT EXISTS events (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      event_date DATE NOT NULL,
+      event_time VARCHAR(255),
+      location VARCHAR(255),
+      description TEXT,
+      is_match TINYINT(1) DEFAULT 0,
+      live_ticker TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
 
-  CREATE TABLE IF NOT EXISTS pages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slug TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    body TEXT NOT NULL,
-    updated_at TEXT DEFAULT (datetime('now'))
-  );
+    CREATE TABLE IF NOT EXISTS pages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      body TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
 
-  CREATE TABLE IF NOT EXISTS vorstand (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    role TEXT,
-    address TEXT,
-    phone TEXT,
-    email TEXT,
-    sort_order INTEGER DEFAULT 0
-  );
+    CREATE TABLE IF NOT EXISTS vorstand (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      role VARCHAR(255),
+      address VARCHAR(255),
+      phone VARCHAR(255),
+      email VARCHAR(255),
+      sort_order INT DEFAULT 0
+    );
 
-  CREATE TABLE IF NOT EXISTS sponsors (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    category TEXT,
-    logo TEXT,
-    link TEXT,
-    sort_order INTEGER DEFAULT 0
-  );
+    CREATE TABLE IF NOT EXISTS sponsors (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      category VARCHAR(255),
+      logo VARCHAR(255),
+      link VARCHAR(255),
+      sort_order INT DEFAULT 0
+    );
 
-  CREATE TABLE IF NOT EXISTS advertisers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    link TEXT,
-    location TEXT,
-    sort_order INTEGER DEFAULT 0
-  );
+    CREATE TABLE IF NOT EXISTS advertisers (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      link VARCHAR(255),
+      location VARCHAR(255),
+      sort_order INT DEFAULT 0,
+      logo VARCHAR(255)
+    );
 
-  CREATE TABLE IF NOT EXISTS teams (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slug TEXT UNIQUE NOT NULL,
-    type TEXT NOT NULL,
-    name TEXT NOT NULL,
-    league TEXT,
-    extra TEXT,
-    trainer TEXT,
-    coach TEXT,
-    goalie TEXT,
-    physio TEXT,
-    times TEXT,
-    location TEXT,
-    photo TEXT,
-    sponsor_logo TEXT,
-    sort_order INTEGER DEFAULT 0
-  );
+    CREATE TABLE IF NOT EXISTS teams (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      type VARCHAR(255) NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      league VARCHAR(255),
+      extra TEXT,
+      trainer VARCHAR(255),
+      coach VARCHAR(255),
+      goalie VARCHAR(255),
+      physio VARCHAR(255),
+      times VARCHAR(255),
+      location VARCHAR(255),
+      photo VARCHAR(255),
+      sponsor_logo VARCHAR(255),
+      sort_order INT DEFAULT 0
+    );
 
-  CREATE TABLE IF NOT EXISTS jobs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT,
-    contact_info TEXT,
-    is_active INTEGER DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  );
-`);
+    CREATE TABLE IF NOT EXISTS jobs (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      contact_info TEXT,
+      is_active TINYINT(1) DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
 
-// Migration for existing tables
-try {
-  db.exec("ALTER TABLE events ADD COLUMN is_match INTEGER DEFAULT 0;");
-} catch (err) {
-  // Column already exists, ignore
+    CREATE TABLE IF NOT EXISTS documents (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      category VARCHAR(255) NOT NULL,
+      file_path VARCHAR(255) NOT NULL,
+      upload_date DATE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS gallery_photos (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      gallery VARCHAR(255) NOT NULL,
+      image_path VARCHAR(255) NOT NULL,
+      caption VARCHAR(255),
+      sort_order INT DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS registrations_juniorenlager (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      child_name VARCHAR(255) NOT NULL,
+      child_birthdate VARCHAR(255),
+      parent_name VARCHAR(255) NOT NULL,
+      parent_email VARCHAR(255) NOT NULL,
+      parent_phone VARCHAR(255) NOT NULL,
+      address VARCHAR(255),
+      allergies TEXT,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS registrations_dorfturnier (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      team_name VARCHAR(255) NOT NULL,
+      contact_name VARCHAR(255) NOT NULL,
+      contact_email VARCHAR(255) NOT NULL,
+      contact_phone VARCHAR(255) NOT NULL,
+      player_count INT DEFAULT 0,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE IF NOT EXISTS registrations_standard (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      anlass_id INT NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(255),
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE IF NOT EXISTS anlaesse (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      body TEXT NOT NULL,
+      sort_order INT DEFAULT 0,
+      has_form TINYINT(1) DEFAULT 0,
+      form_type VARCHAR(255) DEFAULT 'standard',
+      deadline DATE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+  `;
+  try {
+    await db.query(schema);
+    await seed();
+  } catch (err) {
+    console.error('Error initializing database:', err);
+  }
 }
 
-try {
-  db.exec("ALTER TABLE events ADD COLUMN live_ticker TEXT;");
-} catch (err) {
-  // Column already exists, ignore
-}
-
-try {
-  db.exec("ALTER TABLE users ADD COLUMN roles TEXT DEFAULT '[\"admin\"]';");
-} catch (err) {
-  // Column already exists, ignore
-}
-
-function seed() {
-  const userCount = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
-  if (userCount === 0) {
+async function seed() {
+  const [userRows] = await db.query('SELECT COUNT(*) AS c FROM users');
+  if (userRows[0].c === 0) {
     const hash = bcrypt.hashSync('fczell2026', 10);
-    db.prepare(
-      'INSERT INTO users (username, password_hash, display_name, roles) VALUES (?, ?, ?, ?)'
-    ).run('admin', hash, 'Administrator', '["admin"]');
+    await db.query(
+      'INSERT INTO users (username, password_hash, display_name, roles) VALUES (?, ?, ?, ?)',
+      ['admin', hash, 'Administrator', '["admin"]']
+    );
     console.log('-> Standard-Admin angelegt: admin / fczell2026');
   }
-
-  const newsCount = db.prepare('SELECT COUNT(*) AS c FROM news').get().c;
-  if (newsCount === 0) {
-    const insertNews = db.prepare(
-      `INSERT INTO news (title, excerpt, body, category, published_at)
-       VALUES (?, ?, ?, ?, ?)`
-    );
-    const seedNews = [
-      [
-        'FC Ruswil : FC Zell 3:1',
-        'Spielbericht 3. Liga vom Samstag, 25.04.2026.',
-        'Die erste Mannschaft musste sich auswärts in Ruswil mit 3:1 geschlagen geben. Trotz engagiertem Auftritt reichte es nicht zu Punkten. Halbzeitstand: 1:0 für die Gastgeber.',
-        '1. Mannschaft',
-        '2026-04-26'
-      ],
-      [
-        'FC Malters : FC Zell 1:0',
-        'Spielbericht 3. Liga vom Samstag, 11.04.2026.',
-        'Knappe Niederlage in Malters: Ein Tor in der ersten Halbzeit entschied die Partie zu Gunsten der Gastgeber.',
-        '1. Mannschaft',
-        '2026-04-12'
-      ],
-      [
-        'FC Zell : FC Horw 2:3',
-        'Spielbericht 3. Liga vom Samstag, 28.03.2026.',
-        'Die Zeller mussten sich gegen Horw nach Führung in der ersten Hälfte schliesslich mit 2:3 geschlagen geben.',
-        '1. Mannschaft',
-        '2026-03-29'
-      ],
-      [
-        'FC Zell : FC Buttisholz 4:1',
-        'Spielbericht 3. Liga vom Mittwoch, 25.03.2026.',
-        'Souveräner Heimsieg gegen Buttisholz. Die Zeller dominierten die Partie über die volle Spielzeit.',
-        '1. Mannschaft',
-        '2026-03-26'
-      ],
-      [
-        'FC Entlebuch : FC Zell 3:2',
-        'Spielbericht 3. Liga vom Samstag, 21.03.2026.',
-        'Auswärts in Entlebuch reichte es trotz Aufholjagd nicht zum Punktgewinn.',
-        '1. Mannschaft',
-        '2026-03-22'
-      ],
-      [
-        'FC Zell Ausrüstungsbestellung',
-        'Bestellfenster vom 29.11.2025 – 06.12.2025.',
-        'In der Woche vom 29. November bis 6. Dezember 2025 läuft das Bestellfenster für die FC Zell Ausrüstung. Details und Bestellunterlagen sind im Clubhaus oder beim Materialwart erhältlich.',
-        'Verein',
-        '2025-11-16'
-      ]
-    ];
-    const insertMany = db.transaction((rows) => {
-      for (const r of rows) insertNews.run(...r);
-    });
-    insertMany(seedNews);
-  }
-
-  const eventCount = db.prepare('SELECT COUNT(*) AS c FROM events').get().c;
-  if (eventCount === 0) {
-    const insertEvent = db.prepare(
-      `INSERT INTO events (title, event_date, event_time, location, description)
-       VALUES (?, ?, ?, ?, ?)`
-    );
-    insertEvent.run(
-      'GV FC Zell',
-      '2026-03-06',
-      '19:30',
-      'Clubhaus Gass, Zell',
-      'Generalversammlung des FC Zell. Alle Vereinsmitglieder sind herzlich eingeladen.'
-    );
-  }
-
-  const pageCount = db.prepare('SELECT COUNT(*) AS c FROM pages').get().c;
-  if (pageCount === 0) {
-    const insertPage = db.prepare(
-      'INSERT INTO pages (slug, title, body) VALUES (?, ?, ?)'
-    );
-    insertPage.run(
-      'hero',
-      'Willkommen beim FC Zell',
-      'Seit Jahrzehnten Heimat des Fussballs in Zell – vom Piccolo bis zur 3. Liga. Komm vorbei auf der Gass, sei dabei und werde Teil unserer Vereinsfamilie.'
-    );
-    insertPage.run(
-      'verein-intro',
-      'Über uns',
-      'Der FC Zell ist mehr als ein Fussballverein. Wir sind eine Gemeinschaft, in der Kameradschaft, Fairness und Freude am Spiel im Vordergrund stehen. Von den Piccolos bis zu den Senioren bieten wir für jede Altersklasse die passende Mannschaft.'
-    );
-    insertPage.run(
-      'clubhaus',
-      'Clubhaus',
-      `Unser Clubhaus auf der Sportanlage Gass kann gemietet werden.
-
-**Tarife pro Tag**
-- CHF 200.– für Vereinsmitglieder
-- CHF 350.– für Nichtmitglieder
-- CHF 350.– für Vereine und Organisationen
-- CHF 200.– für Vorstands-, Ehren-, und Freimitglieder, Donatoren und Bandenwerber
-
-**Im Mietpreis inbegriffen**
-- Benützung des Clubhauses und der Terrasse
-- Benützung der WC-Anlagen
-- Strom und Wasser
-- Grill / Friteuse: Zusatzkosten CHF 50.– (komplett gereinigt)
-
-Sämtliche Getränke (ausser Wein) werden durch den FC Zell geliefert. Der Verbrauch wird gemäss interner Preisliste verrechnet.
-
-Fragen zur Nutzung beantworten wir gerne unter info(at)fczell.ch.`
-    );
-    insertPage.run(
-      'penaltyclub',
-      'Penalty-Club Zell',
-      `**Die etwas andere Gönnervereinigung**
-
-Unter dem Namen Penalty-Club Zell verbirgt sich die Gönnervereinigung des FC Zell. Als die Planungsarbeiten rund um den Bau der Sportanlage „Gass" begannen, wurde das Thema „Gründung eines Donatorenclubs" laut. Wagemutig machten sich ein paar verschworene FCZ-ler daran, ein Konzept für einen Donatorenclub zu erarbeiten.
-
-**Ziele**
-- Pflege der gesellschaftlichen Beziehungen unter den Mitgliedern
-- Moralische und finanzielle Unterstützung des FC Zell
-
-**Gründung 1997**
-Am Freitag, 24. Januar 1997, fand die Gründungsversammlung im Gasthof Lindengarten Zell statt. Heute zählt der Club rund 70 Mitglieder. In den ersten drei Jahren wurden insgesamt CHF 26'000.– für die Finanzierung des Sportplatzes und Clubhauses Gass eingesetzt.
-
-**Mitgliederbeitrag**
-- Einzelmitglied: CHF 300.–
-- Partner/in eines Mitglieds: CHF 100.–`
-    );
-    insertPage.run(
-      'jobs',
-      'Wir suchen DICH',
-      `**… als Grillmeister/in**
-
-Damit wir unsere Matchbesucher an den Spielen unserer 1. Mannschaft auch kulinarisch verwöhnen können, suchen wir Unterstützung am Grill.
-
-Kannst du dir vorstellen, an einem Heimspiel pro Halbjahr bei uns am Grill mitzuhelfen? Dann komm in unsere neue „Grillmannschaft".
-
-Kontakt: joerg.graber@bithawk.ch · 079 333 97 59`
-    );
-  }
-
-  const jobCount = db.prepare('SELECT COUNT(*) AS c FROM jobs').get().c;
-  if (jobCount === 0) {
-    db.prepare(`
-      INSERT INTO jobs (title, description, contact_info) 
-      VALUES (?, ?, ?)
-    `).run(
-      'WIR SUCHEN DICH als Grillmeister/in',
-      `<ul>
-  <li>Bist du gerne in guter Gesellschaft?</li>
-  <li>Der FC Zell liegt dir am Herzen?</li>
-  <li>Du möchtest den FC Zell gerne unterstützen?</li>
-</ul>
-<p><strong>DANN BIST DU UNSERE WAHL!</strong></p>
-<p>Wir suchen für die Spiele der 1. Mannschaft Unterstützung am Grill.<br>Hast du Interesse?</p>`,
-      'Dann melde dich gerne bei unserem Präsi Jörg Graber Tel.: 079 333 97 59'
-    );
-  }
 }
 
-seed();
+initDb();
 
 module.exports = db;

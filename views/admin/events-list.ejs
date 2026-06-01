@@ -23,7 +23,7 @@
       <tbody>
         <% items.forEach(ev => { %>
           <tr>
-            <td><%= ev.event_date %></td>
+            <td><%= formatDate(ev.event_date) %></td>
             <td><%= ev.event_time || '–' %></td>
             <td><strong><%= ev.title %></strong></td>
             <td><%= ev.location || '–' %></td>

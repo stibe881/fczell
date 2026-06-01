@@ -4,13 +4,13 @@
 <section class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-content">
-    <p class="eyebrow">Fussballclub Zell · seit 1970</p>
+    <p class="eyebrow">Fussballclub Zell · seit 1960</p>
     <h1><%= hero ? hero.title : 'Willkommen beim FC Zell' %></h1>
     <p class="hero-lead">
       <%= hero ? hero.body : 'Heimat des Fussballs in Zell – vom Piccolo bis zur 3. Liga.' %>
     </p>
     <div class="hero-actions">
-      <a class="btn btn-primary btn-lg" href="/aktive">Unsere Mannschaften</a>
+      <a class="btn btn-primary btn-lg" href="/verein#mannschaften">Unsere Mannschaften</a>
       <a class="btn btn-outline btn-lg" href="/news">Aktuelle News</a>
     </div>
     <div class="hero-meta">
@@ -21,6 +21,7 @@
   </div>
 </section>
 
+<!-- 1. News -->
 <section class="band band-light" id="news">
   <div class="band-head">
     <div>
@@ -30,58 +31,23 @@
     <a class="link-arrow" href="/news">Alle News &rarr;</a>
   </div>
 
-  <ul class="news-list">
+  <div class="news-cards-grid">
     <% news.forEach(n => { %>
-      <li class="news-row" style="cursor: pointer;" onclick="window.location.href='/news/<%= n.id %>'">
-        <div class="news-row-date">
-          <time datetime="<%= n.published_at %>">
-            <strong><%= new Date(n.published_at).toLocaleDateString('de-CH', { day: '2-digit' }) %></strong>
-            <span><%= new Date(n.published_at).toLocaleDateString('de-CH', { month: 'short', year: 'numeric' }) %></span>
-          </time>
+      <a href="/news/<%= n.id %>" class="news-card">
+        <div class="news-card-body">
+          <div class="news-card-date"><%= formatDate(n.published_at) %><% if (n.category) { %> · <%= n.category %><% } %></div>
+          <h3 class="news-card-title"><%= n.title %></h3>
+          <% if (n.excerpt) { %><p class="news-card-excerpt"><%= n.excerpt %></p><% } %>
+          <span class="news-card-link">Weiterlesen →</span>
         </div>
-        <div class="news-row-body">
-          <span class="tag"><%= n.category %></span>
-          <h3><a href="/news/<%= n.id %>" style="color: inherit; text-decoration: none;"><%= n.title %></a></h3>
-          <% if (n.excerpt) { %><p><%= n.excerpt %></p><% } %>
-        </div>
-      </li>
+      </a>
     <% }) %>
-  </ul>
-</section>
-
-<section class="band band-dark" id="agenda">
-  <div class="band-head">
-    <div>
-      <p class="eyebrow eyebrow-light">Agenda</p>
-      <h2>Kommende Termine</h2>
-    </div>
-    <a class="link-arrow link-arrow-light" href="/events">Alle Termine &rarr;</a>
   </div>
-
-  <% if (events.length === 0) { %>
-    <p class="empty">Aktuell sind keine Termine geplant.</p>
-  <% } else { %>
-    <ul class="event-list">
-      <% events.forEach(ev => {
-           const d = new Date(ev.event_date);
-      %>
-        <li class="event-row" style="cursor: pointer;" onclick="window.location.href='/events/<%= ev.id %>'">
-          <div class="event-date">
-            <span class="event-day"><%= d.toLocaleDateString('de-CH', { weekday: 'long' }) %></span>
-            <span class="event-num"><%= d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' }) %></span>
-            <% if (ev.event_time) { %><span class="event-time"><%= ev.event_time %> Uhr</span><% } %>
-          </div>
-          <div class="event-body">
-            <h3><a href="/events/<%= ev.id %>" style="color: inherit; text-decoration: none;"><%= ev.title %></a></h3>
-            <% if (ev.location) { %><p class="event-loc"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <%= ev.location %></p><% } %>
-            <% if (ev.description) { %><p><%= ev.description %></p><% } %>
-          </div>
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
 </section>
 
+
+
+<!-- CTA -->
 <section class="band band-accent">
   <div class="cta-row">
     <div>
@@ -91,10 +57,57 @@
     </div>
     <div class="cta-actions">
       <a class="btn btn-primary btn-lg" href="/kontakt">Kontakt aufnehmen</a>
-      <a class="btn btn-outline-dark btn-lg" href="/jobs">Jobs &amp; Helfer</a>
+      <a class="btn btn-outline-dark btn-lg" href="/verein#sponsoren">Sponsor werden</a>
     </div>
   </div>
 </section>
 
+<style>
+.news-cards-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+.news-card {
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.news-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+  transform: translateY(-3px);
+}
+.news-card-body {
+  padding: 1.5rem;
+}
+.news-card-date {
+  font-size: 0.82rem;
+  color: var(--fcz-gray-500);
+  margin-bottom: 0.5rem;
+}
+.news-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--fcz-black);
+}
+.news-card-excerpt {
+  font-size: 0.95rem;
+  color: var(--fcz-gray-700);
+  line-height: 1.6;
+}
+.news-card-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--fcz-red);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+</style>
 
 <%- include('partials/footer') %>

@@ -1,0 +1,62 @@
+<% const isEdit = !!registration; %>
+<%- include('_admin-header', { pageTitle: isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung', active: 'anlaesse' }) %>
+
+<div class="admin-topbar">
+  <h1><%= isEdit ? 'Anmeldung bearbeiten' : 'Neue Anmeldung' %></h1>
+  <a href="<%= anlassId ? '/admin/anlaesse/' + anlassId + '/registrations' : '/admin/anlaesse' %>" class="btn btn-ghost">Abbrechen</a>
+</div>
+
+<div class="admin-card">
+  <form action="/admin/registrations/juniorenlager/<%= isEdit ? registration.id + '/edit' : 'new' %>" method="POST" class="admin-form">
+    <input type="hidden" name="anlass_id" value="<%= anlassId %>">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="child_name">Name des Kindes</label>
+        <input type="text" id="child_name" name="child_name" value="<%= isEdit ? registration.child_name : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="child_birthdate">Geburtsdatum</label>
+        <input type="text" id="child_birthdate" name="child_birthdate" value="<%= isEdit ? registration.child_birthdate : '' %>" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="parent_name">Name Elternteil</label>
+        <input type="text" id="parent_name" name="parent_name" value="<%= isEdit ? registration.parent_name : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="parent_email">E-Mail</label>
+        <input type="email" id="parent_email" name="parent_email" value="<%= isEdit ? registration.parent_email : '' %>" required />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="parent_phone">Telefon</label>
+        <input type="text" id="parent_phone" name="parent_phone" value="<%= isEdit ? registration.parent_phone : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="address">Adresse</label>
+        <input type="text" id="address" name="address" value="<%= isEdit ? registration.address : '' %>" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="allergies">Allergien / Unverträglichkeiten</label>
+      <textarea id="allergies" name="allergies" rows="3"><%= isEdit ? registration.allergies : '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Bemerkungen</label>
+      <textarea id="notes" name="notes" rows="3"><%= isEdit ? registration.notes : '' %></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </div>
+  </form>
+</div>
+
+<%- include('_admin-footer') %>

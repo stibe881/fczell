@@ -1,0 +1,36 @@
+<% const pageTitle = 'Fotogalerie'; const active = 'gallery'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head">
+    <h1>Fotogalerie</h1>
+    <a class="btn btn-primary" href="/admin/gallery/new">+ Neues Foto</a>
+  </div>
+
+  <% const galleryNames = Object.keys(galleries); %>
+  <% if (galleryNames.length === 0) { %>
+    <p class="empty">Noch keine Fotos erfasst.</p>
+  <% } else { %>
+    <% galleryNames.forEach(name => { %>
+      <div style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 0.75rem;"><%= name %></h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+          <% galleries[name].forEach(photo => { %>
+            <div style="text-align: center; width: 120px;">
+              <img src="<%= photo.image_path %>" alt="<%= photo.caption || '' %>"
+                   style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid var(--fcz-gray-200);" />
+              <% if (photo.caption) { %>
+                <div class="muted" style="font-size: 0.75rem; margin-top: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= photo.caption %></div>
+              <% } %>
+              <form action="/admin/gallery/<%= photo.id %>/delete" method="post" onsubmit="return confirm('Foto wirklich löschen?');" style="margin-top: 0.35rem;">
+                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+              </form>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

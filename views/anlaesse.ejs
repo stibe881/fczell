@@ -1,0 +1,545 @@
+<% const pageTitle = 'Anlässe'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="eyebrow">FC Zell</p>
+    <h1>Anlässe</h1>
+    <p>Die Höhepunkte im Vereinsjahr – immer aktuell.</p>
+  </div>
+</section>
+
+<!-- ========== SECTION NAV ========== -->
+<nav class="section-nav" id="sectionNav">
+  <div class="section-nav-inner">
+    <% anlaesse.forEach((a, index) => { %>
+      <a href="#<%= a.slug %>" class="section-nav-link <%= index === 0 ? 'active' : '' %>"><%= a.title %></a>
+    <% }) %>
+  </div>
+</nav>
+
+<% anlaesse.forEach((anlass, index) => { 
+  const isDark = index % 2 === 1;
+  const bandClass = isDark ? 'band-light' : 'band-cream'; 
+%>
+<section class="band <%= bandClass %>" id="<%= anlass.slug %>">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Event</p>
+      <h2><%= anlass.title %></h2>
+    </div>
+  </div>
+
+  <% if (anlass.body) { %>
+    <div class="prose" style="margin-bottom: 3rem;">
+      <%- mdToHtml(anlass.body) %>
+    </div>
+  <% } %>
+
+  <!-- Registration Form -->
+  <% if (anlass.has_form) { 
+       const isClosed = anlass.deadline && new Date() > new Date(anlass.deadline);
+  %>
+    <div class="anlass-card" id="<%= anlass.slug %>-anmeldung">
+      <div class="anlass-card-header">
+        <h3>Anmeldung <%= anlass.title %></h3>
+      </div>
+      <div class="anlass-card-body">
+        <% if (isClosed) { %>
+          <div style="background: #ffebee; color: #c62828; padding: 1.5rem; border-radius: 8px; font-weight: 600; text-align: center;">
+            Der Anmeldeschluss für diesen Anlass ist leider bereits erreicht.
+          </div>
+        <% } else { %>
+          <form method="POST" action="/anlaesse/<%= anlass.slug %>/anmelden" class="anlass-form">
+            
+            <% if (anlass.form_type === 'juniorenlager') { %>
+              <div class="form-row">
+                <label><span>Name des Kindes *</span><input type="text" name="child_name" required /></label>
+                <label><span>Geburtsdatum *</span><input type="date" name="child_birthdate" required /></label>
+              </div>
+              <div class="form-row">
+                <label><span>Name Elternteil *</span><input type="text" name="parent_name" required /></label>
+                <label><span>E-Mail *</span><input type="email" name="parent_email" required /></label>
+              </div>
+              <div class="form-row">
+                <label><span>Telefon *</span><input type="tel" name="parent_phone" required /></label>
+                <label><span>Adresse *</span><input type="text" name="address" required /></label>
+              </div>
+              <label><span>Allergien / Unverträglichkeiten</span><textarea name="allergies" rows="3" placeholder="Falls vorhanden, bitte hier angeben"></textarea></label>
+            
+            <% } else if (anlass.form_type === 'dorfturnier') { %>
+              <label><span>Teamname *</span><input type="text" name="team_name" required /></label>
+              <div class="form-row">
+                <label><span>Kontaktperson *</span><input type="text" name="contact_name" required /></label>
+                <label><span>E-Mail *</span><input type="email" name="contact_email" required /></label>
+              </div>
+              <div class="form-row">
+                <label><span>Telefon *</span><input type="tel" name="contact_phone" required /></label>
+                <label><span>Anzahl Spieler *</span><input type="number" name="player_count" min="1" max="30" required /></label>
+              </div>
+            
+            <% } else { %>
+              <label><span>Name / Kontaktperson *</span><input type="text" name="name" required /></label>
+              <div class="form-row">
+                <label><span>E-Mail *</span><input type="email" name="email" required /></label>
+                <label><span>Telefon</span><input type="tel" name="phone" /></label>
+              </div>
+            <% } %>
+
+            <label><span>Bemerkungen</span><textarea name="notes" rows="3" placeholder="Sonstige Hinweise"></textarea></label>
+            <button type="submit" class="btn btn-primary btn-lg">Anmeldung absenden</button>
+            <p class="form-note">Mit dem Absenden stimmst du der Verarbeitung deiner Angaben zur Bearbeitung der Anmeldung zu.</p>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Legacy specifics for existing galleries/docs -->
+  <% if (anlass.slug === 'juniorenlager') { %>
+    <% if (juniorenlagerNews && juniorenlagerNews.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Tagesberichte</h3>
+        <ul class="news-list">
+          <% juniorenlagerNews.forEach(item => { %>
+            <li class="news-row">
+              <div class="news-row-date">
+                <time>
+                  <strong><%= new Date(item.published_at || item.created_at).getDate() %></strong>
+                  <span><%= new Date(item.published_at || item.created_at).toLocaleDateString('de-CH', { month: 'short', year: 'numeric' }) %></span>
+                </time>
+              </div>
+              <div class="news-row-body">
+                <h3><a href="/news/<%= item.id %>"><%= item.title %></a></h3>
+                <% if (item.lead) { %><p><%= item.lead %></p><% } %>
+              </div>
+              <a href="/news/<%= item.id %>" class="news-row-cta" aria-label="Weiterlesen">→</a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+    <% if (juniorenlagerPhotos && juniorenlagerPhotos.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Fotogalerie</h3>
+        <div class="gallery-grid">
+          <% juniorenlagerPhotos.forEach(photo => { %>
+            <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
+              <img src="<%= photo.image_path %>" alt="Foto" loading="lazy" />
+            </figure>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+    <% if (juniorenlagerDocs && juniorenlagerDocs.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Dokumente</h3>
+        <ul class="doc-list">
+          <% juniorenlagerDocs.forEach(doc => { %>
+            <li>
+              <a href="<%= doc.file_path %>" target="_blank" rel="noopener" class="doc-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span><%= doc.title %></span>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+  <% } %>
+
+  <% if (anlass.slug === 'amtscup') { %>
+    <% if (amtscupDocs && amtscupDocs.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Spielpläne & Reglement</h3>
+        <ul class="doc-list">
+          <% amtscupDocs.forEach(doc => { %>
+            <li>
+              <a href="<%= doc.file_path %>" target="_blank" rel="noopener" class="doc-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span><%= doc.title %></span>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+  <% } %>
+
+  <% if (anlass.slug === 'dorfturnier') { %>
+    <% if (dorfturnierDocs && dorfturnierDocs.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Spielpläne</h3>
+        <ul class="doc-list">
+          <% dorfturnierDocs.forEach(doc => { %>
+            <li>
+              <a href="<%= doc.file_path %>" target="_blank" rel="noopener" class="doc-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span><%= doc.title %></span>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+    <% if (dorfturnierPhotos && dorfturnierPhotos.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Fotogalerie</h3>
+        <div class="gallery-grid">
+          <% dorfturnierPhotos.forEach(photo => { %>
+            <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
+              <img src="<%= photo.image_path %>" alt="Foto" loading="lazy" />
+            </figure>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+
+  <% if (anlass.slug === 'generalversammlung' || anlass.slug === 'gv') { %>
+    <% if (nextGv) { %>
+      <div class="anlass-card" style="margin-bottom: 3rem;">
+        <div class="anlass-card-header">
+          <h3>Nächste GV</h3>
+        </div>
+        <div class="anlass-card-body">
+          <div class="gv-event-details">
+            <div class="gv-detail">
+              <span class="gv-detail-label">Anlass</span>
+              <span class="gv-detail-value"><%= nextGv.title %></span>
+            </div>
+            <% if (nextGv.event_date) { %>
+              <div class="gv-detail">
+                <span class="gv-detail-label">Datum</span>
+                <span class="gv-detail-value"><%= new Date(nextGv.event_date).toLocaleDateString('de-CH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+              </div>
+            <% } %>
+            <% if (nextGv.event_time) { %>
+              <div class="gv-detail">
+                <span class="gv-detail-label">Zeit</span>
+                <span class="gv-detail-value"><%= nextGv.event_time %> Uhr</span>
+              </div>
+            <% } %>
+            <% if (nextGv.location) { %>
+              <div class="gv-detail">
+                <span class="gv-detail-label">Ort</span>
+                <span class="gv-detail-value"><%= nextGv.location %></span>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if (gvDocs && gvDocs.length > 0) { %>
+      <div class="anlass-subsection">
+        <h3>Protokolle</h3>
+        <ul class="doc-list">
+          <% gvDocs.forEach(doc => { %>
+            <li>
+              <a href="<%= doc.file_path %>" target="_blank" rel="noopener" class="doc-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span><%= doc.title %></span>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+  <% } %>
+
+</section>
+<% }) %>
+
+<!-- ========== LIGHTBOX ========== -->
+<div id="anlassLightbox" class="lightbox" onclick="closeAnlassLightbox()">
+  <span class="lightbox-close" onclick="closeAnlassLightbox()">&times;</span>
+  <img class="lightbox-content" id="anlassLightboxImg">
+</div>
+
+<!-- ========== PAGE STYLES ========== -->
+<style>
+/* ---------- SECTION NAV ---------- */
+.section-nav {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+}
+.section-nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.section-nav-inner::-webkit-scrollbar { display: none; }
+.section-nav-link {
+  display: inline-block;
+  padding: 1rem 1.25rem;
+  color: var(--fcz-gray-700);
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  position: relative;
+  transition: color var(--transition);
+}
+.section-nav-link:hover { color: var(--fcz-red); }
+.section-nav-link.active {
+  color: var(--fcz-red);
+}
+.section-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.25rem;
+  right: 1.25rem;
+  height: 3px;
+  background: var(--fcz-red);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ---------- ANLASS CARD (forms, event detail) ---------- */
+.anlass-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 3rem;
+}
+.anlass-card-header {
+  background: var(--fcz-black);
+  color: #fff;
+  padding: 1.5rem 2rem;
+}
+.anlass-card-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+.anlass-card-body {
+  padding: 2rem;
+}
+
+/* ---------- ANLASS FORM ---------- */
+.anlass-form {
+  display: grid;
+  gap: 1rem;
+}
+.anlass-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--fcz-gray-700);
+  font-weight: 500;
+}
+.anlass-form input,
+.anlass-form textarea,
+.anlass-form select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--fcz-gray-300);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--fcz-gray-900);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.anlass-form input:focus,
+.anlass-form textarea:focus,
+.anlass-form select:focus {
+  outline: 0;
+  border-color: var(--fcz-red);
+  box-shadow: 0 0 0 3px rgba(26, 128, 182, 0.15);
+}
+.anlass-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 600px) {
+  .anlass-form .form-row { grid-template-columns: 1fr; }
+}
+
+/* ---------- SUBSECTIONS ---------- */
+.anlass-subsection {
+  margin-top: 3rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+.band-cream .anlass-subsection {
+  border-top-color: rgba(0,0,0,0.06);
+}
+.anlass-subsection h3 {
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- GALLERY GRID ---------- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.gallery-item {
+  margin: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: zoom-in;
+  position: relative;
+  background: var(--fcz-gray-100);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+.gallery-item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+.gallery-item figcaption {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  color: var(--fcz-gray-700);
+  background: #fff;
+}
+
+/* ---------- DOCUMENT LIST ---------- */
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.doc-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  color: var(--fcz-gray-900);
+  font-weight: 500;
+  transition: all var(--transition);
+}
+.doc-link:hover {
+  border-color: var(--fcz-red);
+  color: var(--fcz-red);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.doc-link svg {
+  flex-shrink: 0;
+  color: var(--fcz-red);
+}
+.doc-link span {
+  flex: 1;
+}
+.doc-link .doc-dl-icon {
+  color: var(--fcz-gray-500);
+  transition: color var(--transition);
+}
+.doc-link:hover .doc-dl-icon {
+  color: var(--fcz-red);
+}
+.doc-date {
+  font-size: 0.85rem;
+  color: var(--fcz-gray-500);
+  white-space: nowrap;
+}
+
+/* ---------- GV EVENT DETAILS ---------- */
+.gv-event-details {
+  display: grid;
+  gap: 0;
+}
+.gv-detail {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  align-items: baseline;
+}
+.gv-detail:last-child { border-bottom: 0; }
+.gv-detail-full { grid-template-columns: 1fr; }
+.gv-detail-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fcz-gray-500);
+}
+.gv-detail-value {
+  font-weight: 500;
+  color: var(--fcz-gray-900);
+}
+
+@media (max-width: 600px) {
+  .gv-detail { grid-template-columns: 1fr; gap: 0.25rem; }
+}
+</style>
+
+<!-- ========== SCRIPTS ========== -->
+<script>
+// ---------- Lightbox ----------
+function openAnlassLightbox(src) {
+  document.getElementById('anlassLightboxImg').src = src;
+  document.getElementById('anlassLightbox').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeAnlassLightbox() {
+  document.getElementById('anlassLightbox').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAnlassLightbox();
+});
+
+// ---------- Section nav active state ----------
+(function() {
+  const nav = document.getElementById('sectionNav');
+  const links = nav.querySelectorAll('.section-nav-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var section = document.getElementById(id);
+    if (section) sections.push({ id: id, el: section, link: link });
+  });
+
+  function updateActive() {
+    var scrollY = window.scrollY + nav.offsetHeight + 120;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+<%- include('partials/footer') %>
