@@ -1,4 +1,36 @@
-</main>
+    </main> <!-- /admin-main -->
+  </div> <!-- /admin-content-wrapper -->
+</div> <!-- /admin-layout -->
+
+<script>
+  // Mobile sidebar toggle logic
+  const sidebar = document.getElementById('adminSidebar');
+  const toggleBtn = document.getElementById('sidebarToggle');
+  const closeBtn = document.getElementById('sidebarClose');
+
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.add('open');
+      document.body.style.overflow = 'hidden'; // prevent scrolling on mobile when sidebar open
+    });
+  }
+  if (closeBtn && sidebar) {
+    closeBtn.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+  
+  // Close sidebar if clicked outside on mobile
+  document.addEventListener('click', (e) => {
+    if (sidebar && sidebar.classList.contains('open')) {
+      if (!sidebar.contains(e.target) && e.target !== toggleBtn) {
+        sidebar.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+  });
+</script>
 <script src="/script.js"></script>
 </body>
 </html>

@@ -10,63 +10,98 @@
   <link rel="icon" type="image/png" href="/logo.png" />
 </head>
 <body class="admin">
-<header class="admin-header">
-  <a href="/admin" class="admin-brand">
-    <img src="/logo.png" alt="FC Zell Logo" class="brand-logo" />
-    <span>Admin-Bereich</span>
-  </a>
-  <nav class="admin-nav">
-    <%
-      let roles = [];
-      try {
-        roles = JSON.parse(user.roles || '[]');
-      } catch (e) {}
-      const isAdmin = roles.includes('admin');
-    %>
-    <a href="/admin" class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Übersicht</a>
-    
-    <% if (isAdmin || roles.includes('news')) { %>
-      <a href="/admin/news" class="<%= typeof active !== 'undefined' && active === 'news' ? 'active' : '' %>">News</a>
-    <% } %>
-    
-    <% if (isAdmin || roles.includes('teams')) { %>
-      <a href="/admin/events" class="<%= typeof active !== 'undefined' && active === 'events' ? 'active' : '' %>">Termine</a>
-      <a href="/admin/teams" class="<%= typeof active !== 'undefined' && active === 'teams' ? 'active' : '' %>">Teams</a>
-    <% } %>
-    
-    <% if (isAdmin || roles.includes('content')) { %>
-      <a href="/admin/pages" class="<%= typeof active !== 'undefined' && active === 'pages' ? 'active' : '' %>">Inhalte</a>
-      <a href="/admin/anlaesse" class="<%= typeof active !== 'undefined' && active === 'anlaesse' ? 'active' : '' %>">Anlässe</a>
-      <a href="/admin/vorstand" class="<%= typeof active !== 'undefined' && active === 'vorstand' ? 'active' : '' %>">Vorstand</a>
-      <a href="/admin/jobs" class="<%= typeof active !== 'undefined' && active === 'jobs' ? 'active' : '' %>">Jobs</a>
-      <a href="/admin/documents" class="<%= typeof active !== 'undefined' && active === 'documents' ? 'active' : '' %>">Dokumente</a>
-      <a href="/admin/gallery" class="<%= typeof active !== 'undefined' && active === 'gallery' ? 'active' : '' %>">Galerie</a>
-    <% } %>
-    
-    <% if (isAdmin || roles.includes('sponsoring')) { %>
-      <a href="/admin/sponsors" class="<%= typeof active !== 'undefined' && active === 'sponsors' ? 'active' : '' %>">Sponsoren</a>
-      <a href="/admin/advertisers" class="<%= typeof active !== 'undefined' && active === 'advertisers' ? 'active' : '' %>">Banden</a>
-    <% } %>
-    
-    <% if (isAdmin) { %>
-      <a href="/admin/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Benutzer</a>
-    <% } %>
-    
-    <a href="/admin/account" class="<%= typeof active !== 'undefined' && active === 'account' ? 'active' : '' %>">Konto</a>
-  </nav>
-  <div class="admin-meta">
-    <a href="/" target="_blank" class="link-arrow">Webseite ansehen ↗</a>
-    <span class="user-chip"><%= user.displayName || user.username %></span>
-    <form action="/logout" method="post" style="display:inline">
-      <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
-    </form>
-  </div>
-</header>
 
-<% if (typeof flash !== 'undefined' && flash) { %>
-  <div class="flash flash-<%= flash.type %>" role="status">
-    <div class="flash-inner"><%= flash.msg %></div>
-  </div>
-<% } %>
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="/admin" class="admin-brand">
+        <img src="/logo.png" alt="FC Zell Logo" class="brand-logo" />
+        <span>Admin</span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Menü schliessen">×</button>
+    </div>
 
-<main class="admin-main">
+    <nav class="sidebar-nav">
+      <%
+        let roles = [];
+        try {
+          roles = JSON.parse(user.roles || '[]');
+        } catch (e) {}
+        const isAdmin = roles.includes('admin');
+      %>
+
+      <div class="nav-group">
+        <h4>Übersicht & Aktuelles</h4>
+        <a href="/admin" class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+        <% if (isAdmin || roles.includes('news')) { %>
+          <a href="/admin/news" class="<%= typeof active !== 'undefined' && active === 'news' ? 'active' : '' %>">News</a>
+        <% } %>
+        <% if (isAdmin || roles.includes('teams')) { %>
+          <a href="/admin/events" class="<%= typeof active !== 'undefined' && active === 'events' ? 'active' : '' %>">Termine</a>
+        <% } %>
+      </div>
+
+      <% if (isAdmin || roles.includes('teams') || roles.includes('content')) { %>
+        <div class="nav-group">
+          <h4>Verein</h4>
+          <% if (isAdmin || roles.includes('teams')) { %>
+            <a href="/admin/teams" class="<%= typeof active !== 'undefined' && active === 'teams' ? 'active' : '' %>">Teams</a>
+          <% } %>
+          <% if (isAdmin || roles.includes('content')) { %>
+            <a href="/admin/vorstand" class="<%= typeof active !== 'undefined' && active === 'vorstand' ? 'active' : '' %>">Vorstand</a>
+            <a href="/admin/jobs" class="<%= typeof active !== 'undefined' && active === 'jobs' ? 'active' : '' %>">Jobs</a>
+          <% } %>
+        </div>
+      <% } %>
+
+      <% if (isAdmin || roles.includes('content')) { %>
+        <div class="nav-group">
+          <h4>Inhalte</h4>
+          <a href="/admin/pages" class="<%= typeof active !== 'undefined' && active === 'pages' ? 'active' : '' %>">Seiteninhalte</a>
+          <a href="/admin/anlaesse" class="<%= typeof active !== 'undefined' && active === 'anlaesse' ? 'active' : '' %>">Anlässe</a>
+          <a href="/admin/documents" class="<%= typeof active !== 'undefined' && active === 'documents' ? 'active' : '' %>">Dokumente</a>
+          <a href="/admin/gallery" class="<%= typeof active !== 'undefined' && active === 'gallery' ? 'active' : '' %>">Galerie</a>
+        </div>
+      <% } %>
+
+      <% if (isAdmin || roles.includes('sponsoring')) { %>
+        <div class="nav-group">
+          <h4>Sponsoring</h4>
+          <a href="/admin/sponsors" class="<%= typeof active !== 'undefined' && active === 'sponsors' ? 'active' : '' %>">Sponsoren</a>
+          <a href="/admin/advertisers" class="<%= typeof active !== 'undefined' && active === 'advertisers' ? 'active' : '' %>">Bandenwerber</a>
+        </div>
+      <% } %>
+
+      <div class="nav-group">
+        <h4>System</h4>
+        <% if (isAdmin) { %>
+          <a href="/admin/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Benutzer</a>
+        <% } %>
+        <a href="/admin/account" class="<%= typeof active !== 'undefined' && active === 'account' ? 'active' : '' %>">Konto</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="admin-content-wrapper">
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menü öffnen">☰</button>
+      </div>
+      <div class="topbar-right">
+        <a href="/" target="_blank" class="link-website">Zur Webseite ↗</a>
+        <div class="user-chip"><%= user.displayName || user.username %></div>
+        <form action="/logout" method="post" style="display:inline">
+          <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
+        </form>
+      </div>
+    </header>
+
+    <% if (typeof flash !== 'undefined' && flash) { %>
+      <div class="flash flash-<%= flash.type %>" role="status">
+        <div class="flash-inner"><%= flash.msg %></div>
+      </div>
+    <% } %>
+
+    <main class="admin-main">
