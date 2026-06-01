@@ -279,6 +279,7 @@ p { margin: 0 0 1em; }
 }
 .hero-content {
   width: 100%;
+  min-width: 0;
   max-width: var(--max-w);
   padding: 5rem var(--pad-x);
   text-align: left;
@@ -310,7 +311,7 @@ p { margin: 0 0 1em; }
 }
 .hero-meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 1rem 2.5rem;
   padding-top: 2rem;
   border-top: 1px solid rgba(255,255,255,0.18);
