@@ -956,6 +956,10 @@ app.post('/admin/advertisers/:id/delete', requireRole('sponsoring'), async (req,
 // --- Teams CRUD ---
 app.get('/admin/teams', requireRole('teams'), async (req, res) => {
   const [items] = await db.query(`SELECT * FROM teams ORDER BY type ASC, sort_order ASC, id ASC`);
+  const [allStaff] = await db.query(`SELECT * FROM team_staff`);
+  items.forEach(item => {
+    item.staff = allStaff.filter(s => s.team_id === item.id).sort((a,b)=>a.sort_order - b.sort_order);
+  });
   res.render('admin/teams-list', { page: 'admin', items });
 });
 
