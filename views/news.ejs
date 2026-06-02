@@ -142,7 +142,8 @@
           // Filter cards
           const filter = btn.dataset.filter;
           cards.forEach(card => {
-            if (filter === 'all' || card.dataset.category === filter) {
+            const cardCats = card.dataset.category ? card.dataset.category.split(',').map(s => s.trim()) : [];
+            if (filter === 'all' || cardCats.includes(filter)) {
               card.style.display = 'block';
             } else {
               card.style.display = 'none';

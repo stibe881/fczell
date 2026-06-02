@@ -17,7 +17,12 @@
     <div class="form-row">
       <label>
         <span>Datum *</span>
-        <input type="date" name="published_at" required value="<%= item ? item.published_at : new Date().toISOString().slice(0,10) %>" />
+        <%
+          let d = new Date();
+          if (item && item.published_at) d = new Date(item.published_at);
+          const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        %>
+        <input type="date" name="published_at" required value="<%= dateStr %>" />
       </label>
       <label style="flex: 1;">
         <span>Kategorien (mehrere möglich)</span>
