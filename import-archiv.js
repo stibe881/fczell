@@ -2,7 +2,13 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const cheerio = require('cheerio');
+const TurndownService = require('turndown');
+const turndownPluginGfm = require('turndown-plugin-gfm');
+const { marked } = require('marked');
 const db = require('./db');
+
+const turndownService = new TurndownService();
+turndownService.use(turndownPluginGfm.tables);
 
 const IMG_DIR = path.join(__dirname, 'public', 'images', 'archiv');
 
@@ -81,7 +87,12 @@ async function importArchiv() {
           contentHtml = page$('.post-content').html();
         }
         
-        const cleanText = cheerio.load(contentHtml || '')('body').text().replace(/\s+/g, ' ').trim();
+        const $content = cheerio.load(contentHtml || '');
+        $content('img, script, style, .gallery, .fusion-portfolio').remove();
+        let htmlToConvert = $content('body').html() || '';
+        
+        let mdText = turndownService.turndown(htmlToConvert);
+        let cleanHtml = marked.parse(mdText);
         
         // Extract images
         let images = [];
@@ -96,10 +107,10 @@ async function importArchiv() {
         
         bodyMarkdown += `\n<details style="border: 1px solid var(--fcz-gray-200); border-radius: 6px; overflow: hidden;">\n`;
         bodyMarkdown += `  <summary style="background: #fff; padding: 0.75rem 1rem; cursor: pointer; font-weight: 600; font-size: 1.1rem; border-bottom: 1px solid var(--fcz-gray-100); list-style-position: inside;">${entry.title}</summary>\n`;
-        bodyMarkdown += `  <div style="padding: 1rem; background: #fafafa;">\n`;
+        bodyMarkdown += `  <div style="padding: 1rem; background: #fafafa; overflow-x: auto;">\n`;
 
-        if (cleanText) {
-          bodyMarkdown += `<p style="white-space: pre-line;">${cleanText}</p>\n`;
+        if (cleanHtml) {
+          bodyMarkdown += `<div class="prose">${cleanHtml}</div>\n`;
         }
         
         if (images.length >= 6) {
