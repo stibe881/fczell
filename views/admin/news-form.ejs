@@ -1,5 +1,6 @@
 <% const pageTitle = item ? 'News bearbeiten' : 'News erfassen'; const active = 'news'; %>
 <%- include('_admin-header') %>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 <div class="admin-content">
   <div class="admin-page-head">
@@ -7,7 +8,7 @@
     <a class="link-arrow" href="/admin/news">← zurück zur Übersicht</a>
   </div>
 
-  <form class="admin-form" action="<%= item ? '/admin/news/' + item.id + '/edit' : '/admin/news/new' %>" method="post">
+  <form class="admin-form" action="<%= item ? '/admin/news/' + item.id + '/edit' : '/admin/news/new' %>" method="post" enctype="multipart/form-data">
     <label>
       <span>Titel *</span>
       <input name="title" required value="<%= item ? item.title : '' %>" />
@@ -38,16 +39,52 @@
     </label>
 
     <label>
-      <span>Inhalt *</span>
-      <textarea name="body" rows="14" required placeholder="Der vollständige Beitrag. Leerzeilen trennen Absätze. **Fett** und *kursiv* möglich."><%= item ? item.body : '' %></textarea>
-      <small class="muted">Tipp: Absätze durch Leerzeile trennen. Mit <code>**fett**</code> und <code>*kursiv*</code> kannst du Texte formatieren. Listen mit <code>- Eintrag</code>.</small>
+      <span>Beitragsbild (Featured Image)</span>
+      <% if (item && item.image) { %>
+        <div style="margin-bottom: 0.5rem;">
+          <img src="<%= item.image %>" alt="Aktuelles Bild" style="max-height: 100px; border-radius: 4px;" />
+        </div>
+      <% } %>
+      <input type="file" name="image" accept="image/*" />
+      <small class="muted">Lade ein neues Bild hoch (optional). Dies überschreibt das bestehende Bild.</small>
     </label>
 
+    <div class="form-group">
+      <label>Inhalt *</label>
+      <input type="hidden" name="content" id="content_input" value="<%= item ? (item.content || '').replace(/"/g, '&quot;') : '' %>">
+      <div id="editor" style="height: 300px; background: #fff;"><%- item ? (item.content || '') : '' %></div>
+      <small class="muted">Der vollständige Beitrag. Mit dem Editor kannst du Texte formatieren, Bilder einfügen und verlinken.</small>
+    </div>
+
     <div class="form-actions">
-      <button class="btn btn-primary btn-lg" type="submit"><%= item ? 'Speichern' : 'Veröffentlichen' %></button>
+      <button class="btn btn-primary btn-lg" type="submit" onclick="document.getElementById('content_input').value = document.querySelector('.ql-editor').innerHTML;"><%= item ? 'Speichern' : 'Veröffentlichen' %></button>
       <a class="btn btn-ghost" href="/admin/news">Abbrechen</a>
     </div>
   </form>
 </div>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+  var quill = new Quill('#editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean'],
+        ['link', 'image']
+      ]
+    }
+  });
+</script>
 
 <%- include('_admin-footer') %>

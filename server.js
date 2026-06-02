@@ -525,11 +525,16 @@ app.get('/admin/news/new', requireRole('news'), async (req, res) => {
   res.render('admin/news-form', { page: 'admin', item: null, categories });
 });
 
-app.post('/admin/news/new', requireRole('news'), async (req, res) => {
-  const { title, excerpt, body, category, published_at } = req.body;
+app.post('/admin/news/new', requireRole('news'), uploadAny.any(), async (req, res) => {
+  const { title, excerpt, category, published_at, content } = req.body;
+  let imagePath = '';
+  const file = req.files && req.files.find(f => f.fieldname === 'image');
+  if (file) {
+    imagePath = '/images/news/' + file.filename;
+  }
   await db.query(
-    `INSERT INTO news (title, excerpt, body, category, published_at) VALUES (?, ?, ?, ?, ?)`,
-    [title, excerpt || '', body, category || 'Allgemein', published_at || new Date().toISOString().slice(0, 10)]
+    `INSERT INTO news (title, excerpt, body, category, published_at, content, image) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [title, excerpt || '', '', category || 'Allgemein', published_at || new Date().toISOString().slice(0, 10), content || '', imagePath]
   );
   req.session.flash = { type: 'success', msg: 'News gespeichert.' };
   res.redirect('/admin/news');
@@ -543,11 +548,20 @@ app.get('/admin/news/:id/edit', requireRole('news'), async (req, res) => {
   res.render('admin/news-form', { page: 'admin', item, categories });
 });
 
-app.post('/admin/news/:id/edit', requireRole('news'), async (req, res) => {
-  const { title, excerpt, body, category, published_at } = req.body;
+app.post('/admin/news/:id/edit', requireRole('news'), uploadAny.any(), async (req, res) => {
+  const { title, excerpt, category, published_at, content } = req.body;
+  
+  let imageQuery = '';
+  let imageParam = [];
+  const file = req.files && req.files.find(f => f.fieldname === 'image');
+  if (file) {
+    imageQuery = ', image=?';
+    imageParam = ['/images/news/' + file.filename];
+  }
+
   await db.query(
-    `UPDATE news SET title=?, excerpt=?, body=?, category=?, published_at=?, updated_at=NOW() WHERE id=?`,
-    [title, excerpt || '', body, category || 'Allgemein', published_at, req.params.id]
+    `UPDATE news SET title=?, excerpt=?, category=?, published_at=?, content=?, updated_at=NOW()${imageQuery} WHERE id=?`,
+    [title, excerpt || '', category || 'Allgemein', published_at, content || '', ...imageParam, req.params.id]
   );
   req.session.flash = { type: 'success', msg: 'News aktualisiert.' };
   res.redirect('/admin/news');

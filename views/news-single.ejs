@@ -12,11 +12,14 @@
       </time>
     </p>
   </div>
+  <% if (item.image) { %>
+    <div style="margin: 2rem 0;">
+      <img src="<%= item.image %>" alt="<%= item.title %>" style="width: 100%; border-radius: 8px; max-height: 500px; object-fit: cover;" />
+    </div>
+  <% } %>
   <div class="article-body">
     <% if (item.excerpt) { %><p class="lead"><%= item.excerpt %></p><% } %>
-    <% item.body.split(/\n\n+/).forEach(p => { %>
-      <p><%= p %></p>
-    <% }) %>
+    <%- item.content || item.body %>
   </div>
 </article>
 
