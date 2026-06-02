@@ -131,35 +131,54 @@
 
 <!-- ============ #trainer ============ -->
 <section class="band band-light" id="trainer">
-  <div class="band-head" style="justify-content: center; text-align: center;">
-    <div>
-      <p class="eyebrow">Trainer & Staff</p>
-      <h2>Unsere Trainer</h2>
-      <p class="band-sub" style="margin: 1rem auto 0;">Die sportlichen Leiter unserer Mannschaften.</p>
-    </div>
-  </div>
+  <div class="container" style="max-width: 1200px; margin: 0 auto;">
+    <details class="trainer-details">
+      <summary class="band-head" style="justify-content: center; text-align: center; cursor: pointer; list-style: none;">
+        <div>
+          <p class="eyebrow">Trainer & Staff</p>
+          <h2 style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            Unsere Trainer
+            <svg class="trainer-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </h2>
+          <p class="band-sub" style="margin: 1rem auto 0;">Die sportlichen Leiter unserer Mannschaften. <span style="text-decoration: underline;">Klicken zum Aufklappen</span>.</p>
+        </div>
+      </summary>
 
-  <div class="vorstand-grid">
-    <% if (typeof trainers !== 'undefined') { %>
-      <% trainers.forEach(t => { %>
-        <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften#' + t.team_slug; %>
-        <a href="<%= link %>" class="vorstand-card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
-          <div class="vorstand-avatar">
-            <% const initials = t.name.split(/[\s,]+/).map(n => n[0]).join('').substring(0, 2).toUpperCase(); %>
-            <%= initials %>
-            <% if (t.photo) { %>
-              <img src="<%= t.photo %>" alt="<%= t.name %>" loading="lazy" />
-            <% } %>
-          </div>
-          <div class="vorstand-info">
-            <h3 class="vorstand-name"><%= t.name %></h3>
-            <span class="vorstand-role"><%= t.role %> · <%= t.team_name %></span>
-          </div>
-        </a>
-      <% }) %>
-    <% } %>
+      <div class="vorstand-grid" style="margin-top: 2rem;">
+        <% if (typeof trainers !== 'undefined') { %>
+          <% trainers.forEach(t => { %>
+            <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften#' + t.team_slug; %>
+            <a href="<%= link %>" class="vorstand-card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+              <div class="vorstand-avatar">
+                <% const initials = t.name.split(/[\s,]+/).map(n => n[0]).join('').substring(0, 2).toUpperCase(); %>
+                <%= initials %>
+                <% if (t.photo) { %>
+                  <img src="<%= t.photo %>" alt="<%= t.name %>" loading="lazy" />
+                <% } %>
+              </div>
+              <div class="vorstand-info">
+                <h3 class="vorstand-name"><%= t.name %></h3>
+                <span class="vorstand-role"><%= t.role %> · <%= t.team_name %></span>
+              </div>
+            </a>
+          <% }) %>
+        <% } %>
+      </div>
+    </details>
   </div>
 </section>
+
+<style>
+.trainer-details summary::-webkit-details-marker {
+  display: none;
+}
+.trainer-details[open] .trainer-icon {
+  transform: rotate(180deg);
+}
+.trainer-icon {
+  transition: transform 0.3s ease;
+}
+</style>
 
 
 <!-- ============ #verhaltenscodex ============ -->
