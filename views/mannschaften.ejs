@@ -60,7 +60,7 @@
 <section class="band band-cream" id="erste-mannschaft">
   <% if (aktiveTeams && aktiveTeams.length > 0) { %>
   <% const team = aktiveTeams[0]; %>
-  <div class="team-row">
+  <div class="team-row" id="<%= team.slug %>">
     <div class="team-head">
       <p class="eyebrow">Aktive</p>
       <h2><%= team.name %></h2>
@@ -96,7 +96,7 @@
 <section class="band band-dark" id="zweite-mannschaft">
   <% if (aktiveTeams && aktiveTeams.length > 1) { %>
   <% const team = aktiveTeams[1]; %>
-  <div class="team-row">
+  <div class="team-row" id="<%= team.slug %>">
     <div class="team-head">
       <p class="eyebrow eyebrow-light">Aktive</p>
       <h2><%= team.name %></h2>
@@ -133,7 +133,7 @@
 <section class="band band-light" id="senioren">
   <% if (aktiveTeams && aktiveTeams.length > 2) { %>
   <% const team = aktiveTeams[2]; %>
-  <div class="team-row">
+  <div class="team-row" id="<%= team.slug %>">
     <div class="team-head">
       <p class="eyebrow">Aktive</p>
       <h2><%= team.name %></h2>

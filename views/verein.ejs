@@ -15,6 +15,7 @@
   <div class="section-nav-inner">
     <a href="#portrait" class="section-nav-link active">Portrait</a>
     <a href="#vorstand" class="section-nav-link">Vorstand</a>
+    <a href="#trainer" class="section-nav-link">Trainer</a>
     <a href="#verhaltenscodex" class="section-nav-link">Verhaltenscodex</a>
     <a href="#clubhaus" class="section-nav-link">Clubhaus</a>
     <a href="#penaltyclub" class="section-nav-link">Penaltyclub</a>
@@ -125,6 +126,38 @@
         </div>
       </div>
     <% }) %>
+  </div>
+</section>
+
+<!-- ============ #trainer ============ -->
+<section class="band band-light" id="trainer">
+  <div class="band-head" style="justify-content: center; text-align: center;">
+    <div>
+      <p class="eyebrow">Trainer & Staff</p>
+      <h2>Unsere Trainer</h2>
+      <p class="band-sub" style="margin: 1rem auto 0;">Die sportlichen Leiter unserer Mannschaften.</p>
+    </div>
+  </div>
+
+  <div class="vorstand-grid">
+    <% if (typeof trainers !== 'undefined') { %>
+      <% trainers.forEach(t => { %>
+        <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften#' + t.team_slug; %>
+        <a href="<%= link %>" class="vorstand-card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+          <div class="vorstand-avatar">
+            <% const initials = t.name.split(/[\s,]+/).map(n => n[0]).join('').substring(0, 2).toUpperCase(); %>
+            <%= initials %>
+            <% if (t.photo) { %>
+              <img src="<%= t.photo %>" alt="<%= t.name %>" loading="lazy" />
+            <% } %>
+          </div>
+          <div class="vorstand-info">
+            <h3 class="vorstand-name"><%= t.name %></h3>
+            <span class="vorstand-role"><%= t.role %> · <%= t.team_name %></span>
+          </div>
+        </a>
+      <% }) %>
+    <% } %>
   </div>
 </section>
 

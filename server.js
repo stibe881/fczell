@@ -20,6 +20,22 @@ const advertiserStorage = multer.diskStorage({
 });
 const uploadAdvertisers = multer({ storage: advertiserStorage });
 
+const trainerStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, path.join(__dirname, 'public/images/trainers')),
+  filename: (req, file, cb) => cb(null, 'trainer-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))
+});
+const uploadTrainers = multer({ storage: trainerStorage });
+
+const uploadAny = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      if (file.fieldname.startsWith('staff_photo')) cb(null, path.join(__dirname, 'public/images/trainers'));
+      else cb(null, path.join(__dirname, 'public/uploads'));
+    },
+    filename: (req, file, cb) => cb(null, 'upload-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))
+  })
+});
+
 const galleryStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, 'public/images/gallery')),
   filename: (req, file, cb) => cb(null, 'gallery-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))
@@ -196,15 +212,14 @@ app.get('/verein', async (req, res) => {
   const [clubhausRows] = await db.query(`SELECT * FROM pages WHERE slug = 'clubhaus'`);
   const clubhaus = clubhausRows[0];
   const [verhaltenscodexRows] = await db.query(`SELECT * FROM pages WHERE slug = 'verhaltenscodex'`);
-  const verhaltenscodex = verhaltenscodexRows[0];
-  const [sponsorenDankRows] = await db.query(`SELECT * FROM pages WHERE slug = 'sponsoren-dank'`);
+  const verhaltenscodex = verhaltenscodexRows[0];  const [sponsorenDankRows] = await db.query(`SELECT * FROM pages WHERE slug = 'sponsoren-dank'`);
   const sponsorenDank = sponsorenDankRows[0];
   
   const [vorstand] = await db.query(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`);
   const [sponsorenListe] = await db.query(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`);
   const [bandenwerber] = await db.query(`SELECT * FROM advertisers ORDER BY sort_order ASC, name ASC`);
+  const [trainers] = await db.query(`SELECT ts.*, t.name AS team_name, t.slug AS team_slug, t.type AS team_type FROM team_staff ts JOIN teams t ON ts.team_id = t.id WHERE ts.role IN ('Trainer', 'Co-Trainer') ORDER BY t.sort_order ASC, ts.id ASC`);
 
-  // Sponsorentafel photos
   const [sponsorentafelPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'sponsorentafel' ORDER BY sort_order ASC`);
 
   res.render('verein', {
@@ -217,6 +232,7 @@ app.get('/verein', async (req, res) => {
     vorstand,
     sponsorenListe,
     bandenwerber,
+    trainers,
     sponsorentafelPhotos
   });
 });
@@ -225,6 +241,11 @@ app.get('/verein', async (req, res) => {
 app.get('/mannschaften', async (req, res) => {
   const [aktiveTeams] = await db.query(`SELECT * FROM teams WHERE type = 'aktive' ORDER BY sort_order ASC, id ASC`);
   const [juniorTeams] = await db.query(`SELECT * FROM teams WHERE type = 'junioren' ORDER BY sort_order ASC, id ASC`);
+  
+  const [allStaff] = await db.query(`SELECT * FROM team_staff`);
+  const mapStaff = (t) => { t.staff = allStaff.filter(s => s.team_id === t.id).sort((a,b)=>a.sort_order - b.sort_order); return t; };
+  aktiveTeams.forEach(mapStaff);
+  juniorTeams.forEach(mapStaff);
   
   const footballUrl = await getPageBody('football-url');
   const matchcenterUrl = await getPageBody('matchcenter-url');
@@ -251,9 +272,12 @@ app.get('/mannschaften', async (req, res) => {
 
 // --- Junioren Detail ---
 app.get('/mannschaften/junioren/:slug', async (req, res) => {
-  const [rows] = await db.query(`SELECT * FROM teams WHERE slug = ? AND type = 'junioren'`, [req.params.slug]);
+  const [rows] = await db.query(`SELECT * FROM teams WHERE type = 'junioren' AND slug = ?`, [req.params.slug]);
   const team = rows[0];
   if (!team) return res.status(404).render('404', { page: '404' });
+  
+  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY sort_order ASC, id ASC`, [team.id]);
+  team.staff = staff;
   res.render('team-detail', { page: 'mannschaften', team });
 });
 
@@ -935,18 +959,44 @@ app.get('/admin/teams', requireRole('teams'), async (req, res) => {
   res.render('admin/teams-list', { page: 'admin', items });
 });
 
-app.get('/admin/teams/new', requireRole('teams'), async (req, res) => {
+app.get('/admin/teams/new', requireRole('teams'), (req, res) => {
   res.render('admin/teams-form', { page: 'admin', item: null });
 });
 
-app.post('/admin/teams/new', requireRole('teams'), async (req, res) => {
-  const { slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order } = req.body;
-  try {
-    await db.query(`INSERT INTO teams (slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [slug||'', type||'aktive', name, league||'', extra||'', trainer||'', coach||'', goalie||'', physio||'', times||'', location||'', sort_order||0]);
-    req.session.flash = { type: 'success', msg: 'Team hinzugefügt.' };
-  } catch (e) {
-    req.session.flash = { type: 'error', msg: 'Fehler beim Speichern (Slug bereits vorhanden?).' };
+app.post('/admin/teams/new', requireRole('teams'), uploadAny.any(), async (req, res) => {
+  const { type, name, slug, league, extra, times, location, sort_order } = req.body;
+  const [result] = await db.query(
+    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0]
+  );
+  const teamId = result.insertId;
+
+  // Process dynamic staff
+  const staffRoles = req.body.staff_role || [];
+  const staffNames = req.body.staff_name || [];
+  
+  if (Array.isArray(staffRoles)) {
+    for (let i = 0; i < staffRoles.length; i++) {
+      const role = staffRoles[i];
+      const sName = staffNames[i];
+      if (!sName) continue;
+      
+      let photo = '';
+      const file = req.files && req.files.find(f => f.fieldname === `staff_photo_${i}`);
+      if (file) photo = '/images/trainers/' + file.filename;
+      
+      await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [teamId, role, sName, photo]);
+    }
+  } else if (staffRoles && staffNames) {
+    const role = staffRoles;
+    const sName = staffNames;
+    let photo = '';
+    const file = req.files && req.files.find(f => f.fieldname === `staff_photo_0`);
+    if (file) photo = '/images/trainers/' + file.filename;
+    await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [teamId, role, sName, photo]);
   }
+
+  req.session.flash = { type: 'success', msg: 'Team erstellt.' };
   res.redirect('/admin/teams');
 });
 
@@ -954,17 +1004,48 @@ app.get('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
   const [rows] = await db.query(`SELECT * FROM teams WHERE id = ?`, [req.params.id]);
   const item = rows[0];
   if (!item) return res.redirect('/admin/teams');
+  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY id ASC`, [item.id]);
+  item.staff = staff;
   res.render('admin/teams-form', { page: 'admin', item });
 });
 
-app.post('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
-  const { slug, type, name, league, extra, trainer, coach, goalie, physio, times, location, sort_order } = req.body;
-  try {
-    await db.query(`UPDATE teams SET slug=?, type=?, name=?, league=?, extra=?, trainer=?, coach=?, goalie=?, physio=?, times=?, location=?, sort_order=? WHERE id=?`, [slug||'', type||'aktive', name, league||'', extra||'', trainer||'', coach||'', goalie||'', physio||'', times||'', location||'', sort_order||0, req.params.id]);
-    req.session.flash = { type: 'success', msg: 'Team aktualisiert.' };
-  } catch (e) {
-    req.session.flash = { type: 'error', msg: 'Fehler beim Aktualisieren (Slug bereits vorhanden?).' };
+app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (req, res) => {
+  const { type, name, slug, league, extra, times, location, sort_order } = req.body;
+  await db.query(
+    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=? WHERE id=?`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, req.params.id]
+  );
+  
+  // Process dynamic staff
+  const staffRoles = req.body.staff_role || [];
+  const staffNames = req.body.staff_name || [];
+  const staffExistingPhotos = req.body.staff_existing_photo || [];
+  
+  await db.query(`DELETE FROM team_staff WHERE team_id = ?`, [req.params.id]);
+  
+  if (Array.isArray(staffRoles)) {
+    for (let i = 0; i < staffRoles.length; i++) {
+      const role = staffRoles[i];
+      const sName = staffNames[i];
+      if (!sName) continue;
+      
+      let photo = staffExistingPhotos[i] || '';
+      const file = req.files && req.files.find(f => f.fieldname === `staff_photo_${i}`);
+      if (file) photo = '/images/trainers/' + file.filename;
+      
+      await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [req.params.id, role, sName, photo]);
+    }
+  } else if (staffRoles && staffNames) {
+    // Single item
+    const role = staffRoles;
+    const sName = staffNames;
+    let photo = staffExistingPhotos || '';
+    const file = req.files && req.files.find(f => f.fieldname === `staff_photo_0`);
+    if (file) photo = '/images/trainers/' + file.filename;
+    await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [req.params.id, role, sName, photo]);
   }
+
+  req.session.flash = { type: 'success', msg: 'Team aktualisiert.' };
   res.redirect('/admin/teams');
 });
 
