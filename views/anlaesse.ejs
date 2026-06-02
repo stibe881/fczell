@@ -32,7 +32,11 @@
 
   <% if (anlass.body) { %>
     <div class="prose" style="margin-bottom: 3rem;">
-      <%- mdToHtml(anlass.body) %>
+      <% if (anlass.slug === 'archiv') { %>
+        <%- anlass.body %>
+      <% } else { %>
+        <%- mdToHtml(anlass.body) %>
+      <% } %>
     </div>
   <% } %>
 
