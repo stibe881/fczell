@@ -136,7 +136,7 @@
       <summary class="band-head" style="justify-content: center; text-align: center; cursor: pointer; list-style: none;">
         <div>
           <p class="eyebrow">Trainer & Staff</p>
-          <h2 style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <h2 style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 0;">
             Unsere Trainer
             <svg class="trainer-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </h2>
@@ -144,11 +144,25 @@
         </div>
       </summary>
 
+      <% if (typeof trainers !== 'undefined' && trainers.length > 0) { %>
+        <div class="trainer-filter" style="display:flex; justify-content:center; flex-wrap:wrap; gap:0.5rem; margin-top:2rem;">
+          <button type="button" class="btn btn-primary filter-btn active" data-filter="all">Alle Teams</button>
+          <% 
+            // Extract unique team names, keeping order of appearance
+            const uniqueTeams = [];
+            trainers.forEach(t => { if(!uniqueTeams.includes(t.team_name)) uniqueTeams.push(t.team_name); });
+            uniqueTeams.forEach(teamName => { 
+          %>
+            <button type="button" class="btn btn-outline filter-btn" data-filter="<%= teamName %>"><%= teamName %></button>
+          <% }) %>
+        </div>
+      <% } %>
+
       <div class="vorstand-grid" style="margin-top: 2rem;">
         <% if (typeof trainers !== 'undefined') { %>
           <% trainers.forEach(t => { %>
             <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften#' + t.team_slug; %>
-            <a href="<%= link %>" class="vorstand-card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+            <a href="<%= link %>" class="vorstand-card" data-team="<%= t.team_name %>" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
               <div class="vorstand-avatar">
                 <% const initials = t.name.split(/[\s,]+/).map(n => n[0]).join('').substring(0, 2).toUpperCase(); %>
                 <%= initials %>
@@ -179,6 +193,32 @@
   transition: transform 0.3s ease;
 }
 </style>
+<script>
+  document.querySelectorAll('.trainer-filter .filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Update active state
+      document.querySelectorAll('.trainer-filter .filter-btn').forEach(b => {
+        b.classList.remove('active', 'btn-primary');
+        b.classList.add('btn-outline');
+      });
+      btn.classList.remove('btn-outline');
+      btn.classList.add('active', 'btn-primary');
+      
+      const filter = btn.getAttribute('data-filter');
+      
+      // Filter cards
+      document.querySelectorAll('#trainer .vorstand-card').forEach(card => {
+        if (filter === 'all' || card.getAttribute('data-team') === filter) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
 
 
 <!-- ============ #verhaltenscodex ============ -->
