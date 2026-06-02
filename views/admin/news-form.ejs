@@ -20,12 +20,15 @@
       </label>
       <label>
         <span>Kategorie</span>
-        <input name="category" list="cat-list" value="<%= item ? item.category : 'Allgemein' %>" />
-        <datalist id="cat-list">
-          <% categories.forEach(c => { %>
-            <option value="<%= c.category %>"></option>
-          <% }) %>
-        </datalist>
+        <div style="display: flex; gap: 0.5rem;">
+          <select onchange="document.getElementById('cat_input').value = this.value" style="flex: 1;">
+            <option value="">-- Auswählen --</option>
+            <% categories.forEach(c => { %>
+              <option value="<%= c.category %>" <%= item && item.category === c.category ? 'selected' : (!item && c.category === 'Allgemein' ? 'selected' : '') %>><%= c.category %></option>
+            <% }) %>
+          </select>
+          <input id="cat_input" name="category" value="<%= item ? item.category : 'Allgemein' %>" placeholder="Oder neue tippen..." style="flex: 1;" />
+        </div>
       </label>
     </div>
 
