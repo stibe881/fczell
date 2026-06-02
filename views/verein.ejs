@@ -153,7 +153,7 @@
             trainers.forEach(t => { if(!uniqueTeams.includes(t.team_name)) uniqueTeams.push(t.team_name); });
             uniqueTeams.forEach(teamName => { 
           %>
-            <button type="button" class="btn btn-outline filter-btn" data-filter="<%= teamName %>"><%= teamName %></button>
+            <button type="button" class="btn btn-outline-dark filter-btn" data-filter="<%= teamName %>"><%= teamName %></button>
           <% }) %>
         </div>
       <% } %>
@@ -201,9 +201,9 @@
       // Update active state
       document.querySelectorAll('.trainer-filter .filter-btn').forEach(b => {
         b.classList.remove('active', 'btn-primary');
-        b.classList.add('btn-outline');
+        b.classList.add('btn-outline-dark');
       });
-      btn.classList.remove('btn-outline');
+      btn.classList.remove('btn-outline-dark');
       btn.classList.add('active', 'btn-primary');
       
       const filter = btn.getAttribute('data-filter');
