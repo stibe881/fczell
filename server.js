@@ -980,26 +980,32 @@ app.post('/admin/teams/new', requireRole('teams'), uploadAny.any(), async (req, 
   // Process dynamic staff
   const staffRoles = req.body.staff_role || [];
   const staffNames = req.body.staff_name || [];
+  const staffPhones = req.body.staff_phone || [];
+  const staffEmails = req.body.staff_email || [];
   
   if (Array.isArray(staffRoles)) {
     for (let i = 0; i < staffRoles.length; i++) {
       const role = staffRoles[i];
       const sName = staffNames[i];
+      const sPhone = staffPhones[i] || '';
+      const sEmail = staffEmails[i] || '';
       if (!sName) continue;
       
       let photo = '';
       const file = req.files && req.files.find(f => f.fieldname === `staff_photo_${i}`);
       if (file) photo = '/images/trainers/' + file.filename;
       
-      await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [teamId, role, sName, photo]);
+      await db.query(`INSERT INTO team_staff (team_id, role, name, photo, phone, email) VALUES (?, ?, ?, ?, ?, ?)`, [teamId, role, sName, photo, sPhone, sEmail]);
     }
   } else if (staffRoles && staffNames) {
     const role = staffRoles;
     const sName = staffNames;
+    const sPhone = staffPhones;
+    const sEmail = staffEmails;
     let photo = '';
     const file = req.files && req.files.find(f => f.fieldname === `staff_photo_0`);
     if (file) photo = '/images/trainers/' + file.filename;
-    await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [teamId, role, sName, photo]);
+    await db.query(`INSERT INTO team_staff (team_id, role, name, photo, phone, email) VALUES (?, ?, ?, ?, ?, ?)`, [teamId, role, sName, photo, sPhone || '', sEmail || '']);
   }
 
   req.session.flash = { type: 'success', msg: 'Team erstellt.' };
@@ -1025,6 +1031,8 @@ app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (
   // Process dynamic staff
   const staffRoles = req.body.staff_role || [];
   const staffNames = req.body.staff_name || [];
+  const staffPhones = req.body.staff_phone || [];
+  const staffEmails = req.body.staff_email || [];
   const staffExistingPhotos = req.body.staff_existing_photo || [];
   
   await db.query(`DELETE FROM team_staff WHERE team_id = ?`, [req.params.id]);
@@ -1033,22 +1041,26 @@ app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (
     for (let i = 0; i < staffRoles.length; i++) {
       const role = staffRoles[i];
       const sName = staffNames[i];
+      const sPhone = staffPhones[i] || '';
+      const sEmail = staffEmails[i] || '';
       if (!sName) continue;
       
       let photo = staffExistingPhotos[i] || '';
       const file = req.files && req.files.find(f => f.fieldname === `staff_photo_${i}`);
       if (file) photo = '/images/trainers/' + file.filename;
       
-      await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [req.params.id, role, sName, photo]);
+      await db.query(`INSERT INTO team_staff (team_id, role, name, photo, phone, email) VALUES (?, ?, ?, ?, ?, ?)`, [req.params.id, role, sName, photo, sPhone, sEmail]);
     }
   } else if (staffRoles && staffNames) {
     // Single item
     const role = staffRoles;
     const sName = staffNames;
+    const sPhone = staffPhones;
+    const sEmail = staffEmails;
     let photo = staffExistingPhotos || '';
     const file = req.files && req.files.find(f => f.fieldname === `staff_photo_0`);
     if (file) photo = '/images/trainers/' + file.filename;
-    await db.query(`INSERT INTO team_staff (team_id, role, name, photo) VALUES (?, ?, ?, ?)`, [req.params.id, role, sName, photo]);
+    await db.query(`INSERT INTO team_staff (team_id, role, name, photo, phone, email) VALUES (?, ?, ?, ?, ?, ?)`, [req.params.id, role, sName, photo, sPhone || '', sEmail || '']);
   }
 
   req.session.flash = { type: 'success', msg: 'Team aktualisiert.' };

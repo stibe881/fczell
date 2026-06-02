@@ -20,10 +20,18 @@
 
     <div style="padding: 2rem;">
       <dl class="team-info">
-        <% if (team.trainer) { %><div><dt>Trainer</dt><dd><%= team.trainer %></dd></div><% } %>
-        <% if (team.coach) { %><div><dt>Coach</dt><dd><%= team.coach %></dd></div><% } %>
-        <% if (team.goalie) { %><div><dt>Goalie-Trainer</dt><dd><%= team.goalie %></dd></div><% } %>
-        <% if (team.physio) { %><div><dt>Physio</dt><dd><%= team.physio %></dd></div><% } %>
+        <% if (team.staff && team.staff.length > 0) { %>
+          <% team.staff.forEach(s => { %>
+            <div>
+              <dt><%= s.role %></dt>
+              <dd>
+                <%= s.name %>
+                <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
+                <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
+              </dd>
+            </div>
+          <% }) %>
+        <% } %>
         <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
         <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
         <% if (team.extra) { %><div><dt>Info</dt><dd><%- team.extra %></dd></div><% } %>

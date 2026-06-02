@@ -41,14 +41,16 @@
       <div id="staff-container" style="display:flex; flex-direction:column; gap:1rem;">
         <% if (item && item.staff && item.staff.length > 0) { %>
           <% item.staff.forEach((s, idx) => { %>
-            <div class="staff-row" style="display:flex; gap:0.5rem; align-items:center; background:#f9f9f9; padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
-              <select name="staff_role[]" style="width:150px;">
+            <div class="staff-row" style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; background:#f9f9f9; padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
+              <select name="staff_role[]" style="width:150px;" onchange="sortStaffRows()">
                 <option value="Trainer" <%= s.role === 'Trainer' ? 'selected' : '' %>>Trainer</option>
                 <option value="Co-Trainer" <%= s.role === 'Co-Trainer' ? 'selected' : '' %>>Co-Trainer</option>
                 <option value="Torhütertrainer" <%= s.role === 'Torhütertrainer' ? 'selected' : '' %>>Torhütertrainer</option>
                 <option value="Physio" <%= s.role === 'Physio' ? 'selected' : '' %>>Physio</option>
               </select>
-              <input type="text" name="staff_name[]" value="<%= s.name %>" placeholder="Name" style="flex:1;" />
+              <input type="text" name="staff_name[]" value="<%= s.name %>" placeholder="Name" style="flex:1; min-width:150px;" />
+              <input type="tel" name="staff_phone[]" value="<%= s.phone || '' %>" placeholder="Telefon" style="width:150px;" />
+              <input type="email" name="staff_email[]" value="<%= s.email || '' %>" placeholder="E-Mail" style="width:200px;" />
               
               <div style="width:250px;">
                 <input type="hidden" name="staff_existing_photo[]" value="<%= s.photo %>" />
@@ -84,7 +86,7 @@
         const count = container.children.length;
         const row = document.createElement('div');
         row.className = 'staff-row';
-        row.style.cssText = 'display:flex; gap:0.5rem; align-items:center; background:#f9f9f9; padding:0.5rem; border:1px solid #ddd; border-radius:4px;';
+        row.style.cssText = 'display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; background:#f9f9f9; padding:0.5rem; border:1px solid #ddd; border-radius:4px;';
         row.innerHTML = `
           <select name="staff_role[]" style="width:150px;" onchange="sortStaffRows()">
             <option value="Trainer">Trainer</option>
@@ -92,7 +94,9 @@
             <option value="Torhütertrainer">Torhütertrainer</option>
             <option value="Physio">Physio</option>
           </select>
-          <input type="text" name="staff_name[]" placeholder="Name" style="flex:1;" />
+          <input type="text" name="staff_name[]" placeholder="Name" style="flex:1; min-width:150px;" />
+          <input type="tel" name="staff_phone[]" placeholder="Telefon" style="width:150px;" />
+          <input type="email" name="staff_email[]" placeholder="E-Mail" style="width:200px;" />
           <div style="width:250px;">
             <input type="hidden" name="staff_existing_photo[]" value="" />
             <input type="file" name="staff_photo_${count}" accept="image/*" style="width:160px; font-size:0.8rem;" />
