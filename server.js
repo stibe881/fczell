@@ -176,7 +176,8 @@ app.get('/', async (req, res) => {
 // --- News ---
 app.get('/news', async (req, res) => {
   const [news] = await db.query(`SELECT * FROM news ORDER BY published_at DESC, id DESC`);
-  res.render('news', { page: 'news', news });
+  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  res.render('news', { page: 'news', news, categories });
 });
 
 app.get('/news/:id', async (req, res) => {
@@ -495,7 +496,8 @@ app.get('/admin/news', requireRole('news'), async (req, res) => {
 });
 
 app.get('/admin/news/new', requireRole('news'), async (req, res) => {
-  res.render('admin/news-form', { page: 'admin', item: null });
+  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  res.render('admin/news-form', { page: 'admin', item: null, categories });
 });
 
 app.post('/admin/news/new', requireRole('news'), async (req, res) => {
@@ -512,7 +514,8 @@ app.get('/admin/news/:id/edit', requireRole('news'), async (req, res) => {
   const [rows] = await db.query(`SELECT * FROM news WHERE id = ?`, [req.params.id]);
   const item = rows[0];
   if (!item) return res.redirect('/admin/news');
-  res.render('admin/news-form', { page: 'admin', item });
+  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  res.render('admin/news-form', { page: 'admin', item, categories });
 });
 
 app.post('/admin/news/:id/edit', requireRole('news'), async (req, res) => {

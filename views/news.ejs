@@ -13,9 +13,18 @@
   <% if (news.length === 0) { %>
     <p class="empty">Aktuell sind keine News verfügbar.</p>
   <% } else { %>
+    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+      <div class="news-filters">
+        <button class="news-filter-btn active" data-filter="all">Alle</button>
+        <% categories.forEach(c => { %>
+          <button class="news-filter-btn" data-filter="<%= c.category %>"><%= c.category %></button>
+        <% }) %>
+      </div>
+    <% } %>
+
     <div class="news-cards-grid">
       <% news.forEach(n => { %>
-        <a href="/news/<%= n.id %>" class="news-card">
+        <a href="/news/<%= n.id %>" class="news-card" data-category="<%= n.category || '' %>">
           <div class="news-card-body">
             <div class="news-card-date"><%= formatDate(n.published_at) %><% if (n.category) { %> · <%= n.category %><% } %></div>
             <h3 class="news-card-title"><%= n.title %></h3>
@@ -72,7 +81,57 @@
       font-weight: 600;
       font-size: 0.9rem;
     }
+    .news-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      justify-content: center;
+    }
+    .news-filter-btn {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--fcz-gray-700);
+      transition: all 0.2s;
+    }
+    .news-filter-btn:hover { background: #fafafa; border-color: rgba(0,0,0,0.2); color: var(--fcz-black); }
+    .news-filter-btn.active {
+      background: var(--fcz-red);
+      color: #fff;
+      border-color: var(--fcz-red);
+    }
     </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterBtns = document.querySelectorAll('.news-filter-btn');
+      const cards = document.querySelectorAll('.news-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Update active state
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // Filter cards
+          const filter = btn.dataset.filter;
+          cards.forEach(card => {
+            if (filter === 'all' || card.dataset.category === filter) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+    </script>
   <% } %>
 </section>
 

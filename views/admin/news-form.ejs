@@ -22,13 +22,9 @@
         <span>Kategorie</span>
         <input name="category" list="cat-list" value="<%= item ? item.category : 'Allgemein' %>" />
         <datalist id="cat-list">
-          <option value="1. Mannschaft"></option>
-          <option value="2. Mannschaft"></option>
-          <option value="Senioren 30+"></option>
-          <option value="Junioren"></option>
-          <option value="Verein"></option>
-          <option value="Event"></option>
-          <option value="Allgemein"></option>
+          <% categories.forEach(c => { %>
+            <option value="<%= c.category %>"></option>
+          <% }) %>
         </datalist>
       </label>
     </div>
