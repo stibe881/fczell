@@ -63,7 +63,9 @@ async function importArchiv() {
   const years = Object.keys(grouped).sort((a,b) => b - a);
 
   for (const year of years) {
-    bodyMarkdown += `\n<details>\n  <summary><h2>${year}</h2></summary>\n  <div style="padding: 1rem 0;">\n`;
+    bodyMarkdown += `\n<details style="margin-bottom: 1rem; border: 1px solid var(--fcz-gray-200); border-radius: 8px; overflow: hidden;">\n`;
+    bodyMarkdown += `  <summary style="background: var(--fcz-gray-100); padding: 1rem 1.5rem; cursor: pointer; font-weight: bold; font-size: 1.25rem; margin: 0; list-style-position: inside;">${year}</summary>\n`;
+    bodyMarkdown += `  <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">\n`;
     
     for (const entry of grouped[year]) {
       console.log(`Fetching ${entry.title} (${entry.year}) from ${entry.url}`);
@@ -92,9 +94,12 @@ async function importArchiv() {
         // Remove duplicates and small ones (like WP emoticons)
         images = [...new Set(images)].filter(src => !src.includes('wp-includes/images/smilies'));
         
-        bodyMarkdown += `\n<h3>${entry.title}</h3>\n`;
+        bodyMarkdown += `\n<details style="border: 1px solid var(--fcz-gray-200); border-radius: 6px; overflow: hidden;">\n`;
+        bodyMarkdown += `  <summary style="background: #fff; padding: 0.75rem 1rem; cursor: pointer; font-weight: 600; font-size: 1.1rem; border-bottom: 1px solid var(--fcz-gray-100); list-style-position: inside;">${entry.title}</summary>\n`;
+        bodyMarkdown += `  <div style="padding: 1rem; background: #fafafa;">\n`;
+
         if (cleanText) {
-          bodyMarkdown += `<p>${cleanText}</p>\n`;
+          bodyMarkdown += `<p style="white-space: pre-line;">${cleanText}</p>\n`;
         }
         
         if (images.length >= 6) {
@@ -143,6 +148,7 @@ async function importArchiv() {
           }
           bodyMarkdown += `\n</div>\n`;
         }
+        bodyMarkdown += `\n  </div>\n</details>\n`;
         
       } catch (err) {
         console.error('Error processing', entry.url, err);
