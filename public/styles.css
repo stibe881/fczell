@@ -1707,3 +1707,22 @@ select.form-control {
   max-width: var(--max-w);
   margin: 0 auto;
 }
+/* Prose Table Styles */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+.prose th, .prose td {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--fcz-gray-200);
+  text-align: left;
+}
+.prose th {
+  background-color: var(--fcz-gray-100);
+  font-weight: 600;
+}
+.prose tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
