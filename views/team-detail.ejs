@@ -35,6 +35,15 @@
         <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
         <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
         <% if (team.extra) { %><div><dt>Info</dt><dd><%- team.extra %></dd></div><% } %>
+        <% if (team.contact_phone || team.contact_email) { %>
+          <div>
+            <dt>Kontakt</dt>
+            <dd>
+              <% if (team.contact_phone) { %><a href="tel:<%= team.contact_phone.replace(/\s/g, '') %>" style="color:var(--fcz-gray-600); text-decoration:none;"><%= team.contact_phone %></a><br><% } %>
+              <% if (team.contact_email) { %><a href="mailto:<%= team.contact_email %>" style="color:var(--fcz-gray-600); text-decoration:none;"><%= team.contact_email %></a><% } %>
+            </dd>
+          </div>
+        <% } %>
       </dl>
 
       <% if (team.sponsor_logo) { %>

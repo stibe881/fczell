@@ -970,10 +970,10 @@ app.get('/admin/teams/new', requireRole('teams'), (req, res) => {
 });
 
 app.post('/admin/teams/new', requireRole('teams'), uploadAny.any(), async (req, res) => {
-  const { type, name, slug, league, extra, times, location, sort_order } = req.body;
+  const { type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email } = req.body;
   const [result] = await db.query(
-    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0]
+    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '']
   );
   const teamId = result.insertId;
 
@@ -1022,10 +1022,10 @@ app.get('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
 });
 
 app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (req, res) => {
-  const { type, name, slug, league, extra, times, location, sort_order } = req.body;
+  const { type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email } = req.body;
   await db.query(
-    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=? WHERE id=?`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, req.params.id]
+    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=?, contact_phone=?, contact_email=? WHERE id=?`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', req.params.id]
   );
   
   // Process dynamic staff

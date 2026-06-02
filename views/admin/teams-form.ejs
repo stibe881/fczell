@@ -36,6 +36,17 @@
       <input type="text" id="extra" name="extra" value="<%= item ? item.extra : '' %>" />
     </div>
 
+    <div class="form-group" style="display:flex; gap:1rem;">
+      <div style="flex:1;">
+        <label for="contact_phone">Team Telefonnummer (allgemein)</label>
+        <input type="tel" id="contact_phone" name="contact_phone" value="<%= item ? item.contact_phone : '' %>" placeholder="+41 79 123 45 67" />
+      </div>
+      <div style="flex:1;">
+        <label for="contact_email">Team E-Mail (allgemein)</label>
+        <input type="email" id="contact_email" name="contact_email" value="<%= item ? item.contact_email : '' %>" placeholder="info@fczell.ch" />
+      </div>
+    </div>
+
     <div class="form-group">
       <label>Staff (Trainer, Co-Trainer, Physio, etc.)</label>
       <div id="staff-container" style="display:flex; flex-direction:column; gap:1rem;">
