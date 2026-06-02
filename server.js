@@ -243,7 +243,8 @@ app.get('/mannschaften', async (req, res) => {
   const [juniorTeams] = await db.query(`SELECT * FROM teams WHERE type = 'junioren' ORDER BY sort_order ASC, id ASC`);
   
   const [allStaff] = await db.query(`SELECT * FROM team_staff`);
-  const mapStaff = (t) => { t.staff = allStaff.filter(s => s.team_id === t.id).sort((a,b)=>a.sort_order - b.sort_order); return t; };
+  const roleOrder = { 'Trainer': 1, 'Co-Trainer': 2, 'Torhütertrainer': 3, 'Physio': 4 };
+  const mapStaff = (t) => { t.staff = allStaff.filter(s => s.team_id === t.id).sort((a,b)=>(roleOrder[a.role]||5) - (roleOrder[b.role]||5)); return t; };
   aktiveTeams.forEach(mapStaff);
   juniorTeams.forEach(mapStaff);
   
@@ -276,7 +277,7 @@ app.get('/mannschaften/junioren/:slug', async (req, res) => {
   const team = rows[0];
   if (!team) return res.status(404).render('404', { page: '404' });
   
-  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY sort_order ASC, id ASC`, [team.id]);
+  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY CASE role WHEN 'Trainer' THEN 1 WHEN 'Co-Trainer' THEN 2 WHEN 'Torhütertrainer' THEN 3 WHEN 'Physio' THEN 4 ELSE 5 END ASC, id ASC`, [team.id]);
   team.staff = staff;
   res.render('team-detail', { page: 'mannschaften', team });
 });
@@ -957,8 +958,9 @@ app.post('/admin/advertisers/:id/delete', requireRole('sponsoring'), async (req,
 app.get('/admin/teams', requireRole('teams'), async (req, res) => {
   const [items] = await db.query(`SELECT * FROM teams ORDER BY type ASC, sort_order ASC, id ASC`);
   const [allStaff] = await db.query(`SELECT * FROM team_staff`);
+  const roleOrder = { 'Trainer': 1, 'Co-Trainer': 2, 'Torhütertrainer': 3, 'Physio': 4 };
   items.forEach(item => {
-    item.staff = allStaff.filter(s => s.team_id === item.id).sort((a,b)=>a.sort_order - b.sort_order);
+    item.staff = allStaff.filter(s => s.team_id === item.id).sort((a,b)=>(roleOrder[a.role]||5) - (roleOrder[b.role]||5));
   });
   res.render('admin/teams-list', { page: 'admin', items });
 });
@@ -1008,7 +1010,7 @@ app.get('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
   const [rows] = await db.query(`SELECT * FROM teams WHERE id = ?`, [req.params.id]);
   const item = rows[0];
   if (!item) return res.redirect('/admin/teams');
-  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY id ASC`, [item.id]);
+  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY CASE role WHEN 'Trainer' THEN 1 WHEN 'Co-Trainer' THEN 2 WHEN 'Torhütertrainer' THEN 3 WHEN 'Physio' THEN 4 ELSE 5 END ASC, id ASC`, [item.id]);
   item.staff = staff;
   res.render('admin/teams-form', { page: 'admin', item });
 });

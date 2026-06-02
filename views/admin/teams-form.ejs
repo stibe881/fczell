@@ -66,6 +66,19 @@
     </div>
 
     <script>
+      const roleOrder = { 'Trainer': 1, 'Co-Trainer': 2, 'Torhütertrainer': 3, 'Physio': 4 };
+      
+      function sortStaffRows() {
+        const container = document.getElementById('staff-container');
+        const rows = Array.from(container.children);
+        rows.sort((a, b) => {
+          const roleA = a.querySelector('select[name="staff_role[]"]').value;
+          const roleB = b.querySelector('select[name="staff_role[]"]').value;
+          return (roleOrder[roleA] || 5) - (roleOrder[roleB] || 5);
+        });
+        rows.forEach(row => container.appendChild(row));
+      }
+
       function addStaffRow() {
         const container = document.getElementById('staff-container');
         const count = container.children.length;
@@ -73,7 +86,7 @@
         row.className = 'staff-row';
         row.style.cssText = 'display:flex; gap:0.5rem; align-items:center; background:#f9f9f9; padding:0.5rem; border:1px solid #ddd; border-radius:4px;';
         row.innerHTML = `
-          <select name="staff_role[]" style="width:150px;">
+          <select name="staff_role[]" style="width:150px;" onchange="sortStaffRows()">
             <option value="Trainer">Trainer</option>
             <option value="Co-Trainer">Co-Trainer</option>
             <option value="Torhütertrainer">Torhütertrainer</option>
@@ -87,12 +100,18 @@
           <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
         `;
         container.appendChild(row);
+        sortStaffRows();
       }
       
       // Add one empty row by default if empty
       if (document.getElementById('staff-container').children.length === 0) {
         addStaffRow();
       }
+      
+      // Attach onchange to existing selects
+      document.querySelectorAll('select[name="staff_role[]"]').forEach(sel => {
+        sel.addEventListener('change', sortStaffRows);
+      });
     </script>
 
     <div class="form-group">
