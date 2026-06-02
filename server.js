@@ -192,7 +192,10 @@ app.get('/', async (req, res) => {
 // --- News ---
 app.get('/news', async (req, res) => {
   const [news] = await db.query(`SELECT * FROM news ORDER BY published_at DESC, id DESC`);
-  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  const [catRows] = await db.query(`SELECT category FROM news WHERE category IS NOT NULL AND category != ''`);
+  let uniqueCats = new Set();
+  catRows.forEach(r => r.category.split(',').forEach(c => c.trim() && uniqueCats.add(c.trim())));
+  const categories = Array.from(uniqueCats).map(c => ({category: c})).sort((a,b) => a.category.localeCompare(b.category));
   res.render('news', { page: 'news', news, categories });
 });
 
@@ -521,12 +524,24 @@ app.get('/admin/news', requireRole('news'), async (req, res) => {
 });
 
 app.get('/admin/news/new', requireRole('news'), async (req, res) => {
-  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  const [catRows] = await db.query(`SELECT category FROM news WHERE category IS NOT NULL AND category != ''`);
+  let uniqueCats = new Set();
+  catRows.forEach(r => r.category.split(',').forEach(c => c.trim() && uniqueCats.add(c.trim())));
+  const categories = Array.from(uniqueCats).map(c => ({category: c})).sort((a,b) => a.category.localeCompare(b.category));
   res.render('admin/news-form', { page: 'admin', item: null, categories });
 });
 
 app.post('/admin/news/new', requireRole('news'), uploadAny.any(), async (req, res) => {
-  const { title, excerpt, category, published_at, content } = req.body;
+  const { title, excerpt, published_at, content, new_category } = req.body;
+  let cats = [];
+  if (req.body.category_chk) {
+    if (Array.isArray(req.body.category_chk)) cats.push(...req.body.category_chk);
+    else cats.push(req.body.category_chk);
+  }
+  if (new_category) {
+    cats.push(...new_category.split(',').map(s => s.trim()).filter(Boolean));
+  }
+  const category = cats.join(', ');
   let imagePath = '';
   const file = req.files && req.files.find(f => f.fieldname === 'image');
   if (file) {
@@ -544,12 +559,24 @@ app.get('/admin/news/:id/edit', requireRole('news'), async (req, res) => {
   const [rows] = await db.query(`SELECT * FROM news WHERE id = ?`, [req.params.id]);
   const item = rows[0];
   if (!item) return res.redirect('/admin/news');
-  const [categories] = await db.query(`SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category ASC`);
+  const [catRows] = await db.query(`SELECT category FROM news WHERE category IS NOT NULL AND category != ''`);
+  let uniqueCats = new Set();
+  catRows.forEach(r => r.category.split(',').forEach(c => c.trim() && uniqueCats.add(c.trim())));
+  const categories = Array.from(uniqueCats).map(c => ({category: c})).sort((a,b) => a.category.localeCompare(b.category));
   res.render('admin/news-form', { page: 'admin', item, categories });
 });
 
 app.post('/admin/news/:id/edit', requireRole('news'), uploadAny.any(), async (req, res) => {
-  const { title, excerpt, category, published_at, content } = req.body;
+  const { title, excerpt, published_at, content, new_category } = req.body;
+  let cats = [];
+  if (req.body.category_chk) {
+    if (Array.isArray(req.body.category_chk)) cats.push(...req.body.category_chk);
+    else cats.push(req.body.category_chk);
+  }
+  if (new_category) {
+    cats.push(...new_category.split(',').map(s => s.trim()).filter(Boolean));
+  }
+  const category = cats.join(', ');
   
   let imageQuery = '';
   let imageParam = [];
