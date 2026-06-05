@@ -16,7 +16,12 @@
     <div class="form-row">
       <label>
         <span>Datum *</span>
-        <input type="date" name="event_date" required value="<%= item ? item.event_date : '' %>" />
+        <%
+          let d = new Date();
+          if (item && item.event_date) d = new Date(item.event_date);
+          const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        %>
+        <input type="date" name="event_date" required value="<%= item ? dateStr : '' %>" />
       </label>
       <label>
         <span>Zeit</span>
