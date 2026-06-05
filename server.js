@@ -6,6 +6,7 @@ const path = require('path');
 const db = require('./db');
 const multer = require('multer');
 const { sendContactEmail, sendRegistrationConfirmation } = require('./email');
+const { marked } = require('marked');
 
 // --- Multer storages ---
 const sponsorStorage = multer.diskStorage({
@@ -79,21 +80,7 @@ function escapeHtml(s) {
 
 function mdToHtml(text) {
   if (!text) return '';
-  const blocks = String(text).split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
-  return blocks.map(block => {
-    const headerMatch = block.match(/^(#{1,6})\s+(.+)$/s);
-    if (headerMatch) {
-      const level = headerMatch[1].length;
-      return `<h${level}>` + inline(headerMatch[2]).replace(/\n/g, '<br>') + `</h${level}>`;
-    }
-    const lines = block.split('\n');
-    if (lines.every(l => /^[-*]\s+/.test(l))) {
-      return '<ul>' + lines.map(l =>
-        '<li>' + inline(l.replace(/^[-*]\s+/, '')) + '</li>'
-      ).join('') + '</ul>';
-    }
-    return '<p>' + inline(block).replace(/\n/g, '<br>') + '</p>';
-  }).join('\n');
+  return marked.parse(String(text));
 }
 
 function inline(s) {
