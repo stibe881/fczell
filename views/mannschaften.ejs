@@ -32,6 +32,8 @@
 
   <div class="matchcenter-iframe-wrap" style="max-width: var(--max-w); margin: 0 auto;">
     <iframe
+      name="sfvWidget"
+      id="sfvWidget"
       class="sfvFullHeight"
       src="https://widget.football.ch/Widgets.aspx/v-384/t-31390/a-trr/"
       width="100%"
@@ -101,7 +103,7 @@
       <% if (team.sfv_team_id) { %>
         <div class="team-widget" style="margin-top: 3rem; max-width: 800px;">
           <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
-          <iframe class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
+          <iframe name="sfvWidget" id="sfvWidget" class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
         </div>
       <% } %>
@@ -160,7 +162,7 @@
       <% if (team.sfv_team_id) { %>
         <div class="team-widget" style="margin-top: 3rem; max-width: 800px;">
           <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
-          <iframe class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
+          <iframe name="sfvWidget" id="sfvWidget" class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
         </div>
       <% } %>
@@ -219,7 +221,7 @@
       <% if (team.sfv_team_id) { %>
         <div class="team-widget" style="margin-top: 3rem; max-width: 800px;">
           <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
-          <iframe class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
+          <iframe name="sfvWidget" id="sfvWidget" class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="no" style="border: none; background: transparent;"></iframe>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
         </div>
       <% } %>
