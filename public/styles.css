@@ -1737,3 +1737,11 @@ select.form-control {
 .lightbox-prev { left: 10px; }
 .lightbox-next { right: 10px; }
 @media (max-width: 768px) { .lightbox-prev, .lightbox-next { display: none; } }
+
+
+details.accordion-card[open] summary .chevron {
+  transform: rotate(180deg);
+}
+details.accordion-card summary::-webkit-details-marker {
+  display: none;
+}
