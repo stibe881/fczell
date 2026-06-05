@@ -81,6 +81,11 @@ function mdToHtml(text) {
   if (!text) return '';
   const blocks = String(text).split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
   return blocks.map(block => {
+    const headerMatch = block.match(/^(#{1,6})\s+(.+)$/s);
+    if (headerMatch) {
+      const level = headerMatch[1].length;
+      return `<h${level}>` + inline(headerMatch[2]).replace(/\n/g, '<br>') + `</h${level}>`;
+    }
     const lines = block.split('\n');
     if (lines.every(l => /^[-*]\s+/.test(l))) {
       return '<ul>' + lines.map(l =>
@@ -427,6 +432,13 @@ app.get('/datenschutz', async (req, res) => {
   const [rows] = await db.query(`SELECT * FROM pages WHERE slug = 'datenschutz'`);
   const datenschutz = rows[0];
   res.render('datenschutz', { page: 'datenschutz', datenschutz });
+});
+
+// --- Impressum ---
+app.get('/impressum', async (req, res) => {
+  const [rows] = await db.query(`SELECT * FROM pages WHERE slug = 'impressum'`);
+  const impressum = rows[0];
+  res.render('impressum', { page: 'impressum', impressum });
 });
 
 // --- Jobs ---
