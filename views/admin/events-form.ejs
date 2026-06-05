@@ -55,8 +55,8 @@
       </label>
       
       <label id="livestream_url_wrapper" style="display: <%= item && item.has_livestream ? 'flex' : 'none' %>;">
-        <span>Veo Embed-Code (Iframe)</span>
-        <textarea name="livestream_url" rows="3" placeholder="<iframe src='...' ...></iframe>"><%= item ? item.livestream_url : '' %></textarea>
+        <span>Veo Livestream URL (z.B. https://app.veo.co/...)</span>
+        <input type="url" name="livestream_url" placeholder="https://app.veo.co/matches/..." value="<%= item ? item.livestream_url : '' %>" />
       </label>
     </div>
     
