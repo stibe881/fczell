@@ -66,12 +66,14 @@
         <div class="team-widget" style="margin-top: 4rem;">
           <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
           <iframe
+            class="sfvFullHeight"
             src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/"
             width="100%"
-            height="600"
             frameborder="0"
-            style="border: none; border-radius: var(--radius); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            scrolling="no"
+            style="border: none; background: transparent;">
           </iframe>
+          <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
         </div>
       <% } %>
 
