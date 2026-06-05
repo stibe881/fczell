@@ -38,16 +38,65 @@
       
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
       <% aktiveTeams.filter(t => t.sfv_team_id).forEach(team => { %>
-        <div class="sfv-widget-col">
-          <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800); text-align: center;"><%= team.name %></h3>
+        <details class="sfv-widget-col accordion-card">
+            <summary style="cursor: pointer; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; outline: none; list-style: none;">
+              <h3 style="margin: 0; color: var(--fcz-gray-800); text-align: center;"><%= team.name %></h3>
+              <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.3s ease;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </summary>
           <div style="overflow: hidden; width: 100%;">
             <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>"  class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -155px;"></iframe>
           </div>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
-        </div>
-      <% }) %>
+        </details>
+        <% }) %>
     </div>
-  
+      <script>
+      (function() {
+        const globalAcc = document.querySelector('.global-accordion');
+        const individualAccs = document.querySelectorAll('.sfv-widget-col.accordion-card');
+        const mql = window.matchMedia('(min-width: 768px)');
+        
+        // Disable default chevron to avoid duplicate triangles
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .accordion-card summary::-webkit-details-marker { display: none; }
+          .accordion-card summary { list-style: none; }
+          .accordion-card[open] > summary .chevron { transform: rotate(180deg); }
+        `;
+        document.head.appendChild(style);
+
+        function handleResize(e) {
+          if (e.matches) { // Desktop
+            individualAccs.forEach(acc => {
+              acc.setAttribute('open', '');
+              acc.querySelector('summary').style.pointerEvents = 'none';
+              acc.querySelector('.chevron').style.display = 'none';
+              acc.querySelector('summary').style.borderBottom = 'none';
+            });
+            globalAcc.querySelector('summary').style.pointerEvents = 'auto';
+            globalAcc.querySelector('.chevron').style.display = 'block';
+          } else { // Mobile
+            globalAcc.setAttribute('open', '');
+            globalAcc.querySelector('summary').style.pointerEvents = 'none';
+            globalAcc.querySelector('.chevron').style.display = 'none';
+            individualAccs.forEach(acc => {
+              acc.removeAttribute('open');
+              acc.querySelector('summary').style.pointerEvents = 'auto';
+              acc.querySelector('.chevron').style.display = 'block';
+              acc.querySelector('summary').style.borderBottom = '1px solid rgba(0,0,0,0.05)';
+            });
+          }
+        }
+
+        if(mql.addEventListener) {
+          mql.addEventListener('change', handleResize);
+        } else {
+          mql.addListener(handleResize);
+        }
+        handleResize(mql);
+      })();
+      </script>
+
     </details>
   </div>
     <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
@@ -106,8 +155,8 @@
                 <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
                 <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
               </dd>
-            </div>
-          <% }) %>
+            </details>
+        <% }) %>
         <% } %>
         <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
         <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
@@ -161,8 +210,8 @@
                 <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
                 <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
               </dd>
-            </div>
-          <% }) %>
+            </details>
+        <% }) %>
         <% } %>
         <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
         <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
@@ -216,8 +265,8 @@
                 <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
                 <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
               </dd>
-            </div>
-          <% }) %>
+            </details>
+        <% }) %>
         <% } %>
         <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
         <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
