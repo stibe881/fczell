@@ -29,13 +29,25 @@
     <div class="form-group">
       <label>Logo (Bilddatei, optional)</label>
       <% if (isEdit && item.logo) { %>
-        <div style="margin-bottom: 0.5rem;">
-          <img src="<%= item.logo %>" alt="Aktuelles Logo" style="max-height: 80px; object-fit: contain; border: 1px solid #ddd; padding: 4px; border-radius: 4px;" />
-        </div>
-        <p class="muted" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Aktuelles Logo wird beibehalten, wenn kein neues hochgeladen wird.</p>
         <input type="hidden" name="existing_logo" value="<%= item.logo %>" />
       <% } %>
-      <input type="file" name="logo" accept="image/*" />
+
+      <div id="dropzone" class="dropzone-area <%= isEdit && item.logo ? 'has-image' : '' %>">
+        <input type="file" name="logo" id="logo-input" accept="image/png, image/jpeg, image/webp, image/svg+xml, image/gif" class="dropzone-input" />
+        
+        <div class="dropzone-content" id="dropzone-content" style="display: <%= isEdit && item.logo ? 'none' : 'flex' %>;">
+          <div style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 8px;">📸</div>
+          <span class="dropzone-title">Bild hier ablegen oder klicken</span>
+          <span class="dropzone-desc">Erlaubt: PNG, JPG, WEBP, SVG</span>
+        </div>
+        
+        <div class="dropzone-preview" id="dropzone-preview" style="display: <%= isEdit && item.logo ? 'block' : 'none' %>;">
+          <img id="preview-img" src="<%= isEdit && item.logo ? item.logo : '' %>" alt="Logo Vorschau" />
+          <div class="preview-overlay">
+            <span>Anderes Bild wählen</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -49,5 +61,145 @@
     </div>
   </form>
 </div>
+
+<style>
+  .dropzone-area {
+    position: relative;
+    width: 100%;
+    min-height: 160px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dropzone-area:hover, .dropzone-area.dragover {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+  }
+  .dropzone-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    padding: 20px;
+    text-align: center;
+  }
+  .dropzone-title {
+    font-weight: 600;
+    color: #475569;
+    font-size: 1.1rem;
+  }
+  .dropzone-desc {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 4px;
+  }
+  .dropzone-preview {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+  }
+  .dropzone-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+  }
+  .preview-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: white;
+    font-weight: bold;
+  }
+  .dropzone-area:hover .preview-overlay {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const dropzone = document.getElementById('dropzone');
+  const input = document.getElementById('logo-input');
+  const content = document.getElementById('dropzone-content');
+  const preview = document.getElementById('dropzone-preview');
+  const previewImg = document.getElementById('preview-img');
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    dropzone.classList.add('dragover');
+  }
+
+  function unhighlight(e) {
+    dropzone.classList.remove('dragover');
+  }
+
+  dropzone.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    let dt = e.dataTransfer;
+    let files = dt.files;
+    if (files && files.length) {
+      input.files = files; // Assign files to input
+      updatePreview(files[0]);
+    }
+  }
+
+  input.addEventListener('change', function(e) {
+    if (this.files && this.files.length) {
+      updatePreview(this.files[0]);
+    }
+  });
+
+  function updatePreview(file) {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        content.style.display = 'none';
+        preview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
 
 <%- include('_admin-footer') %>
