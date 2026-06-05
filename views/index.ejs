@@ -7,15 +7,12 @@
     <span class="live-pulse"></span>
     <span style="color: #fff; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Live Übertragung</span>
   </div>
-  <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%;">
+  <div class="video-container" style="position: relative; width: 100%; height: auto; aspect-ratio: 16/9; max-height: 85vh; max-width: calc(85vh * 16 / 9); margin: 0 auto; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000;">
     <%- veoLiveEmbed %>
   </div>
 </section>
 <style>
   .stadion-modus iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     border: none;
