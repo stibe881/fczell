@@ -178,8 +178,8 @@ app.get('/', async (req, res) => {
   const [news] = await db.query(`SELECT * FROM news ORDER BY published_at DESC, id DESC LIMIT 6`);
   const [heroRows] = await db.query(`SELECT * FROM pages WHERE slug = 'hero'`);
   const hero = heroRows[0];
-  const veoLiveRows = await db.query(`SELECT * FROM pages WHERE slug = 'veo-live-embed'`);
-  const veoLiveEmbed = veoLiveRows[0][0] ? veoLiveRows[0][0].body.trim() : '';
+  const [liveEventRows] = await db.query(`SELECT livestream_url FROM events WHERE has_livestream = 1 AND livestream_url IS NOT NULL AND livestream_url != '' LIMIT 1`);
+  const veoLiveEmbed = liveEventRows.length > 0 ? liveEventRows[0].livestream_url.trim() : '';
   res.render('index', { page: 'home', news, hero, veoLiveEmbed });
 });
 
@@ -612,11 +612,12 @@ app.get('/admin/events/new', requireRole('teams'), async (req, res) => {
 });
 
 app.post('/admin/events/new', requireRole('teams'), async (req, res) => {
-  const { title, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const { title, event_date, event_time, location, description, is_match, live_ticker, has_livestream, livestream_url } = req.body;
   const isMatchVal = is_match === '1' ? 1 : 0;
+  const hasLivestreamVal = has_livestream === '1' ? 1 : 0;
   await db.query(
-    `INSERT INTO events (title, event_date, event_time, location, description, is_match, live_ticker) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [title, event_date, event_time || '', location || '', description || '', isMatchVal, live_ticker || '']
+    `INSERT INTO events (title, event_date, event_time, location, description, is_match, live_ticker, has_livestream, livestream_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [title, event_date, event_time || '', location || '', description || '', isMatchVal, live_ticker || '', hasLivestreamVal, livestream_url || '']
   );
   req.session.flash = { type: 'success', msg: 'Termin gespeichert.' };
   res.redirect('/admin/events');
@@ -630,11 +631,12 @@ app.get('/admin/events/:id/edit', requireRole('teams'), async (req, res) => {
 });
 
 app.post('/admin/events/:id/edit', requireRole('teams'), async (req, res) => {
-  const { title, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const { title, event_date, event_time, location, description, is_match, live_ticker, has_livestream, livestream_url } = req.body;
   const isMatchVal = is_match === '1' ? 1 : 0;
+  const hasLivestreamVal = has_livestream === '1' ? 1 : 0;
   await db.query(
-    `UPDATE events SET title=?, event_date=?, event_time=?, location=?, description=?, is_match=?, live_ticker=?, updated_at=NOW() WHERE id=?`,
-    [title, event_date, event_time || '', location || '', description || '', isMatchVal, live_ticker || '', req.params.id]
+    `UPDATE events SET title=?, event_date=?, event_time=?, location=?, description=?, is_match=?, live_ticker=?, has_livestream=?, livestream_url=?, updated_at=NOW() WHERE id=?`,
+    [title, event_date, event_time || '', location || '', description || '', isMatchVal, live_ticker || '', hasLivestreamVal, livestream_url || '', req.params.id]
   );
   req.session.flash = { type: 'success', msg: 'Termin aktualisiert.' };
   res.redirect('/admin/events');
