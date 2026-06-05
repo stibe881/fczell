@@ -1,0 +1,136 @@
+<!-- Cookie Banner -->
+<div id="cookieBanner" class="cookie-banner" style="display: none;">
+  <div class="cookie-banner-inner">
+    <div class="cookie-icon">
+      ⚽
+    </div>
+    <div class="cookie-content">
+      <h3>Fairplay auf dem Rasen – und im Netz!</h3>
+      <p>
+        Wie im Fussball brauchen wir auf unserer Website die richtige Aufstellung (Cookies), damit alles rund läuft. Einige sind für den Spielbetrieb unverzichtbar (technisch notwendig), andere helfen uns dabei, unsere Taktik zu verbessern (Statistiken). Bist du bereit für den Anpfiff?
+      </p>
+      <div class="cookie-buttons">
+        <button id="btnCookieAccept" class="btn btn-primary">Anpfiff! (Alle akzeptieren)</button>
+        <button id="btnCookieEssential" class="btn btn-outline-dark">Nur Verteidigung (Essenzielle)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 700px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    z-index: 9999;
+    border-left: 6px solid var(--fcz-red);
+    overflow: hidden;
+  }
+  
+  .cookie-banner-inner {
+    display: flex;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .cookie-icon {
+    font-size: 3rem;
+    line-height: 1;
+    flex-shrink: 0;
+    animation: spin-slow 10s linear infinite;
+  }
+  
+  @keyframes spin-slow {
+    100% { transform: rotate(360deg); }
+  }
+  
+  .cookie-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--fcz-gray-800);
+    font-size: 1.25rem;
+  }
+  
+  .cookie-content p {
+    margin: 0 0 1.25rem 0;
+    font-size: 0.9rem;
+    color: var(--fcz-gray-600);
+    line-height: 1.5;
+  }
+  
+  .cookie-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 600px) {
+    .cookie-banner {
+      bottom: 0;
+      width: 100%;
+      border-radius: 20px 20px 0 0;
+      border-left: none;
+      border-top: 6px solid var(--fcz-red);
+    }
+    .cookie-banner-inner {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      gap: 1rem;
+    }
+    .cookie-buttons {
+      width: 100%;
+      flex-direction: column;
+    }
+    .cookie-buttons .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const banner = document.getElementById('cookieBanner');
+    const btnAccept = document.getElementById('btnCookieAccept');
+    const btnEssential = document.getElementById('btnCookieEssential');
+    
+    // Check if user already made a choice
+    const cookieChoice = localStorage.getItem('fcz_cookie_consent');
+    
+    if (!cookieChoice) {
+      // Show banner after a tiny delay for better UX
+      setTimeout(() => {
+        banner.style.display = 'block';
+        // Small animation
+        banner.animate([
+          { transform: window.innerWidth <= 600 ? 'translateY(100%)' : 'translate(-50%, 50px)', opacity: 0 },
+          { transform: window.innerWidth <= 600 ? 'translateY(0)' : 'translate(-50%, 0)', opacity: 1 }
+        ], { duration: 400, easing: 'ease-out' });
+      }, 500);
+    }
+    
+    function closeBanner(choice) {
+      localStorage.setItem('fcz_cookie_consent', choice);
+      
+      const anim = banner.animate([
+        { transform: window.innerWidth <= 600 ? 'translateY(0)' : 'translate(-50%, 0)', opacity: 1 },
+        { transform: window.innerWidth <= 600 ? 'translateY(100%)' : 'translate(-50%, 50px)', opacity: 0 }
+      ], { duration: 300, easing: 'ease-in' });
+      
+      anim.onfinish = () => {
+        banner.style.display = 'none';
+      };
+    }
+    
+    btnAccept.addEventListener('click', () => closeBanner('all'));
+    btnEssential.addEventListener('click', () => closeBanner('essential'));
+  });
+</script>

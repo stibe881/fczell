@@ -1,0 +1,20 @@
+<% const pageTitle = 'Impressum'; %>
+<%- include('partials/header') %>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1><%= impressum ? impressum.title : 'Impressum' %></h1>
+  </div>
+</section>
+
+<section class="band band-light">
+  <div class="container content-page">
+    <% if (impressum) { %>
+      <%- mdToHtml(impressum.body) %>
+    <% } else { %>
+      <p>Das Impressum wird in Kürze veröffentlicht.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
