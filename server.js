@@ -191,7 +191,9 @@ app.get('/', async (req, res) => {
   const [news] = await db.query(`SELECT * FROM news ORDER BY published_at DESC, id DESC LIMIT 6`);
   const [heroRows] = await db.query(`SELECT * FROM pages WHERE slug = 'hero'`);
   const hero = heroRows[0];
-  res.render('index', { page: 'home', news, hero });
+  const veoLiveRows = await db.query(`SELECT * FROM pages WHERE slug = 'veo-live-embed'`);
+  const veoLiveEmbed = veoLiveRows[0][0] ? veoLiveRows[0][0].body.trim() : '';
+  res.render('index', { page: 'home', news, hero, veoLiveEmbed });
 });
 
 // --- News ---
