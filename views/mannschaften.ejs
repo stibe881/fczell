@@ -23,28 +23,32 @@
 
 <!-- ============ #resultate ============ -->
 <section class="band band-light" id="resultate">
-  <div class="band-head" style="justify-content: center; text-align: center;">
-    <div>
-      <p class="eyebrow">Spielbetrieb</p>
-      <h2>Resultate &amp; Ranglisten</h2>
-    </div>
-  </div>
+  
 
-  <div class="container">
+  <div class="container" style="max-width: var(--max-w); margin: 0 auto;">
+    <details class="global-accordion accordion-card" style="background: #fff; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 2rem;">
+      <summary style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; outline: none; list-style: none;">
+        <p class="eyebrow" style="margin-bottom: 0.5rem;">Spielbetrieb</p>
+        <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+          Resultate &amp; Ranglisten
+          <svg class="chevron" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--fcz-red)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </h2>
+      </summary>
+      
+      
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
       <% aktiveTeams.filter(t => t.sfv_team_id).forEach(team => { %>
-        <details class="sfv-widget-col accordion-card" style="background: #fff; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.5rem;">
-          <summary style="cursor: pointer; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; outline: none; list-style: none;">
-            <h3 style="margin: 0; color: var(--fcz-gray-800);"><%= team.name %></h3>
-            <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.3s ease;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </summary>
+        <div class="sfv-widget-col">
+          <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800); text-align: center;"><%= team.name %></h3>
           <div style="overflow: hidden; width: 100%;">
             <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>"  class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -155px;"></iframe>
           </div>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
-        </details>
+        </div>
       <% }) %>
     </div>
+  
+    </details>
   </div>
     <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
   </div>
