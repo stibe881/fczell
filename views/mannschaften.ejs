@@ -88,7 +88,9 @@
     <div class="team-content">
       <% if (team.photo) { %>
         <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
+            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          </a>
         </div>
       <% } %>
 
@@ -147,7 +149,9 @@
     <div class="team-content">
       <% if (team.photo) { %>
         <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
+            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          </a>
         </div>
       <% } %>
 
@@ -206,7 +210,9 @@
     <div class="team-content">
       <% if (team.photo) { %>
         <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
+            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
+          </a>
         </div>
       <% } %>
 

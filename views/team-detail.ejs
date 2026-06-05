@@ -14,7 +14,9 @@
     
     <% if (team.photo) { %>
       <div class="team-photo" style="width: 100%; background: #f4f4f4;">
-        <img src="<%= team.photo %>" alt="<%= team.name %>" style="width: 100%; height: auto; display: block;" />
+        <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
+          <img src="<%= team.photo %>" alt="<%= team.name %>" style="width: 100%; height: auto; display: block;" />
+        </a>
       </div>
     <% } %>
 
@@ -65,17 +67,9 @@
       <% if (team.sfv_team_id) { %>
         <div class="team-widget" style="margin-top: 4rem;">
           <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
-          <iframe
-            name="sfvWidget"
-            id="sfvWidget"
-            sandbox="allow-scripts allow-same-origin allow-forms"
-            class="sfvFullHeight"
-            src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/"
-            width="100%"
-            frameborder="0"
-            scrolling="no"
-            style="border: none; background: transparent;">
-          </iframe>
+          <div style="overflow: hidden; width: 100%;">
+            <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>" sandbox="allow-scripts allow-same-origin allow-forms" class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -130px;"></iframe>
+          </div>
           <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
         </div>
       <% } %>
