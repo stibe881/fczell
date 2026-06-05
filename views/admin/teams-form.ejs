@@ -26,9 +26,15 @@
       <input type="text" id="slug" name="slug" value="<%= item ? item.slug : '' %>" required />
     </div>
 
-    <div class="form-group">
-      <label for="league">Liga (z.B. 3. Liga, Gruppe 3)</label>
-      <input type="text" id="league" name="league" value="<%= item ? item.league : '' %>" />
+    <div class="form-group" style="display:flex; gap:1rem;">
+      <div style="flex:1;">
+        <label for="league">Liga (z.B. 3. Liga, Gruppe 3)</label>
+        <input type="text" id="league" name="league" value="<%= item ? item.league : '' %>" />
+      </div>
+      <div style="flex:1;">
+        <label for="sfv_team_id">SFV Team ID (für football.ch Widget, z.B. 31390)</label>
+        <input type="text" id="sfv_team_id" name="sfv_team_id" value="<%= item ? item.sfv_team_id : '' %>" placeholder="Nur ID, z.B. 31390" />
+      </div>
     </div>
 
     <div class="form-group">
