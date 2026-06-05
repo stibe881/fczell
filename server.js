@@ -214,7 +214,7 @@ app.get('/verein', async (req, res) => {
   
   const [vorstand] = await db.query(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`);
   const [sponsorenListe] = await db.query(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`);
-  const [bandenwerber] = await db.query(`SELECT * FROM advertisers ORDER BY sort_order ASC, name ASC`);
+  const [bandenwerber] = await db.query(`SELECT * FROM advertisers ORDER BY name ASC`);
   const [trainers] = await db.query(`SELECT ts.*, t.name AS team_name, t.slug AS team_slug, t.type AS team_type FROM team_staff ts JOIN teams t ON ts.team_id = t.id WHERE ts.role IN ('Trainer', 'Co-Trainer') ORDER BY t.sort_order ASC, ts.id ASC`);
 
   const [sponsorentafelPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'sponsorentafel' ORDER BY sort_order ASC`);
@@ -955,8 +955,10 @@ app.post('/admin/sponsors/:id/delete', requireRole('sponsoring'), async (req, re
 
 // --- Advertisers CRUD ---
 app.get('/admin/advertisers', requireRole('sponsoring'), async (req, res) => {
-  const [items] = await db.query(`SELECT * FROM advertisers ORDER BY sort_order ASC, name ASC`);
-  res.render('admin/advertisers-list', { page: 'admin', items });
+  const orderBy = req.query.order === 'newest' ? 'id DESC' : 'name ASC';
+  const currentOrder = req.query.order === 'newest' ? 'newest' : 'alpha';
+  const [items] = await db.query(`SELECT * FROM advertisers ORDER BY ${orderBy}`);
+  res.render('admin/advertisers-list', { page: 'admin', items, currentOrder });
 });
 
 app.get('/admin/advertisers/new', requireRole('sponsoring'), async (req, res) => {
@@ -964,11 +966,11 @@ app.get('/admin/advertisers/new', requireRole('sponsoring'), async (req, res) =>
 });
 
 app.post('/admin/advertisers/new', requireRole('sponsoring'), uploadAdvertisers.single('logo'), async (req, res) => {
-  const { name, link, location, sort_order } = req.body;
+  const { name, link, location } = req.body;
   let logoUrl = null;
   if (req.file) logoUrl = '/images/advertisers/' + req.file.filename;
   await db.query(`INSERT INTO advertisers (name, link, location, sort_order, logo) VALUES (?, ?, ?, ?, ?)`, [
-    name, link || '', location || '', sort_order || 0, logoUrl
+    name, link || '', location || '', 0, logoUrl
   ]);
   req.session.flash = { type: 'success', msg: 'Bandenwerber gespeichert.' };
   res.redirect('/admin/advertisers');
@@ -982,11 +984,11 @@ app.get('/admin/advertisers/:id/edit', requireRole('sponsoring'), async (req, re
 });
 
 app.post('/admin/advertisers/:id/edit', requireRole('sponsoring'), uploadAdvertisers.single('logo'), async (req, res) => {
-  const { name, link, location, sort_order } = req.body;
+  const { name, link, location } = req.body;
   let logoUrl = req.body.existing_logo;
   if (req.file) logoUrl = '/images/advertisers/' + req.file.filename;
-  await db.query(`UPDATE advertisers SET name=?, link=?, location=?, sort_order=?, logo=? WHERE id=?`, [
-    name, link || '', location || '', sort_order || 0, logoUrl, req.params.id
+  await db.query(`UPDATE advertisers SET name=?, link=?, location=?, logo=? WHERE id=?`, [
+    name, link || '', location || '', logoUrl, req.params.id
   ]);
   req.session.flash = { type: 'success', msg: 'Bandenwerber aktualisiert.' };
   res.redirect('/admin/advertisers');

@@ -2,9 +2,16 @@
 <%- include('_admin-header') %>
 
 <div class="admin-content">
-  <div class="admin-page-head">
+  <div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
     <h1>Bandenwerber</h1>
-    <a class="btn btn-primary" href="/admin/advertisers/new">+ Neuer Bandenwerber</a>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <div class="sort-toggle">
+        <span class="muted" style="margin-right: 0.5rem; font-size: 0.9rem;">Sortierung:</span>
+        <a href="?order=alpha" class="btn btn-sm <%= currentOrder === 'alpha' ? 'btn-primary' : 'btn-outline' %>">Alphabetisch</a>
+        <a href="?order=newest" class="btn btn-sm <%= currentOrder === 'newest' ? 'btn-primary' : 'btn-outline' %>">Neuste</a>
+      </div>
+      <a class="btn btn-primary" href="/admin/advertisers/new">+ Neuer Bandenwerber</a>
+    </div>
   </div>
 
   <% if (items.length === 0) { %>
@@ -13,7 +20,6 @@
     <table class="admin-table">
       <thead>
         <tr>
-          <th>Reihenfolge</th>
           <th>Logo</th>
           <th>Name</th>
           <th>Ort</th>
@@ -23,7 +29,6 @@
       <tbody>
         <% items.forEach(s => { %>
           <tr>
-            <td><%= s.sort_order %></td>
             <td>
               <% if (s.logo) { %>
                 <img src="<%= s.logo %>" alt="Logo" style="height: 30px; object-fit: contain;" />
