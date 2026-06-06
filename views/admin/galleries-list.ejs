@@ -1,0 +1,44 @@
+<% const pageTitle = 'Fotogalerien'; const active = 'gallery'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <h1>Fotogalerien</h1>
+    <a class="btn btn-primary" href="/admin/gallery/new-gallery">+ Neue Galerie</a>
+  </div>
+
+  <% if (galleries.length === 0) { %>
+    <p class="empty">Noch keine Galerien erfasst.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Zugeordneter Anlass</th>
+          <th>Anzahl Fotos</th>
+          <th style="width: 250px;">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% galleries.forEach(g => { %>
+          <tr>
+            <td><strong><%= g.name %></strong></td>
+            <td><%= g.anlass_title || '-' %></td>
+            <td><%= g.photo_count %> Fotos</td>
+            <td>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a class="btn btn-sm btn-outline" href="/admin/gallery/<%= g.id %>/photos">Fotos bearbeiten</a>
+                <a class="btn btn-sm btn-outline" href="/admin/gallery/<%= g.id %>/edit">ändern</a>
+                <form action="/admin/gallery/<%= g.id %>/delete" method="post" onsubmit="return confirm('Diese Galerie und ALLE dazugehörigen Fotos wirklich löschen?');" style="margin: 0;">
+                  <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>

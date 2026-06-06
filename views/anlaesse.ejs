@@ -34,22 +34,6 @@
     <div class="prose" style="margin-bottom: 3rem;">
       <% if (anlass.slug === 'archiv') { %>
         <%- anlass.body %>
-        
-        <% const archiveNames = Object.keys(archiveGalleries); %>
-        <% if (archiveNames.length > 0) { %>
-          <% archiveNames.forEach(name => { %>
-            <div class="anlass-subsection" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(0,0,0,0.08);">
-              <h3 style="text-transform: capitalize; margin-bottom: 1.5rem;"><%= name %></h3>
-              <div class="gallery-grid">
-                <% archiveGalleries[name].forEach(photo => { %>
-                  <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
-                    <img src="<%= photo.image_path %>" alt="<%= photo.caption || 'Foto' %>" loading="lazy" />
-                  </figure>
-                <% }) %>
-              </div>
-            </div>
-          <% }) %>
-        <% } %>
       <% } else { %>
         <%- mdToHtml(anlass.body) %>
       <% } %>
@@ -139,18 +123,6 @@
         </ul>
       </div>
     <% } %>
-    <% if (juniorenlagerPhotos && juniorenlagerPhotos.length > 0) { %>
-      <div class="anlass-subsection">
-        <h3>Fotogalerie</h3>
-        <div class="gallery-grid">
-          <% juniorenlagerPhotos.forEach(photo => { %>
-            <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
-              <img src="<%= photo.image_path %>" alt="Foto" loading="lazy" />
-            </figure>
-          <% }) %>
-        </div>
-      </div>
-    <% } %>
     <% if (juniorenlagerDocs && juniorenlagerDocs.length > 0) { %>
       <div class="anlass-subsection">
         <h3>Dokumente</h3>
@@ -202,18 +174,24 @@
         </ul>
       </div>
     <% } %>
-    <% if (dorfturnierPhotos && dorfturnierPhotos.length > 0) { %>
-      <div class="anlass-subsection">
-        <h3>Fotogalerie</h3>
-        <div class="gallery-grid">
-          <% dorfturnierPhotos.forEach(photo => { %>
-            <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
-              <img src="<%= photo.image_path %>" alt="Foto" loading="lazy" />
-            </figure>
-          <% }) %>
+  <% } %>
+
+  <!-- Generic Assigned Galleries Rendering -->
+  <% if (anlass.galleries && anlass.galleries.length > 0) { %>
+    <% anlass.galleries.forEach(g => { %>
+      <% if (g.photos && g.photos.length > 0) { %>
+        <div class="anlass-subsection">
+          <h3><%= g.name %></h3>
+          <div class="gallery-grid">
+            <% g.photos.forEach(photo => { %>
+              <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
+                <img src="<%= photo.image_path %>" alt="<%= photo.caption || '' %>" loading="lazy" />
+              </figure>
+            <% }) %>
+          </div>
         </div>
-      </div>
-    <% } %>
+      <% } %>
+    <% }) %>
   <% } %>
 
   <% if (anlass.slug === 'generalversammlung' || anlass.slug === 'gv') { %>

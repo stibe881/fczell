@@ -122,9 +122,18 @@ async function initDb() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS galleries (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      anlass_id INT,
+      sort_order INT DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS gallery_photos (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      gallery VARCHAR(255) NOT NULL,
+      gallery_id INT,
+      gallery VARCHAR(255),
       image_path VARCHAR(255) NOT NULL,
       caption VARCHAR(255),
       sort_order INT DEFAULT 0,

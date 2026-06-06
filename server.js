@@ -286,18 +286,16 @@ app.get('/anlaesse', async (req, res) => {
   // News tagged as Juniorenlager (legacy compatibility)
   const [juniorenlagerNews] = await db.query(`SELECT * FROM news WHERE category = 'Juniorenlager' ORDER BY published_at DESC`);
 
-  // Photos
-  const [allPhotos] = await db.query(`SELECT * FROM gallery_photos ORDER BY gallery ASC, sort_order ASC, id DESC`);
-  const juniorenlagerPhotos = allPhotos.filter(p => p.gallery === 'juniorenlager');
-  const dorfturnierPhotos = allPhotos.filter(p => p.gallery === 'dorfturnier');
+  // Fetch all galleries and their photos
+  const [galleries] = await db.query(`SELECT * FROM galleries ORDER BY sort_order ASC, id DESC`);
+  const [photos] = await db.query(`SELECT * FROM gallery_photos ORDER BY sort_order ASC, id DESC`);
   
-  const archiveGalleries = {};
-  const excludeFromArchive = ['juniorenlager', 'dorfturnier', 'sponsorentafel'];
-  allPhotos.forEach(p => {
-    if (!excludeFromArchive.includes(p.gallery) && !p.gallery.startsWith('team-')) {
-      if (!archiveGalleries[p.gallery]) archiveGalleries[p.gallery] = [];
-      archiveGalleries[p.gallery].push(p);
-    }
+  galleries.forEach(g => {
+    g.photos = photos.filter(p => p.gallery_id === g.id);
+  });
+
+  anlaesse.forEach(a => {
+    a.galleries = galleries.filter(g => g.anlass_id === a.id);
   });
 
   // Documents
@@ -314,9 +312,6 @@ app.get('/anlaesse', async (req, res) => {
     page: 'anlaesse',
     anlaesse,
     juniorenlagerNews,
-    juniorenlagerPhotos,
-    dorfturnierPhotos,
-    archiveGalleries,
     juniorenlagerDocs,
     amtscupDocs,
     dorfturnierDocs,
@@ -1199,55 +1194,92 @@ app.post('/admin/documents/:id/delete', requireRole('content'), async (req, res)
   res.redirect('/admin/documents');
 });
 
-// --- Gallery CRUD ---
+// --- Galleries CRUD ---
 app.get('/admin/gallery', requireRole('content'), async (req, res) => {
-  const [items] = await db.query(`SELECT * FROM gallery_photos ORDER BY gallery ASC, sort_order ASC, id DESC`);
-  const galleries = {};
-  items.forEach(i => {
-    if (!galleries[i.gallery]) galleries[i.gallery] = [];
-    galleries[i.gallery].push(i);
-  });
-  res.render('admin/gallery-list', { page: 'admin', galleries, items });
+  const [galleries] = await db.query(`
+    SELECT g.*, a.title as anlass_title,
+           (SELECT COUNT(*) FROM gallery_photos p WHERE p.gallery_id = g.id) as photo_count
+    FROM galleries g
+    LEFT JOIN anlaesse a ON g.anlass_id = a.id
+    ORDER BY g.sort_order ASC, g.id DESC
+  `);
+  res.render('admin/galleries-list', { page: 'admin', galleries });
 });
 
-app.get('/admin/gallery/new', requireRole('content'), async (req, res) => {
-  const gallery = req.query.gallery || '';
-  res.render('admin/gallery-form', { page: 'admin', item: null, gallery });
+app.get('/admin/gallery/new-gallery', requireRole('content'), async (req, res) => {
+  const [anlaesse] = await db.query('SELECT id, title FROM anlaesse ORDER BY title ASC');
+  res.render('admin/galleries-form', { page: 'admin', gallery: null, anlaesse });
 });
 
-app.post('/admin/gallery/new', requireRole('content'), uploadGallery.single('image'), async (req, res) => {
-  const { gallery, caption, sort_order } = req.body;
-  if (!req.file) {
-    req.session.flash = { type: 'error', msg: 'Bitte ein Bild hochladen.' };
-    return res.redirect('/admin/gallery/new');
-  }
-  const imagePath = '/images/gallery/' + req.file.filename;
-  await db.query(`INSERT INTO gallery_photos (gallery, image_path, caption, sort_order) VALUES (?, ?, ?, ?)`, [
-    gallery || 'allgemein', imagePath, caption || '', sort_order || 0
-  ]);
-  req.session.flash = { type: 'success', msg: 'Foto hochgeladen.' };
+app.post('/admin/gallery/new-gallery', requireRole('content'), async (req, res) => {
+  const { name, anlass_id, sort_order } = req.body;
+  await db.query(`INSERT INTO galleries (name, anlass_id, sort_order) VALUES (?, ?, ?)`, [name, anlass_id || null, sort_order || 0]);
+  req.session.flash = { type: 'success', msg: 'Galerie erstellt.' };
   res.redirect('/admin/gallery');
 });
 
-app.post('/admin/gallery/bulk-delete', requireRole('content'), async (req, res) => {
-  const { photoIds } = req.body;
-  if (!photoIds) {
-    req.session.flash = { type: 'error', msg: 'Keine Fotos ausgewählt.' };
-    return res.redirect('/admin/gallery');
-  }
-  const ids = Array.isArray(photoIds) ? photoIds : [photoIds];
-  if (ids.length > 0) {
-    const placeholders = ids.map(() => '?').join(',');
-    await db.query(`DELETE FROM gallery_photos WHERE id IN (${placeholders})`, ids);
-    req.session.flash = { type: 'success', msg: `${ids.length} Foto(s) gelöscht.` };
-  }
+app.get('/admin/gallery/:id/edit', requireRole('content'), async (req, res) => {
+  const [galleries] = await db.query('SELECT * FROM galleries WHERE id = ?', [req.params.id]);
+  if (!galleries.length) return res.redirect('/admin/gallery');
+  const [anlaesse] = await db.query('SELECT id, title FROM anlaesse ORDER BY title ASC');
+  res.render('admin/galleries-form', { page: 'admin', gallery: galleries[0], anlaesse });
+});
+
+app.post('/admin/gallery/:id/edit', requireRole('content'), async (req, res) => {
+  const { name, anlass_id, sort_order } = req.body;
+  await db.query(`UPDATE galleries SET name = ?, anlass_id = ?, sort_order = ? WHERE id = ?`, [name, anlass_id || null, sort_order || 0, req.params.id]);
+  req.session.flash = { type: 'success', msg: 'Galerie aktualisiert.' };
   res.redirect('/admin/gallery');
 });
 
 app.post('/admin/gallery/:id/delete', requireRole('content'), async (req, res) => {
-  await db.query(`DELETE FROM gallery_photos WHERE id = ?`, [req.params.id]);
-  req.session.flash = { type: 'success', msg: 'Foto gelöscht.' };
+  await db.query('DELETE FROM galleries WHERE id = ?', [req.params.id]);
+  await db.query('DELETE FROM gallery_photos WHERE gallery_id = ?', [req.params.id]);
+  req.session.flash = { type: 'success', msg: 'Galerie und zugehörige Fotos gelöscht.' };
   res.redirect('/admin/gallery');
+});
+
+// --- Gallery Photos CRUD ---
+app.get('/admin/gallery/:id/photos', requireRole('content'), async (req, res) => {
+  const [galleries] = await db.query('SELECT * FROM galleries WHERE id = ?', [req.params.id]);
+  if (!galleries.length) return res.redirect('/admin/gallery');
+  const [photos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery_id = ? ORDER BY sort_order ASC, id DESC`, [req.params.id]);
+  res.render('admin/gallery-photos', { page: 'admin', gallery: galleries[0], photos });
+});
+
+app.post('/admin/gallery/:id/photos', requireRole('content'), uploadGallery.single('image'), async (req, res) => {
+  const { caption, sort_order } = req.body;
+  if (!req.file) {
+    req.session.flash = { type: 'error', msg: 'Bitte ein Bild hochladen.' };
+    return res.redirect(`/admin/gallery/${req.params.id}/photos`);
+  }
+  const imagePath = '/images/gallery/' + req.file.filename;
+  await db.query(`INSERT INTO gallery_photos (gallery_id, image_path, caption, sort_order) VALUES (?, ?, ?, ?)`, [
+    req.params.id, imagePath, caption || '', sort_order || 0
+  ]);
+  req.session.flash = { type: 'success', msg: 'Foto hochgeladen.' };
+  res.redirect(`/admin/gallery/${req.params.id}/photos`);
+});
+
+app.post('/admin/gallery/:id/photos/bulk-delete', requireRole('content'), async (req, res) => {
+  const { photoIds } = req.body;
+  if (!photoIds) {
+    req.session.flash = { type: 'error', msg: 'Keine Fotos ausgewählt.' };
+    return res.redirect(`/admin/gallery/${req.params.id}/photos`);
+  }
+  const ids = Array.isArray(photoIds) ? photoIds : [photoIds];
+  if (ids.length > 0) {
+    const placeholders = ids.map(() => '?').join(',');
+    await db.query(`DELETE FROM gallery_photos WHERE id IN (${placeholders}) AND gallery_id = ?`, [...ids, req.params.id]);
+    req.session.flash = { type: 'success', msg: `${ids.length} Foto(s) gelöscht.` };
+  }
+  res.redirect(`/admin/gallery/${req.params.id}/photos`);
+});
+
+app.post('/admin/gallery/:id/photos/:photoId/delete', requireRole('content'), async (req, res) => {
+  await db.query(`DELETE FROM gallery_photos WHERE id = ? AND gallery_id = ?`, [req.params.photoId, req.params.id]);
+  req.session.flash = { type: 'success', msg: 'Foto gelöscht.' };
+  res.redirect(`/admin/gallery/${req.params.id}/photos`);
 });
 
 // --- Registrations (read only for admin) ---

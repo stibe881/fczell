@@ -1,0 +1,59 @@
+<% const pageTitle = 'Fotos verwalten'; const active = 'gallery'; %>
+<%- include('_admin-header') %>
+
+<div class="admin-content">
+  <div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1>Fotos in "<%= gallery.name %>"</h1>
+      <a class="link-arrow" href="/admin/gallery" style="margin-top: 0.5rem; display: inline-block;">← zurück zu allen Galerien</a>
+    </div>
+  </div>
+
+  <!-- Foto-Upload Form -->
+  <div style="background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Neues Foto hochladen</h3>
+    <form action="/admin/gallery/<%= gallery.id %>/photos" method="post" enctype="multipart/form-data" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+      <div style="flex: 1; min-width: 200px;">
+        <label for="image" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bild *</label>
+        <input type="file" id="image" name="image" accept="image/*" required style="width: 100%;" />
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <label for="caption" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bildunterschrift</label>
+        <input type="text" id="caption" name="caption" style="width: 100%; padding: 0.5rem; border: 1px solid var(--fcz-gray-300); border-radius: 4px;" />
+      </div>
+      <div style="width: 100px;">
+        <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Sort.</label>
+        <input type="number" id="sort_order" name="sort_order" value="0" style="width: 100%; padding: 0.5rem; border: 1px solid var(--fcz-gray-300); border-radius: 4px;" />
+      </div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Hochladen</button>
+    </form>
+  </div>
+
+  <% if (photos.length === 0) { %>
+    <p class="empty">Noch keine Fotos in dieser Galerie.</p>
+  <% } else { %>
+    <form action="/admin/gallery/<%= gallery.id %>/photos/bulk-delete" method="POST" id="bulkDeleteForm" onsubmit="return confirm('Ausgewählte Fotos wirklich löschen?');">
+      <div style="margin-bottom: 2rem; padding: 1rem; background: var(--fcz-gray-100); border-radius: var(--radius); display: flex; gap: 1rem; align-items: center;">
+        <button type="button" class="btn btn-sm btn-outline-dark" onclick="document.querySelectorAll('.photo-cb').forEach(cb => cb.checked = true)">Alle markieren</button>
+        <button type="button" class="btn btn-sm btn-outline-dark" onclick="document.querySelectorAll('.photo-cb').forEach(cb => cb.checked = false)">Auswahl aufheben</button>
+        <button type="submit" class="btn btn-sm btn-danger">Ausgewählte löschen</button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        <% photos.forEach(photo => { %>
+          <div class="gallery-item" style="position: relative; width: 120px; cursor: pointer;" onclick="const cb = this.querySelector('.photo-cb'); if(event.target !== cb) cb.checked = !cb.checked;">
+            <input type="checkbox" name="photoIds" value="<%= photo.id %>" class="photo-cb" style="position: absolute; top: 8px; left: 8px; transform: scale(1.5); cursor: pointer; z-index: 10;" />
+            <img src="<%= photo.image_path %>" alt="<%= photo.caption || '' %>"
+                 style="width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--fcz-gray-300); transition: opacity 0.2s;" 
+                 onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" />
+            <% if (photo.caption) { %>
+              <div class="muted" style="font-size: 0.75rem; margin-top: 0.4rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;" title="<%= photo.caption %>"><%= photo.caption %></div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </form>
+  <% } %>
+</div>
+
+<%- include('_admin-footer') %>
