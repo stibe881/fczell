@@ -2,13 +2,15 @@
 <%- include('_admin-header') %>
 
 <div class="admin-content">
-  <div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-    <h1>Bandenwerber</h1>
-    <div style="display: flex; gap: 1rem; align-items: center;">
-      <div class="sort-toggle">
-        <span class="muted" style="margin-right: 0.5rem; font-size: 0.9rem;">Sortierung:</span>
-        <a href="?order=alpha" class="btn btn-sm <%= currentOrder === 'alpha' ? 'btn-primary' : 'btn-outline' %>">Alphabetisch</a>
-        <a href="?order=newest" class="btn btn-sm <%= currentOrder === 'newest' ? 'btn-primary' : 'btn-outline' %>">Neuste</a>
+  <div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1>Bandenwerber</h1>
+      <p>Übersicht aller Bandenwerber.</p>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <div class="form-group" style="margin: 0; display: flex; align-items: center; gap: 0.5rem; background: #fff; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--fcz-gray-200);">
+        <input type="checkbox" id="toggleArchived" style="width: auto; margin: 0;">
+        <label for="toggleArchived" style="margin: 0; font-size: 0.9rem; font-weight: 500; cursor: pointer;">Archivierte anzeigen</label>
       </div>
       <a class="btn btn-primary" href="/admin/advertisers/new">+ Neuer Bandenwerber</a>
     </div>
@@ -17,38 +19,117 @@
   <% if (items.length === 0) { %>
     <p class="empty">Noch keine Bandenwerber erfasst.</p>
   <% } else { %>
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Logo</th>
-          <th>Name</th>
-          <th>Ort</th>
-          <th class="actions">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% items.forEach(s => { %>
+    <div class="admin-card">
+      <table class="admin-table sortable-table" id="advertisersTable">
+        <thead>
           <tr>
-            <td>
-              <% if (s.logo) { %>
-                <img src="<%= s.logo %>" alt="Logo" style="height: 30px; object-fit: contain;" />
-              <% } else { %>
-                <span class="muted">Kein Logo</span>
-              <% } %>
-            </td>
-            <td><strong><%= s.name %></strong></td>
-            <td><%= s.location %></td>
-            <td class="actions">
-              <a class="btn btn-sm btn-primary" href="/admin/advertisers/<%= s.id %>/edit">bearbeiten</a>
-              <form action="/admin/advertisers/<%= s.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
-                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
-              </form>
-            </td>
+            <th>Logo</th>
+            <th class="sort-header" data-sort="name" style="cursor: pointer; user-select: none;">Name <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="location" style="cursor: pointer; user-select: none;">Ort <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="active_from" style="cursor: pointer; user-select: none;">Aktiv ab <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="active_until" style="cursor: pointer; user-select: none;">Aktiv bis <span class="sort-icon"></span></th>
+            <th class="actions">Aktionen</th>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% 
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            items.forEach(s => { 
+              let isArchived = s.is_archived === 1;
+              if (s.active_until) {
+                const untilDate = new Date(s.active_until);
+                if (untilDate < today) isArchived = true;
+              }
+          %>
+            <tr class="item-row" data-archived="<%= isArchived ? 'true' : 'false' %>" style="<%= isArchived ? 'display: none; opacity: 0.7;' : '' %>">
+              <td>
+                <% if (s.logo) { %>
+                  <img src="<%= s.logo %>" alt="Logo" style="height: 30px; object-fit: contain;" />
+                <% } else { %>
+                  <span class="muted">Kein Logo</span>
+                <% } %>
+              </td>
+              <td data-value="<%= s.name.toLowerCase() %>">
+                <strong><%= s.name %></strong>
+                <% if (isArchived) { %>
+                  <span style="font-size: 0.7rem; background: var(--fcz-gray-200); padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase;">Archiviert</span>
+                <% } %>
+              </td>
+              <td data-value="<%= s.location.toLowerCase() %>"><%= s.location %></td>
+              <td data-value="<%= s.active_from || '0000-00-00' %>">
+                <%- s.active_from ? formatDate(s.active_from) : '<span class="muted">Sofort</span>' %>
+              </td>
+              <td data-value="<%= s.active_until || '9999-99-99' %>">
+                <%- s.active_until ? formatDate(s.active_until) : '<span class="muted">Unbegrenzt</span>' %>
+              </td>
+              <td class="actions">
+                <a class="btn btn-sm btn-outline-dark" href="/admin/advertisers/<%= s.id %>/edit">Bearbeiten</a>
+                <form action="/admin/advertisers/<%= s.id %>/delete" method="post" onsubmit="return confirm('Wirklich löschen?');" style="display:inline">
+                  <button class="btn btn-sm btn-ghost" type="submit" style="color:var(--fcz-red);">Löschen</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
   <% } %>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('toggleArchived');
+  const rows = document.querySelectorAll('.item-row');
+  
+  if (toggle) {
+    toggle.addEventListener('change', (e) => {
+      const showArchived = e.target.checked;
+      rows.forEach(row => {
+        const isArchived = row.getAttribute('data-archived') === 'true';
+        if (showArchived) {
+          // Show ONLY archived
+          row.style.display = isArchived ? '' : 'none';
+        } else {
+          // Show ONLY active
+          row.style.display = isArchived ? 'none' : '';
+        }
+      });
+    });
+  }
+
+  const table = document.getElementById('advertisersTable');
+  if (table) {
+    const headers = table.querySelectorAll('.sort-header');
+    let currentSort = { col: null, asc: true };
+
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const col = header.getAttribute('data-sort');
+        const isAsc = currentSort.col === col ? !currentSort.asc : true;
+        currentSort = { col, asc: isAsc };
+        
+        headers.forEach(h => h.querySelector('.sort-icon').textContent = '');
+        header.querySelector('.sort-icon').textContent = isAsc ? ' ▲' : ' ▼';
+
+        const tbody = table.querySelector('tbody');
+        const rowsArr = Array.from(tbody.querySelectorAll('.item-row'));
+
+        const colIndex = Array.from(header.parentElement.children).indexOf(header);
+
+        rowsArr.sort((a, b) => {
+          const aVal = a.children[colIndex].getAttribute('data-value') || '';
+          const bVal = b.children[colIndex].getAttribute('data-value') || '';
+          if (aVal < bVal) return isAsc ? -1 : 1;
+          if (aVal > bVal) return isAsc ? 1 : -1;
+          return 0;
+        });
+
+        rowsArr.forEach(r => tbody.appendChild(r));
+      });
+    });
+  }
+});
+</script>
 
 <%- include('_admin-footer') %>

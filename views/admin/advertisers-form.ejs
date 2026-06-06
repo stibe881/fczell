@@ -50,6 +50,26 @@
       </div>
     </div>
 
+    <div style="background: var(--fcz-gray-50); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--fcz-gray-200); margin: 1rem 0;">
+      <h3 style="font-size: 1.1rem; margin-top: 0; margin-bottom: 1rem; font-weight: 600;">Sichtbarkeit & Archivierung</h3>
+      <div class="admin-cols" style="gap: 1rem; margin-bottom: 1rem; align-items: start;">
+        <div class="form-group" style="margin: 0; display: flex; flex-direction: column;">
+          <label for="active_from" style="white-space: nowrap;">Sichtbar ab</label>
+          <input type="date" id="active_from" name="active_from" value="<%= isEdit && item.active_from ? item.active_from : '' %>" />
+          <small style="margin-top: 0.5rem;">Wenn leer, sofort auf der Webseite aktiv.</small>
+        </div>
+        <div class="form-group" style="margin: 0; display: flex; flex-direction: column;">
+          <label for="active_until" style="white-space: nowrap;">Sichtbar bis</label>
+          <input type="date" id="active_until" name="active_until" value="<%= isEdit && item.active_until ? item.active_until : '' %>" />
+          <small style="margin-top: 0.5rem;">Wird nach diesem Datum automatisch archiviert.</small>
+        </div>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+        <input type="checkbox" id="is_archived" name="is_archived" value="1" <%= isEdit && item.is_archived ? 'checked' : '' %> style="width: auto;" />
+        <label for="is_archived" style="margin: 0; color: var(--fcz-red-dark); font-weight: 600;">Manuell archivieren (Sofort verbergen)</label>
+      </div>
+    </div>
+
     <div class="form-actions">
       <a class="btn btn-outline" href="/admin/advertisers">Abbrechen</a>
       <button class="btn btn-primary" type="submit">Speichern</button>

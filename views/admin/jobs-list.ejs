@@ -1,49 +1,51 @@
 <%- include('_admin-header', { pageTitle: 'Jobs', active: 'jobs' }) %>
 
-<div class="admin-head">
-  <div>
-    <h1>Jobs</h1>
-    <p>Übersicht aller Job-Ausschreibungen.</p>
+<div class="admin-content">
+  <div class="admin-page-head">
+    <div>
+      <h1>Jobs</h1>
+      <p>Übersicht aller Job-Ausschreibungen.</p>
+    </div>
+    <a href="/admin/jobs/new" class="btn btn-primary">+ Neuer Job</a>
   </div>
-  <a href="/admin/jobs/new" class="btn btn-primary">+ Neuer Job</a>
-</div>
 
-<div class="admin-card">
-  <% if (jobs.length === 0) { %>
-    <p class="empty-state">Keine Jobs vorhanden. Erstelle den ersten Job!</p>
-  <% } else { %>
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Titel</th>
-          <th>Status</th>
-          <th>Erstellt am</th>
-          <th class="actions">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% jobs.forEach(job => { %>
+  <div class="admin-card">
+    <% if (jobs.length === 0) { %>
+      <p class="empty-state">Keine Jobs vorhanden. Erstelle den ersten Job!</p>
+    <% } else { %>
+      <table class="admin-table">
+        <thead>
           <tr>
-            <td><strong><a href="/admin/jobs/<%= job.id %>/edit" style="color: inherit; text-decoration: none;"><%= job.title %></a></strong></td>
-            <td>
-              <% if (job.is_active) { %>
-                <span style="color: var(--fcz-red); font-weight: 600;">Aktiv</span>
-              <% } else { %>
-                <span style="color: var(--fcz-gray-500);">Inaktiv</span>
-              <% } %>
-            </td>
-            <td><%= formatDate(job.created_at) %></td>
-            <td class="actions">
-              <a href="/admin/jobs/<%= job.id %>/edit" class="btn btn-sm btn-outline-dark">Bearbeiten</a>
-              <form action="/admin/jobs/<%= job.id %>/delete" method="post" style="display:inline" onsubmit="return confirm('Möchtest du diesen Job wirklich löschen?');">
-                <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--fcz-red);">Löschen</button>
-              </form>
-            </td>
+            <th>Titel</th>
+            <th>Status</th>
+            <th>Erstellt am</th>
+            <th class="actions">Aktionen</th>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  <% } %>
+        </thead>
+        <tbody>
+          <% jobs.forEach(job => { %>
+            <tr>
+              <td><strong><a href="/admin/jobs/<%= job.id %>/edit" style="color: inherit; text-decoration: none;"><%= job.title %></a></strong></td>
+              <td>
+                <% if (job.is_active) { %>
+                  <span style="color: var(--fcz-red); font-weight: 600;">Aktiv</span>
+                <% } else { %>
+                  <span style="color: var(--fcz-gray-500);">Inaktiv</span>
+                <% } %>
+              </td>
+              <td><%= formatDate(job.created_at) %></td>
+              <td class="actions">
+                <a href="/admin/jobs/<%= job.id %>/edit" class="btn btn-sm btn-outline-dark">Bearbeiten</a>
+                <form action="/admin/jobs/<%= job.id %>/delete" method="post" style="display:inline" onsubmit="return confirm('Möchtest du diesen Job wirklich löschen?');">
+                  <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--fcz-red);">Löschen</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
 </div>
 
 <%- include('_admin-footer') %>

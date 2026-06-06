@@ -355,36 +355,18 @@
   <!-- Hauptsponsoren / Footer-Sponsoren -->
   <h3 style="text-align: center; margin-bottom: 2rem;">Unsere Premium Partner</h3>
   <div class="footer-sponsors" style="border-bottom: none; padding-top: 0; margin-bottom: 3rem;">
-    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-      <span class="footer-sponsor-cat">Hauptsponsor</span>
-      <a href="https://www.kklh.ch/" target="_blank" rel="noopener">
-        <img src="/images/sponsors/kklh.jpg" alt="KKLH" class="footer-sponsor-logo" loading="lazy" />
-      </a>
-    </div>
-    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-      <span class="footer-sponsor-cat">CO-Sponsor</span>
-      <a href="https://www.valiant.ch/de/" target="_blank" rel="noopener">
-        <img src="/images/sponsors/valiant.jpg" alt="Valiant" class="footer-sponsor-logo" loading="lazy" />
-      </a>
-    </div>
-    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-      <span class="footer-sponsor-cat">Juniorensponsor</span>
-      <a href="https://www.ldilag.ch/" target="_blank" rel="noopener">
-        <img src="/images/sponsors/leuenberger.jpg" alt="Leuenberger" class="footer-sponsor-logo" loading="lazy" />
-      </a>
-    </div>
-    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-      <span class="footer-sponsor-cat">Ausrüster</span>
-      <a href="https://go-in.ch/kunzsport/" target="_blank" rel="noopener">
-        <img src="/images/sponsors/kunz.jpg" alt="Kunz Sport" class="footer-sponsor-logo" loading="lazy" />
-      </a>
-    </div>
-    <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-      <span class="footer-sponsor-cat">Sportfonds</span>
-      <a href="https://sport.lu.ch/" target="_blank" rel="noopener">
-        <img src="/images/sponsors/swisslos.jpg" alt="Swisslos Sportfonds" class="footer-sponsor-logo" loading="lazy" />
-      </a>
-    </div>
+    <% sponsorenListe.forEach(sponsor => { %>
+      <div class="footer-sponsor-item" style="box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <span class="footer-sponsor-cat"><%= sponsor.category %></span>
+        <% if (sponsor.link) { %>
+          <a href="<%= sponsor.link %>" target="_blank" rel="noopener">
+            <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
+          </a>
+        <% } else { %>
+          <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="footer-sponsor-logo" loading="lazy" />
+        <% } %>
+      </div>
+    <% }) %>
   </div>
 
   <!-- Sponsorentafel Photos -->

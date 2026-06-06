@@ -214,7 +214,14 @@ app.get('/verein', async (req, res) => {
   
   const [vorstand] = await db.query(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`);
   const [sponsorenListe] = await db.query(`SELECT * FROM sponsors ORDER BY sort_order ASC, id ASC`);
-  const [bandenwerber] = await db.query(`SELECT * FROM advertisers ORDER BY name ASC`);
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [bandenwerber] = await db.query(`
+    SELECT * FROM advertisers 
+    WHERE (is_archived = 0 OR is_archived IS NULL)
+    AND (active_from IS NULL OR active_from = '' OR active_from <= ?)
+    AND (active_until IS NULL OR active_until = '' OR active_until >= ?)
+    ORDER BY name ASC
+  `, [todayStr, todayStr]);
   const [trainers] = await db.query(`SELECT ts.*, t.name AS team_name, t.slug AS team_slug, t.type AS team_type FROM team_staff ts JOIN teams t ON ts.team_id = t.id WHERE ts.role IN ('Trainer', 'Co-Trainer') ORDER BY t.sort_order ASC, ts.id ASC`);
 
   const [sponsorentafelPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'sponsorentafel' ORDER BY sort_order ASC`);
@@ -1140,6 +1147,10 @@ app.post('/admin/teams/:id/delete', requireRole('teams'), async (req, res) => {
 // --- Jobs CRUD ---
 app.get('/admin/jobs', requireRole('content'), async (req, res) => {
   const [jobs] = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
+  jobs.forEach(job => {
+    if (job.description) job.descriptionHtml = marked.parse(job.description);
+    if (job.contact_info) job.contact_infoHtml = marked.parse(job.contact_info);
+  });
   res.render('admin/jobs-list', { page: 'admin', jobs });
 });
 
