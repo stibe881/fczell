@@ -27,8 +27,8 @@
             <td><%= g.photo_count %> Fotos</td>
             <td>
               <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <a class="btn btn-sm btn-outline" href="/admin/gallery/<%= g.id %>/photos">Fotos bearbeiten</a>
-                <a class="btn btn-sm btn-outline" href="/admin/gallery/<%= g.id %>/edit">ändern</a>
+                <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/photos">Fotos bearbeiten</a>
+                <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/edit">Name / Anlass ändern</a>
                 <form action="/admin/gallery/<%= g.id %>/delete" method="post" onsubmit="return confirm('Diese Galerie und ALLE dazugehörigen Fotos wirklich löschen?');" style="margin: 0;">
                   <button class="btn btn-sm btn-danger" type="submit">löschen</button>
                 </form>

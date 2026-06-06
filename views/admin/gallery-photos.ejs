@@ -10,24 +10,96 @@
   </div>
 
   <!-- Foto-Upload Form -->
-  <div style="background: var(--fcz-gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Neues Foto hochladen</h3>
-    <form action="/admin/gallery/<%= gallery.id %>/photos" method="post" enctype="multipart/form-data" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
-      <div style="flex: 1; min-width: 200px;">
-        <label for="image" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bild *</label>
-        <input type="file" id="image" name="image" accept="image/*" required style="width: 100%;" />
+  <div style="margin-bottom: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Neue Fotos hinzufügen</h3>
+    <form action="/admin/gallery/<%= gallery.id %>/photos" method="post" enctype="multipart/form-data" id="uploadForm">
+      <div id="dropZone" style="border: 2px dashed var(--fcz-gray-300); border-radius: var(--radius); padding: 3rem 1.5rem; text-align: center; background: var(--fcz-gray-50); cursor: pointer; transition: all 0.2s ease;">
+        <input type="file" id="images" name="images" accept="image/*" multiple style="display: none;" onchange="handleFiles(this.files)" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--fcz-gray-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <p style="margin: 0; font-size: 1.1rem; color: var(--fcz-gray-700); font-weight: 500;">Bilder hierher ziehen oder klicken zum Auswählen</p>
+        <p class="muted" style="margin-top: 0.5rem;">Du kannst mehrere Bilder gleichzeitig markieren.</p>
       </div>
-      <div style="flex: 1; min-width: 200px;">
-        <label for="caption" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bildunterschrift</label>
-        <input type="text" id="caption" name="caption" style="width: 100%; padding: 0.5rem; border: 1px solid var(--fcz-gray-300); border-radius: 4px;" />
-      </div>
-      <div style="width: 100px;">
-        <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Sort.</label>
-        <input type="number" id="sort_order" name="sort_order" value="0" style="width: 100%; padding: 0.5rem; border: 1px solid var(--fcz-gray-300); border-radius: 4px;" />
-      </div>
-      <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Hochladen</button>
+      
+      <div id="previewArea" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;"></div>
+
+      <button type="submit" id="submitBtn" class="btn btn-primary" style="margin-top: 1.5rem; display: none;">Hochladen starten</button>
     </form>
   </div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('images');
+    const submitBtn = document.getElementById('submitBtn');
+    const previewArea = document.getElementById('previewArea');
+
+    // Klicken triggert file input
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Drag & Drop Styling
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+      dropZone.style.borderColor = 'var(--fcz-red)';
+      dropZone.style.background = 'rgba(230, 0, 0, 0.05)';
+    }
+
+    function unhighlight(e) {
+      dropZone.style.borderColor = 'var(--fcz-gray-300)';
+      dropZone.style.background = 'var(--fcz-gray-50)';
+    }
+
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files; // Zuweisen der Files an das unsichtbare Input-Feld
+      handleFiles(files);
+    }
+
+    function handleFiles(files) {
+      if (files.length > 0) {
+        submitBtn.style.display = 'inline-block';
+        previewArea.innerHTML = '';
+        
+        // Kleine Vorschau der ausgewählten Bilder
+        Array.from(files).forEach(file => {
+          if (!file.type.startsWith('image/')) return;
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '80px';
+            img.style.height = '80px';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '6px';
+            img.style.border = '1px solid var(--fcz-gray-200)';
+            previewArea.appendChild(img);
+          }
+          reader.readAsDataURL(file);
+        });
+      } else {
+        submitBtn.style.display = 'none';
+        previewArea.innerHTML = '';
+      }
+    }
+  </script>
 
   <% if (photos.length === 0) { %>
     <p class="empty">Noch keine Fotos in dieser Galerie.</p>

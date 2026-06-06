@@ -1247,17 +1247,20 @@ app.get('/admin/gallery/:id/photos', requireRole('content'), async (req, res) =>
   res.render('admin/gallery-photos', { page: 'admin', gallery: galleries[0], photos });
 });
 
-app.post('/admin/gallery/:id/photos', requireRole('content'), uploadGallery.single('image'), async (req, res) => {
-  const { caption, sort_order } = req.body;
-  if (!req.file) {
-    req.session.flash = { type: 'error', msg: 'Bitte ein Bild hochladen.' };
+app.post('/admin/gallery/:id/photos', requireRole('content'), uploadGallery.array('images', 50), async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    req.session.flash = { type: 'error', msg: 'Bitte mindestens ein Bild hochladen.' };
     return res.redirect(`/admin/gallery/${req.params.id}/photos`);
   }
-  const imagePath = '/images/gallery/' + req.file.filename;
-  await db.query(`INSERT INTO gallery_photos (gallery_id, image_path, caption, sort_order) VALUES (?, ?, ?, ?)`, [
-    req.params.id, imagePath, caption || '', sort_order || 0
-  ]);
-  req.session.flash = { type: 'success', msg: 'Foto hochgeladen.' };
+  
+  for (const file of req.files) {
+    const imagePath = '/images/gallery/' + file.filename;
+    await db.query(`INSERT INTO gallery_photos (gallery_id, image_path) VALUES (?, ?)`, [
+      req.params.id, imagePath
+    ]);
+  }
+  
+  req.session.flash = { type: 'success', msg: `${req.files.length} Foto(s) hochgeladen.` };
   res.redirect(`/admin/gallery/${req.params.id}/photos`);
 });
 
