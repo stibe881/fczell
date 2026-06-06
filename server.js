@@ -991,11 +991,11 @@ app.get('/admin/advertisers/new', requireRole('sponsoring'), async (req, res) =>
 });
 
 app.post('/admin/advertisers/new', requireRole('sponsoring'), uploadAdvertisers.single('logo'), async (req, res) => {
-  const { name, link, location } = req.body;
+  const { name, link, location, active_from, active_until, is_archived } = req.body;
   let logoUrl = null;
   if (req.file) logoUrl = '/images/advertisers/' + req.file.filename;
-  await db.query(`INSERT INTO advertisers (name, link, location, sort_order, logo) VALUES (?, ?, ?, ?, ?)`, [
-    name, link || '', location || '', 0, logoUrl
+  await db.query(`INSERT INTO advertisers (name, link, location, sort_order, logo, active_from, active_until, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [
+    name, link || '', location || '', 0, logoUrl, active_from || null, active_until || null, is_archived ? 1 : 0
   ]);
   req.session.flash = { type: 'success', msg: 'Bandenwerber gespeichert.' };
   res.redirect('/admin/advertisers');
@@ -1005,18 +1005,28 @@ app.get('/admin/advertisers/:id/edit', requireRole('sponsoring'), async (req, re
   const [rows] = await db.query(`SELECT * FROM advertisers WHERE id = ?`, [req.params.id]);
   const item = rows[0];
   if (!item) return res.redirect('/admin/advertisers');
+  
+  if (item.active_from) {
+    const d = new Date(item.active_from);
+    if (!isNaN(d)) item.active_from = d.toISOString().split('T')[0];
+  }
+  if (item.active_until) {
+    const d = new Date(item.active_until);
+    if (!isNaN(d)) item.active_until = d.toISOString().split('T')[0];
+  }
+
   res.render('admin/advertisers-form', { page: 'admin', item });
 });
 
 app.post('/admin/advertisers/:id/edit', requireRole('sponsoring'), uploadAdvertisers.single('logo'), async (req, res) => {
-  const { name, link, location } = req.body;
+  const { name, link, location, active_from, active_until, is_archived } = req.body;
   let logoUrl = req.body.existing_logo;
   if (req.file) logoUrl = '/images/advertisers/' + req.file.filename;
-  await db.query(`UPDATE advertisers SET name=?, link=?, location=?, logo=? WHERE id=?`, [
-    name, link || '', location || '', logoUrl, req.params.id
+  await db.query(`UPDATE advertisers SET name=?, link=?, location=?, logo=?, active_from=?, active_until=?, is_archived=? WHERE id=?`, [
+    name, link || '', location || '', logoUrl, active_from || null, active_until || null, is_archived ? 1 : 0, req.params.id
   ]);
   req.session.flash = { type: 'success', msg: 'Bandenwerber aktualisiert.' };
-    res.redirect('/admin/advertisers/' + req.params.id + '/edit');
+  res.redirect('/admin/advertisers');
 });
 
 app.post('/admin/advertisers/:id/delete', requireRole('sponsoring'), async (req, res) => {
