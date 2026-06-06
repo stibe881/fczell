@@ -10,19 +10,22 @@
   <% if (items.length === 0) { %>
     <p class="empty">Noch keine Teams erfasst.</p>
   <% } else { %>
-    <table class="admin-table">
+    <table class="admin-table" id="adminTeamsTable">
       <thead>
         <tr>
-          <th>Typ</th>
-          <th>Name</th>
-          <th>Liga</th>
+          <th class="sortable" data-sort="type" style="cursor: pointer; user-select: none;">Typ <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="name" style="cursor: pointer; user-select: none;">Name <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="league" style="cursor: pointer; user-select: none;">Liga <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
           <th>Trainer</th>
           <th class="actions">Aktionen</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="adminTeamsTbody">
         <% items.forEach(t => { %>
-          <tr>
+          <tr class="team-row" 
+              data-type="<%= t.type.toLowerCase() %>" 
+              data-name="<%= t.name.toLowerCase() %>" 
+              data-league="<%= (t.league || '').toLowerCase() %>">
             <td>
               <% if (t.type === 'aktive') { %>
                 <span class="tag">Aktive</span>
@@ -51,5 +54,52 @@
     </table>
   <% } %>
 </div>
+
+<script>
+  // Table Sorting Logic
+  const tableBody = document.getElementById('adminTeamsTbody');
+  const headers = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, asc: true };
+
+  if (headers.length > 0) {
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        const asc = currentSort.column === column ? !currentSort.asc : true;
+        currentSort = { column, asc };
+
+        // Update UI Icons
+        headers.forEach(h => {
+          const icon = h.querySelector('.sort-icon');
+          if (icon) {
+            icon.innerHTML = '↕';
+            icon.style.opacity = '0.3';
+            icon.style.color = 'inherit';
+          }
+        });
+        const currentIcon = header.querySelector('.sort-icon');
+        if (currentIcon) {
+          currentIcon.innerHTML = asc ? '↓' : '↑';
+          currentIcon.style.opacity = '1';
+          currentIcon.style.color = 'var(--fcz-red)';
+        }
+
+        // Sort rows
+        const rows = Array.from(tableBody.querySelectorAll('.team-row'));
+        rows.sort((a, b) => {
+          let valA = a.getAttribute(`data-${column}`);
+          let valB = b.getAttribute(`data-${column}`);
+
+          if (valA < valB) return asc ? -1 : 1;
+          if (valA > valB) return asc ? 1 : -1;
+          return 0;
+        });
+
+        // Re-append rows
+        rows.forEach(row => tableBody.appendChild(row));
+      });
+    });
+  }
+</script>
 
 <%- include('_admin-footer') %>

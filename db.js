@@ -178,11 +178,13 @@ async function initDb() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       slug VARCHAR(255) UNIQUE NOT NULL,
       title VARCHAR(255) NOT NULL,
+      year INT,
       body TEXT NOT NULL,
       sort_order INT DEFAULT 0,
       has_form TINYINT(1) DEFAULT 0,
       form_type VARCHAR(255) DEFAULT 'standard',
       deadline DATE,
+      is_archived TINYINT(1) DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );

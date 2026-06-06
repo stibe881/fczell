@@ -781,6 +781,17 @@ p { margin: 0 0 1em; }
   color: var(--fcz-gray-700);
   font-weight: 500;
 }
+
+.contact-form label.checkbox-label, .admin-form label.checkbox-label, .login-card label.checkbox-label {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin-top: 0.2rem;
+}
 .contact-form input, .contact-form textarea,
 .admin-form input, .admin-form textarea, .admin-form select,
 .login-card input, .footer-login input {

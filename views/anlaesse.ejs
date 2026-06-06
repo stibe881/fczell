@@ -15,6 +15,9 @@
     <% anlaesse.forEach((a, index) => { %>
       <a href="#<%= a.slug %>" class="section-nav-link <%= index === 0 ? 'active' : '' %>"><%= a.title %></a>
     <% }) %>
+    <% if (archivedAnlaesse && archivedAnlaesse.length > 0) { %>
+      <a href="#archiv" class="section-nav-link">Archiv</a>
+    <% } %>
   </div>
 </nav>
 
@@ -32,11 +35,7 @@
 
   <% if (anlass.body) { %>
     <div class="prose" style="margin-bottom: 3rem;">
-      <% if (anlass.slug === 'archiv') { %>
-        <%- anlass.body %>
-      <% } else { %>
-        <%- mdToHtml(anlass.body) %>
-      <% } %>
+      <%- mdToHtml(anlass.body) %>
     </div>
   <% } %>
 
@@ -247,6 +246,184 @@
 
 </section>
 <% }) %>
+
+<% if (archivedAnlaesse && archivedAnlaesse.length > 0) { %>
+<section class="band band-dark" id="archiv">
+  <div class="band-head">
+    <div>
+      <p class="eyebrow">Archiv</p>
+      <h2>Vergangene Anlässe</h2>
+    </div>
+  </div>
+  <div class="prose" style="margin-bottom: 2rem; color: rgba(255,255,255,0.8);">
+    <p>Hier finden Sie Impressionen vergangener Anlässe und Turniere.</p>
+  </div>
+
+  <div style="margin-bottom: 1.5rem; max-width: 400px;">
+    <input type="text" id="archiveFilter" placeholder="Anlässe durchsuchen..." class="form-control" style="width: 100%; padding: 0.8rem 1rem; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; outline: none; font-family: inherit;">
+  </div>
+
+  <% 
+    // Extract unique titles for filter chips
+    const uniqueTitles = [...new Set(archivedAnlaesse.map(a => a.title))].sort();
+  %>
+  <% if (uniqueTitles.length > 0) { %>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 3rem;" id="archiveChips">
+      <button class="archive-chip active" data-filter="all" style="padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid var(--fcz-red); background: var(--fcz-red); color: #fff; transition: all 0.2s;">Alle</button>
+      <% uniqueTitles.forEach(t => { %>
+        <button class="archive-chip" data-filter="<%= t.toLowerCase() %>" style="padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); transition: all 0.2s;"><%= t %></button>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div id="archiveList">
+    <% 
+      // Group by year
+      const archiveGroups = {};
+      archivedAnlaesse.forEach(archAnlass => {
+        const year = archAnlass.year || 'Weitere';
+        if (!archiveGroups[year]) archiveGroups[year] = [];
+        archiveGroups[year].push(archAnlass);
+      });
+      
+      // Sort years descending (Weitere at the end)
+      const sortedYears = Object.keys(archiveGroups).sort((a, b) => {
+        if (a === 'Weitere') return 1;
+        if (b === 'Weitere') return -1;
+        return parseInt(b) - parseInt(a);
+      });
+    %>
+
+    <% sortedYears.forEach(year => { %>
+      <div class="archive-year-group" data-year="<%= year %>">
+        <h3 style="color: var(--fcz-accent); font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 1.5rem; padding-bottom: 0.5rem;"><%= year %></h3>
+        <% archiveGroups[year].forEach(archAnlass => { %>
+          <div class="archive-item" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); overflow: hidden;">
+            <button class="archive-toggle" onclick="toggleArchive(this)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.2rem; font-family: 'Inter', sans-serif; font-weight: 600; text-align: left;">
+              <span class="archive-title"><%= archAnlass.title %></span>
+              <svg class="archive-icon" style="transition: transform 0.3s;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            
+            <div class="archive-content" style="display: none; padding: 0 1.5rem 1.5rem;">
+              <% if (archAnlass.body) { %>
+                <div class="prose" style="margin-bottom: 2rem; color: rgba(255,255,255,0.8);">
+                  <%- mdToHtml(archAnlass.body) %>
+                </div>
+              <% } %>
+
+              <!-- Galleries for this archived anlass -->
+              <% if (archAnlass.galleries && archAnlass.galleries.length > 0) { %>
+                <% archAnlass.galleries.forEach(g => { %>
+                  <% if (g.photos && g.photos.length > 0) { %>
+                    <div class="anlass-subsection">
+                      <% if (archAnlass.galleries.length > 1) { %>
+                        <h4 style="margin-bottom: 1rem; color: #fff;"><%= g.name %></h4>
+                      <% } %>
+                      <div class="gallery-grid">
+                        <% g.photos.forEach(photo => { %>
+                          <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
+                            <img src="<%= photo.image_path %>" alt="" loading="lazy" />
+                          </figure>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                <% }) %>
+              <% } else { %>
+                <p class="muted" style="color: rgba(255,255,255,0.5);">Noch keine Galerien vorhanden.</p>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% }) %>
+  </div>
+  <p id="noArchiveResults" style="display: none; color: rgba(255,255,255,0.5); padding: 2rem; text-align: center; border: 1px dashed rgba(255,255,255,0.2); border-radius: var(--radius);">Keine Anlässe gefunden.</p>
+</section>
+
+<script>
+  function toggleArchive(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('.archive-icon');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.style.transform = 'rotate(180deg)';
+      btn.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+      btn.style.paddingBottom = '1rem';
+      content.style.paddingTop = '1rem';
+    } else {
+      content.style.display = 'none';
+      icon.style.transform = 'rotate(0deg)';
+      btn.style.borderBottom = 'none';
+      btn.style.paddingBottom = '1.5rem';
+    }
+  }
+
+  const searchInput = document.getElementById('archiveFilter');
+  const chips = document.querySelectorAll('.archive-chip');
+  let currentChipFilter = 'all';
+
+  function applyFilters() {
+    const term = searchInput ? searchInput.value.toLowerCase() : '';
+    const groups = document.querySelectorAll('.archive-year-group');
+    let hasAnyVisible = false;
+    
+    groups.forEach(group => {
+      let hasVisibleInGroup = false;
+      const items = group.querySelectorAll('.archive-item');
+      
+      items.forEach(item => {
+        const title = item.querySelector('.archive-title').innerText.toLowerCase();
+        
+        const matchesText = title.includes(term);
+        const matchesChip = currentChipFilter === 'all' || title.includes(currentChipFilter);
+        
+        if (matchesText && matchesChip) {
+          item.style.display = 'block';
+          hasVisibleInGroup = true;
+          hasAnyVisible = true;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      if (hasVisibleInGroup) {
+        group.style.display = 'block';
+      } else {
+        group.style.display = 'none';
+      }
+    });
+
+    const noResults = document.getElementById('noArchiveResults');
+    if (noResults) {
+      noResults.style.display = hasAnyVisible ? 'none' : 'block';
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      // Update active styling
+      chips.forEach(c => {
+        c.classList.remove('active');
+        c.style.background = 'rgba(255,255,255,0.05)';
+        c.style.border = '1px solid rgba(255,255,255,0.2)';
+        c.style.color = 'rgba(255,255,255,0.8)';
+      });
+      chip.classList.add('active');
+      chip.style.background = 'var(--fcz-red)';
+      chip.style.border = '1px solid var(--fcz-red)';
+      chip.style.color = '#fff';
+
+      currentChipFilter = chip.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+</script>
+<% } %>
 
 <!-- ========== LIGHTBOX ========== -->
 <div id="anlassLightbox" class="lightbox" onclick="closeAnlassLightbox()">

@@ -30,6 +30,44 @@
       }
     }
   });
+
+  // Global AJAX Delete to preserve page state/filters
+  document.addEventListener('submit', async (e) => {
+    if (e.defaultPrevented) return;
+    const form = e.target;
+    // Intercept single delete forms (exclude bulk-delete to let them safely reload)
+    if (form.action && form.action.match(/\/delete$/) && !form.action.includes('bulk-delete')) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '...';
+      }
+      try {
+        const res = await fetch(form.action, {
+          method: form.method || 'POST',
+          body: new FormData(form)
+        });
+        if (res.ok) {
+          const container = form.closest('tr') || form.closest('.admin-card') || form.closest('li') || form.closest('.photo-item');
+          if (container) {
+            container.style.transition = 'all 0.3s ease';
+            container.style.opacity = '0';
+            container.style.transform = 'scale(0.95)';
+            setTimeout(() => container.remove(), 300);
+          } else {
+            window.location.reload();
+          }
+        } else {
+          alert('Fehler beim Löschen. Bitte lade die Seite neu.');
+          if (btn) { btn.disabled = false; btn.innerHTML = 'löschen'; }
+        }
+      } catch (err) {
+        console.error(err);
+        window.location.reload();
+      }
+    }
+  });
 </script>
 <script src="/script.js"></script>
 </body>

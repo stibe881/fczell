@@ -10,19 +10,23 @@
   <% if (items.length === 0) { %>
     <p class="empty">Noch keine Termine erfasst.</p>
   <% } else { %>
-    <table class="admin-table">
+    <table class="admin-table" id="adminEventsTable">
       <thead>
         <tr>
-          <th>Datum</th>
-          <th>Zeit</th>
-          <th>Titel</th>
-          <th>Ort</th>
+          <th class="sortable" data-sort="date" style="cursor: pointer; user-select: none;">Datum <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="time" style="cursor: pointer; user-select: none;">Zeit <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="title" style="cursor: pointer; user-select: none;">Titel <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="location" style="cursor: pointer; user-select: none;">Ort <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
           <th class="actions">Aktionen</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="adminEventsTbody">
         <% items.forEach(ev => { %>
-          <tr>
+          <tr class="event-row" 
+              data-date="<%= new Date(ev.event_date).getTime() %>" 
+              data-time="<%= ev.event_time || '' %>" 
+              data-title="<%= ev.title.toLowerCase() %>" 
+              data-location="<%= (ev.location || '').toLowerCase() %>">
             <td><%= formatDate(ev.event_date) %></td>
             <td><%= ev.event_time || '–' %></td>
             <td><strong><%= ev.title %></strong></td>
@@ -39,5 +43,58 @@
     </table>
   <% } %>
 </div>
+
+<script>
+  // Table Sorting Logic
+  const tableBody = document.getElementById('adminEventsTbody');
+  const headers = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, asc: true };
+
+  if (headers.length > 0) {
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        const asc = currentSort.column === column ? !currentSort.asc : true;
+        currentSort = { column, asc };
+
+        // Update UI Icons
+        headers.forEach(h => {
+          const icon = h.querySelector('.sort-icon');
+          if (icon) {
+            icon.innerHTML = '↕';
+            icon.style.opacity = '0.3';
+            icon.style.color = 'inherit';
+          }
+        });
+        const currentIcon = header.querySelector('.sort-icon');
+        if (currentIcon) {
+          currentIcon.innerHTML = asc ? '↓' : '↑';
+          currentIcon.style.opacity = '1';
+          currentIcon.style.color = 'var(--fcz-red)';
+        }
+
+        // Sort rows
+        const rows = Array.from(tableBody.querySelectorAll('.event-row'));
+        rows.sort((a, b) => {
+          let valA = a.getAttribute(`data-${column}`);
+          let valB = b.getAttribute(`data-${column}`);
+
+          // Numeric parsing for dates (milliseconds)
+          if (column === 'date') {
+            valA = parseInt(valA) || 0;
+            valB = parseInt(valB) || 0;
+          }
+
+          if (valA < valB) return asc ? -1 : 1;
+          if (valA > valB) return asc ? 1 : -1;
+          return 0;
+        });
+
+        // Re-append rows
+        rows.forEach(row => tableBody.appendChild(row));
+      });
+    });
+  }
+</script>
 
 <%- include('_admin-footer') %>

@@ -57,11 +57,17 @@
 
       <% if (isAdmin || roles.includes('content')) { %>
         <div class="nav-group">
+          <h4>Anlässe</h4>
+          <a href="/admin/anlaesse" class="<%= typeof active !== 'undefined' && active === 'anlaesse' ? 'active' : '' %>">Anlässe</a>
+          <a href="/admin/gallery" class="<%= typeof active !== 'undefined' && active === 'gallery' ? 'active' : '' %>">Fotogalerien</a>
+        </div>
+      <% } %>
+
+      <% if (isAdmin || roles.includes('content')) { %>
+        <div class="nav-group">
           <h4>Inhalte</h4>
           <a href="/admin/pages" class="<%= typeof active !== 'undefined' && active === 'pages' ? 'active' : '' %>">Seiteninhalte</a>
-          <a href="/admin/anlaesse" class="<%= typeof active !== 'undefined' && active === 'anlaesse' ? 'active' : '' %>">Anlässe</a>
           <a href="/admin/documents" class="<%= typeof active !== 'undefined' && active === 'documents' ? 'active' : '' %>">Dokumente</a>
-          <a href="/admin/gallery" class="<%= typeof active !== 'undefined' && active === 'gallery' ? 'active' : '' %>">Galerie</a>
         </div>
       <% } %>
 

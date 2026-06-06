@@ -1,6 +1,6 @@
 <%- include('_admin-header', { pageTitle: anlass ? 'Anlass bearbeiten' : 'Neuer Anlass', active: 'anlaesse' }) %>
 
-<div class="admin-topbar">
+<div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
   <h1><%= anlass ? 'Anlass bearbeiten: ' + anlass.title : 'Neuer Anlass' %></h1>
   <a href="/admin/anlaesse" class="btn btn-ghost">Abbrechen</a>
 </div>
@@ -8,13 +8,19 @@
 <div class="admin-card">
   <form action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" class="admin-form">
     
-    <div class="form-group">
-      <label for="title">Titel</label>
-      <input type="text" id="title" name="title" value="<%= anlass ? anlass.title : '' %>" required oninput="document.getElementById('slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')" />
+    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="title">Titel</label>
+        <input type="text" id="title" name="title" value="<%= anlass ? anlass.title : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="year">Jahr</label>
+        <input type="number" id="year" name="year" value="<%= anlass && anlass.year ? anlass.year : new Date().getFullYear() %>" />
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="slug">URL-Slug (z.B. juniorenlager)</label>
+      <label for="slug">URL-Slug (automatisch generiert aus Titel & Jahr)</label>
       <input type="text" id="slug" name="slug" value="<%= anlass ? anlass.slug : '' %>" required />
     </div>
 
@@ -22,6 +28,13 @@
       <label for="sort_order">Reihenfolge (Sortierung)</label>
       <input type="number" id="sort_order" name="sort_order" value="<%= anlass ? anlass.sort_order : '0' %>" />
       <small>Kleinere Zahlen werden zuerst angezeigt.</small>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label" style="font-weight: 600;">
+        <input type="checkbox" id="is_archived" name="is_archived" value="1" <%= anlass && anlass.is_archived ? 'checked' : '' %> />
+        Archivieren (Anlass ist vergangen und soll im Archiv angezeigt werden)
+      </label>
     </div>
 
     <div class="form-group">
@@ -52,7 +65,7 @@
     <div class="form-group">
       <label for="body">Inhalt (Informationen zum Anlass)</label>
       <small style="display:block; margin-bottom:0.5rem;">Du kannst Markdown verwenden (*kursiv*, **fett**, # Überschrift).</small>
-      <textarea id="body" name="body" rows="15" required style="font-family: monospace;"><%= anlass ? anlass.body : '' %></textarea>
+      <textarea id="body" name="body" rows="15" style="font-family: monospace;"><%= anlass ? anlass.body : '' %></textarea>
     </div>
 
     <div class="form-actions">
@@ -70,9 +83,23 @@
       element: document.getElementById('body'),
       spellChecker: false,
       hideIcons: ['image', 'side-by-side', 'fullscreen'],
-      status: false
+      status: false,
+      forceSync: true
     });
   });
+
+  function updateSlug() {
+    const title = document.getElementById('title').value;
+    const year = document.getElementById('year').value;
+    const combined = title + (year ? '-' + year : '');
+    const slug = combined.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    document.getElementById('slug').value = slug;
+  }
+
+  <% if (!anlass) { %>
+    document.getElementById('title').addEventListener('input', updateSlug);
+    document.getElementById('year').addEventListener('input', updateSlug);
+  <% } %>
 </script>
 
 <%- include('_admin-footer') %>

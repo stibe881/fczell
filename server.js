@@ -281,7 +281,11 @@ app.get('/mannschaften/junioren/:slug', async (req, res) => {
 
 // --- Anlässe ---
 app.get('/anlaesse', async (req, res) => {
-  const [anlaesse] = await db.query(`SELECT * FROM anlaesse ORDER BY sort_order ASC, id ASC`);
+  const [allAnlaesse] = await db.query(`SELECT * FROM anlaesse ORDER BY sort_order ASC, id ASC`);
+
+  // Split into active and archived
+  const anlaesse = allAnlaesse.filter(a => a.is_archived === 0);
+  const archivedAnlaesse = allAnlaesse.filter(a => a.is_archived === 1);
 
   // News tagged as Juniorenlager (legacy compatibility)
   const [juniorenlagerNews] = await db.query(`SELECT * FROM news WHERE category = 'Juniorenlager' ORDER BY published_at DESC`);
@@ -294,7 +298,7 @@ app.get('/anlaesse', async (req, res) => {
     g.photos = photos.filter(p => p.gallery_id === g.id);
   });
 
-  anlaesse.forEach(a => {
+  allAnlaesse.forEach(a => {
     a.galleries = galleries.filter(g => g.anlass_id === a.id);
   });
 
@@ -311,6 +315,7 @@ app.get('/anlaesse', async (req, res) => {
   res.render('anlaesse', {
     page: 'anlaesse',
     anlaesse,
+    archivedAnlaesse,
     juniorenlagerNews,
     juniorenlagerDocs,
     amtscupDocs,
@@ -598,7 +603,7 @@ app.post('/admin/news/:id/edit', requireRole('news'), uploadAny.any(), async (re
     [title, excerpt || '', category || 'Allgemein', published_at, content || '', ...imageParam, req.params.id]
   );
   req.session.flash = { type: 'success', msg: 'News aktualisiert.' };
-  res.redirect('/admin/news');
+    res.redirect('/admin/news/' + req.params.id + '/edit');
 });
 
 app.post('/admin/news/:id/delete', requireRole('news'), async (req, res) => {
@@ -645,7 +650,7 @@ app.post('/admin/events/:id/edit', requireRole('teams'), async (req, res) => {
     [title, event_date, event_time || '', location || '', description || '', isMatchVal, live_ticker || '', hasLivestreamVal, livestream_url || '', req.params.id]
   );
   req.session.flash = { type: 'success', msg: 'Termin aktualisiert.' };
-  res.redirect('/admin/events');
+    res.redirect('/admin/events/' + req.params.id + '/edit');
 });
 
 app.post('/admin/events/:id/delete', requireRole('teams'), async (req, res) => {
@@ -656,23 +661,27 @@ app.post('/admin/events/:id/delete', requireRole('teams'), async (req, res) => {
 
 // --- Anlässe ---
 app.get('/admin/anlaesse', requireRole('content'), async (req, res) => {
-  const [anlaesse] = await db.query(`SELECT * FROM anlaesse ORDER BY sort_order ASC, id ASC`);
-  res.render('admin/anlaesse-list', { page: 'admin', anlaesse });
+  const [anlaesse] = await db.query(`SELECT * FROM anlaesse ORDER BY is_archived ASC, sort_order ASC, id DESC`);
+  res.render('admin/anlaesse-list', { page: 'admin', active: 'anlaesse', anlaesse, isArchiv: false });
+});
+
+app.get('/admin/anlaesse/archiv', requireRole('content'), async (req, res) => {
+  res.redirect('/admin/anlaesse');
 });
 
 app.get('/admin/anlaesse/new', requireRole('content'), async (req, res) => {
-  res.render('admin/anlaesse-form', { page: 'admin', anlass: null });
+  res.render('admin/anlaesse-form', { page: 'admin', active: 'anlaesse', anlass: null });
 });
 
 app.post('/admin/anlaesse/new', requireRole('content'), async (req, res) => {
-  const { title, slug, body, has_form, form_type, deadline, sort_order } = req.body;
+  const { title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived } = req.body;
   try {
     await db.query(`
-      INSERT INTO anlaesse (title, slug, body, has_form, form_type, deadline, sort_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [title, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0]);
+      INSERT INTO anlaesse (title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0]);
     req.session.flash = { type: 'success', msg: 'Anlass erstellt.' };
-    res.redirect('/admin/anlaesse');
+    res.redirect(is_archived ? '/admin/anlaesse/archiv' : '/admin/anlaesse');
   } catch (err) {
     req.session.flash = { type: 'error', msg: 'Fehler beim Erstellen (Slug schon vergeben?).' };
     res.redirect('/admin/anlaesse/new');
@@ -683,19 +692,19 @@ app.get('/admin/anlaesse/:id/edit', requireRole('content'), async (req, res) => 
   const [rows] = await db.query(`SELECT * FROM anlaesse WHERE id = ?`, [req.params.id]);
   const anlass = rows[0];
   if (!anlass) return res.redirect('/admin/anlaesse');
-  res.render('admin/anlaesse-form', { page: 'admin', anlass });
+  res.render('admin/anlaesse-form', { page: 'admin', active: anlass.is_archived ? 'archiv' : 'anlaesse', anlass });
 });
 
 app.post('/admin/anlaesse/:id/edit', requireRole('content'), async (req, res) => {
-  const { title, slug, body, has_form, form_type, deadline, sort_order } = req.body;
+  const { title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived } = req.body;
   try {
     await db.query(`
       UPDATE anlaesse 
-      SET title=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?
+      SET title=?, year=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?, is_archived=?
       WHERE id=?
-    `, [title, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, req.params.id]);
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, req.params.id]);
     req.session.flash = { type: 'success', msg: 'Anlass aktualisiert.' };
-    res.redirect('/admin/anlaesse');
+    res.redirect('/admin/anlaesse/' + req.params.id + '/edit');
   } catch (err) {
     req.session.flash = { type: 'error', msg: 'Fehler beim Aktualisieren (Slug schon vergeben?).' };
     res.redirect('/admin/anlaesse/' + req.params.id + '/edit');
@@ -703,9 +712,12 @@ app.post('/admin/anlaesse/:id/edit', requireRole('content'), async (req, res) =>
 });
 
 app.post('/admin/anlaesse/:id/delete', requireRole('content'), async (req, res) => {
+  // Check if it's archived before deleting to redirect correctly
+  const [rows] = await db.query(`SELECT is_archived FROM anlaesse WHERE id = ?`, [req.params.id]);
+  const isArchived = rows.length > 0 && rows[0].is_archived === 1;
   await db.query(`DELETE FROM anlaesse WHERE id = ?`, [req.params.id]);
   req.session.flash = { type: 'success', msg: 'Anlass gelöscht.' };
-  res.redirect('/admin/anlaesse');
+  res.redirect(isArchived ? '/admin/anlaesse/archiv' : '/admin/anlaesse');
 });
 
 // --- Anlässe Registrations Admin ---
@@ -950,7 +962,7 @@ app.post('/admin/sponsors/:id/edit', requireRole('sponsoring'), uploadSponsors.s
   if (req.file) finalLogo = '/images/sponsoren/' + req.file.filename;
   await db.query(`UPDATE sponsors SET name=?, category=?, logo=?, link=?, sort_order=? WHERE id=?`, [name, category||'', finalLogo, link||'', sort_order||0, req.params.id]);
   req.session.flash = { type: 'success', msg: 'Sponsor aktualisiert.' };
-  res.redirect('/admin/sponsors');
+    res.redirect('/admin/sponsors/' + req.params.id + '/edit');
 });
 
 app.post('/admin/sponsors/:id/delete', requireRole('sponsoring'), async (req, res) => {
@@ -997,7 +1009,7 @@ app.post('/admin/advertisers/:id/edit', requireRole('sponsoring'), uploadAdverti
     name, link || '', location || '', logoUrl, req.params.id
   ]);
   req.session.flash = { type: 'success', msg: 'Bandenwerber aktualisiert.' };
-  res.redirect('/admin/advertisers');
+    res.redirect('/admin/advertisers/' + req.params.id + '/edit');
 });
 
 app.post('/admin/advertisers/:id/delete', requireRole('sponsoring'), async (req, res) => {
@@ -1116,7 +1128,7 @@ app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (
   }
 
   req.session.flash = { type: 'success', msg: 'Team aktualisiert.' };
-  res.redirect('/admin/teams');
+    res.redirect('/admin/teams/' + req.params.id + '/edit');
 });
 
 app.post('/admin/teams/:id/delete', requireRole('teams'), async (req, res) => {
@@ -1155,7 +1167,7 @@ app.post('/admin/jobs/:id/edit', requireRole('content'), async (req, res) => {
   const active = is_active === '1' ? 1 : 0;
   await db.query(`UPDATE jobs SET title = ?, description = ?, contact_info = ?, is_active = ?, updated_at = NOW() WHERE id = ?`, [title, description, contact_info, active, req.params.id]);
   req.session.flash = { type: 'success', msg: 'Job aktualisiert.' };
-  res.redirect('/admin/jobs');
+    res.redirect('/admin/jobs/' + req.params.id + '/edit');
 });
 
 app.post('/admin/jobs/:id/delete', requireRole('content'), async (req, res) => {
@@ -1207,7 +1219,7 @@ app.get('/admin/gallery', requireRole('content'), async (req, res) => {
 });
 
 app.get('/admin/gallery/new-gallery', requireRole('content'), async (req, res) => {
-  const [anlaesse] = await db.query('SELECT id, title FROM anlaesse ORDER BY title ASC');
+  const [anlaesse] = await db.query('SELECT id, title, year FROM anlaesse ORDER BY title ASC, year DESC');
   res.render('admin/galleries-form', { page: 'admin', gallery: null, anlaesse });
 });
 
@@ -1221,15 +1233,16 @@ app.post('/admin/gallery/new-gallery', requireRole('content'), async (req, res) 
 app.get('/admin/gallery/:id/edit', requireRole('content'), async (req, res) => {
   const [galleries] = await db.query('SELECT * FROM galleries WHERE id = ?', [req.params.id]);
   if (!galleries.length) return res.redirect('/admin/gallery');
-  const [anlaesse] = await db.query('SELECT id, title FROM anlaesse ORDER BY title ASC');
-  res.render('admin/galleries-form', { page: 'admin', gallery: galleries[0], anlaesse });
+  const [anlaesse] = await db.query('SELECT id, title, year FROM anlaesse ORDER BY title ASC, year DESC');
+  const [photos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery_id = ? ORDER BY id DESC`, [req.params.id]);
+  res.render('admin/gallery-edit', { page: 'admin', gallery: galleries[0], anlaesse, photos });
 });
 
 app.post('/admin/gallery/:id/edit', requireRole('content'), async (req, res) => {
   const { name, anlass_id, sort_order } = req.body;
   await db.query(`UPDATE galleries SET name = ?, anlass_id = ?, sort_order = ? WHERE id = ?`, [name, anlass_id || null, sort_order || 0, req.params.id]);
   req.session.flash = { type: 'success', msg: 'Galerie aktualisiert.' };
-  res.redirect('/admin/gallery');
+  res.redirect(`/admin/gallery/${req.params.id}/edit`); // Stay on the same page
 });
 
 app.post('/admin/gallery/:id/delete', requireRole('content'), async (req, res) => {
@@ -1239,18 +1252,28 @@ app.post('/admin/gallery/:id/delete', requireRole('content'), async (req, res) =
   res.redirect('/admin/gallery');
 });
 
-// --- Gallery Photos CRUD ---
-app.get('/admin/gallery/:id/photos', requireRole('content'), async (req, res) => {
-  const [galleries] = await db.query('SELECT * FROM galleries WHERE id = ?', [req.params.id]);
-  if (!galleries.length) return res.redirect('/admin/gallery');
-  const [photos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery_id = ? ORDER BY sort_order ASC, id DESC`, [req.params.id]);
-  res.render('admin/gallery-photos', { page: 'admin', gallery: galleries[0], photos });
+app.post('/admin/gallery/bulk-delete', requireRole('content'), async (req, res) => {
+  let { galleryIds } = req.body;
+  if (!galleryIds) {
+    req.session.flash = { type: 'info', msg: 'Keine Galerien ausgewählt.' };
+    return res.redirect('/admin/gallery');
+  }
+  if (!Array.isArray(galleryIds)) {
+    galleryIds = [galleryIds];
+  }
+  for (const id of galleryIds) {
+    await db.query('DELETE FROM galleries WHERE id = ?', [id]);
+    await db.query('DELETE FROM gallery_photos WHERE gallery_id = ?', [id]);
+  }
+  req.session.flash = { type: 'success', msg: `${galleryIds.length} Galerien gelöscht.` };
+  res.redirect('/admin/gallery');
 });
 
+// --- Gallery Photos Upload/Delete ---
 app.post('/admin/gallery/:id/photos', requireRole('content'), uploadGallery.array('images', 50), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     req.session.flash = { type: 'error', msg: 'Bitte mindestens ein Bild hochladen.' };
-    return res.redirect(`/admin/gallery/${req.params.id}/photos`);
+    return res.redirect(`/admin/gallery/${req.params.id}/edit`);
   }
   
   for (const file of req.files) {
@@ -1261,14 +1284,14 @@ app.post('/admin/gallery/:id/photos', requireRole('content'), uploadGallery.arra
   }
   
   req.session.flash = { type: 'success', msg: `${req.files.length} Foto(s) hochgeladen.` };
-  res.redirect(`/admin/gallery/${req.params.id}/photos`);
+  res.redirect(`/admin/gallery/${req.params.id}/edit`);
 });
 
 app.post('/admin/gallery/:id/photos/bulk-delete', requireRole('content'), async (req, res) => {
   const { photoIds } = req.body;
   if (!photoIds) {
     req.session.flash = { type: 'error', msg: 'Keine Fotos ausgewählt.' };
-    return res.redirect(`/admin/gallery/${req.params.id}/photos`);
+    return res.redirect(`/admin/gallery/${req.params.id}/edit`);
   }
   const ids = Array.isArray(photoIds) ? photoIds : [photoIds];
   if (ids.length > 0) {
@@ -1276,13 +1299,13 @@ app.post('/admin/gallery/:id/photos/bulk-delete', requireRole('content'), async 
     await db.query(`DELETE FROM gallery_photos WHERE id IN (${placeholders}) AND gallery_id = ?`, [...ids, req.params.id]);
     req.session.flash = { type: 'success', msg: `${ids.length} Foto(s) gelöscht.` };
   }
-  res.redirect(`/admin/gallery/${req.params.id}/photos`);
+  res.redirect(`/admin/gallery/${req.params.id}/edit`);
 });
 
 app.post('/admin/gallery/:id/photos/:photoId/delete', requireRole('content'), async (req, res) => {
   await db.query(`DELETE FROM gallery_photos WHERE id = ? AND gallery_id = ?`, [req.params.photoId, req.params.id]);
   req.session.flash = { type: 'success', msg: 'Foto gelöscht.' };
-  res.redirect(`/admin/gallery/${req.params.id}/photos`);
+  res.redirect(`/admin/gallery/${req.params.id}/edit`);
 });
 
 // --- Registrations (read only for admin) ---
@@ -1350,7 +1373,7 @@ app.post('/admin/users/:id/edit', requireRole('admin'), async (req, res) => {
   }
   
   req.session.flash = { type: 'success', msg: 'Benutzer aktualisiert.' };
-  res.redirect('/admin/users');
+    res.redirect('/admin/users/' + req.params.id + '/edit');
 });
 
 app.post('/admin/users/:id/delete', requireRole('admin'), async (req, res) => {

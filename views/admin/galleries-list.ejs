@@ -10,35 +10,101 @@
   <% if (galleries.length === 0) { %>
     <p class="empty">Noch keine Galerien erfasst.</p>
   <% } else { %>
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Zugeordneter Anlass</th>
-          <th>Anzahl Fotos</th>
-          <th style="width: 250px;">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% galleries.forEach(g => { %>
+    <form action="/admin/gallery/bulk-delete" method="POST" id="bulkDeleteForm" onsubmit="return confirm('Ausgewählte Galerien und ALLE dazugehörigen Fotos wirklich löschen?');">
+      <div style="margin-bottom: 1rem; padding: 1rem; background: var(--fcz-gray-100); border-radius: var(--radius); display: flex; gap: 1rem; align-items: center;">
+        <button type="button" class="btn btn-sm btn-outline-dark" onclick="document.querySelectorAll('.gallery-cb').forEach(cb => cb.checked = true)">Alle markieren</button>
+        <button type="button" class="btn btn-sm btn-outline-dark" onclick="document.querySelectorAll('.gallery-cb').forEach(cb => cb.checked = false)">Auswahl aufheben</button>
+        <button type="submit" class="btn btn-sm btn-danger">Ausgewählte löschen</button>
+      </div>
+
+      <table class="admin-table" id="adminGalleriesTable">
+        <thead>
           <tr>
-            <td><strong><%= g.name %></strong></td>
-            <td><%= g.anlass_title || '-' %></td>
-            <td><%= g.photo_count %> Fotos</td>
-            <td>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/photos">Fotos bearbeiten</a>
-                <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/edit">Name / Anlass ändern</a>
-                <form action="/admin/gallery/<%= g.id %>/delete" method="post" onsubmit="return confirm('Diese Galerie und ALLE dazugehörigen Fotos wirklich löschen?');" style="margin: 0;">
-                  <button class="btn btn-sm btn-danger" type="submit">löschen</button>
-                </form>
-              </div>
-            </td>
+            <th style="width: 40px; padding-left: 1rem;"></th>
+            <th class="sortable" data-sort="name" style="cursor: pointer; user-select: none;">Name <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+            <th class="sortable" data-sort="anlass" style="cursor: pointer; user-select: none;">Zugeordneter Anlass <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+            <th class="sortable" data-sort="count" style="cursor: pointer; user-select: none;">Anzahl Fotos <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+            <th style="width: 250px;">Aktionen</th>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody id="adminGalleriesTbody">
+          <% galleries.forEach(g => { %>
+            <tr class="gallery-row" 
+                data-name="<%= g.name.toLowerCase() %>" 
+                data-anlass="<%= (g.anlass_title || '').toLowerCase() %>" 
+                data-count="<%= g.photo_count %>"
+                style="cursor: pointer;" onclick="const cb = this.querySelector('.gallery-cb'); if(event.target.tagName !== 'INPUT' && event.target.tagName !== 'A' && event.target.tagName !== 'BUTTON') cb.checked = !cb.checked;">
+              <td style="padding-left: 1rem;"><input type="checkbox" name="galleryIds" value="<%= g.id %>" class="gallery-cb" style="transform: scale(1.2); cursor: pointer;" /></td>
+              <td><strong><%= g.name %></strong></td>
+              <td><%= g.anlass_title || '-' %></td>
+              <td><%= g.photo_count %> Fotos</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/edit">Bearbeiten</a>
+                  <form action="/admin/gallery/<%= g.id %>/delete" method="post" onsubmit="return confirm('Diese Galerie und ALLE dazugehörigen Fotos wirklich löschen?');" style="margin: 0;">
+                    <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </form>
   <% } %>
 </div>
+
+<script>
+  // Table Sorting Logic
+  const tableBody = document.getElementById('adminGalleriesTbody');
+  const headers = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, asc: true };
+
+  if (headers.length > 0) {
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        const asc = currentSort.column === column ? !currentSort.asc : true;
+        currentSort = { column, asc };
+
+        // Update UI Icons
+        headers.forEach(h => {
+          const icon = h.querySelector('.sort-icon');
+          if (icon) {
+            icon.innerHTML = '↕';
+            icon.style.opacity = '0.3';
+            icon.style.color = 'inherit';
+          }
+        });
+        const currentIcon = header.querySelector('.sort-icon');
+        if (currentIcon) {
+          currentIcon.innerHTML = asc ? '↓' : '↑';
+          currentIcon.style.opacity = '1';
+          currentIcon.style.color = 'var(--fcz-red)';
+        }
+
+        // Sort rows
+        const rows = Array.from(tableBody.querySelectorAll('.gallery-row'));
+        rows.sort((a, b) => {
+          let valA = a.getAttribute(`data-${column}`);
+          let valB = b.getAttribute(`data-${column}`);
+
+          // Numeric parsing for counts
+          if (column === 'count') {
+            valA = parseInt(valA) || 0;
+            valB = parseInt(valB) || 0;
+          }
+
+          if (valA < valB) return asc ? -1 : 1;
+          if (valA > valB) return asc ? 1 : -1;
+          return 0;
+        });
+
+        // Re-append rows
+        rows.forEach(row => tableBody.appendChild(row));
+      });
+    });
+  }
+</script>
 
 <%- include('_admin-footer') %>

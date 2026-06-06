@@ -1,26 +1,80 @@
 <%- include('_admin-header', { pageTitle: 'Anlässe verwalten', active: 'anlaesse' }) %>
 
-<div class="admin-topbar">
+<div class="admin-page-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
   <h1>Anlässe verwalten</h1>
   <a href="/admin/anlaesse/new" class="btn btn-primary">+ Neuer Anlass</a>
 </div>
 
+<div class="admin-card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+    <div style="flex: 1; min-width: 200px;">
+      <label for="adminSearch" style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); display: block; margin-bottom: 0.4rem;">Suchen</label>
+      <input type="text" id="adminSearch" placeholder="Titel suchen..." class="form-control" style="width: 100%; padding: 0.6rem; border: 1px solid var(--fcz-gray-300); border-radius: var(--radius);">
+    </div>
+    
+    <% 
+      const uniqueTitles = [...new Set(anlaesse.map(a => a.title))].sort();
+      const uniqueYears = [...new Set(anlaesse.map(a => a.year).filter(y => y))].sort((a,b) => b - a);
+    %>
+    <div style="min-width: 150px;">
+      <label for="filterTitle" style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); display: block; margin-bottom: 0.4rem;">Titel</label>
+      <select id="filterTitle" class="form-control" style="width: 100%; padding: 0.6rem; border: 1px solid var(--fcz-gray-300); border-radius: var(--radius); background: #fff;">
+        <option value="all">Alle Titel</option>
+        <% uniqueTitles.forEach(t => { %>
+          <option value="<%= t.toLowerCase() %>"><%= t %></option>
+        <% }) %>
+      </select>
+    </div>
+    
+    <div style="min-width: 120px;">
+      <label for="filterYear" style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); display: block; margin-bottom: 0.4rem;">Jahr</label>
+      <select id="filterYear" class="form-control" style="width: 100%; padding: 0.6rem; border: 1px solid var(--fcz-gray-300); border-radius: var(--radius); background: #fff;">
+        <option value="all">Alle Jahre</option>
+        <% uniqueYears.forEach(y => { %>
+          <option value="<%= y %>"><%= y %></option>
+        <% }) %>
+        <option value="none">Weitere (Ohne Jahr)</option>
+      </select>
+    </div>
+
+    <div style="min-width: 200px; display: flex; align-items: center; padding-bottom: 0.6rem;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--fcz-gray-700);">
+        <input type="checkbox" id="toggleArchiv" style="transform: scale(1.2);">
+        Nur archivierte Anlässe anzeigen
+      </label>
+    </div>
+  </div>
+</div>
+
 <div class="admin-card">
-  <table class="admin-table">
+  <table class="admin-table" id="adminAnlaesseTable">
     <thead>
       <tr>
-        <th>Titel</th>
-        <th>Slug</th>
+        <th class="sortable" data-sort="title" style="cursor: pointer; user-select: none;">Titel <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+        <th class="sortable" data-sort="year" style="cursor: pointer; user-select: none;">Jahr <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+        <th class="sortable" data-sort="slug" style="cursor: pointer; user-select: none;">Slug <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
         <th>Anmeldeformular?</th>
-        <th>Anmeldeschluss</th>
-        <th>Sortierung</th>
+        <th class="sortable" data-sort="deadline" style="cursor: pointer; user-select: none;">Anmeldeschluss <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+        <th class="sortable" data-sort="sort_order" style="cursor: pointer; user-select: none;">Sortierung <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
         <th class="actions">Aktionen</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="adminAnlaesseTbody">
       <% anlaesse.forEach(a => { %>
-        <tr>
-          <td><strong><%= a.title %></strong></td>
+        <tr class="anlass-row" 
+            data-title="<%= a.title.toLowerCase() %>" 
+            data-year="<%= a.year || 0 %>" 
+            data-slug="<%= a.slug.toLowerCase() %>"
+            data-deadline="<%= a.deadline || '9999-99-99' %>"
+            data-sort_order="<%= a.sort_order %>"
+            data-archived="<%= a.is_archived %>">
+          <td>
+            <strong><%= a.title %></strong>
+            <% if (a.is_archived) { %>
+              <span class="tag" style="background: var(--fcz-gray-200); color: var(--fcz-gray-600); margin-left: 0.5rem; font-size: 0.7rem;">Archiv</span>
+            <% } %>
+          </td>
+          <td><%= a.year || '-' %></td>
           <td><code><%= a.slug %></code></td>
           <td>
             <% if (a.has_form) { %>
@@ -43,12 +97,120 @@
         </tr>
       <% }) %>
       <% if (anlaesse.length === 0) { %>
-        <tr>
-          <td colspan="6" style="text-align:center; padding:2rem;">Keine Anlässe vorhanden.</td>
+        <tr id="noResultsRow">
+          <td colspan="7" style="text-align:center; padding:2rem;">Keine Anlässe vorhanden.</td>
+        </tr>
+      <% } else { %>
+        <tr id="noResultsRow" style="display: none;">
+          <td colspan="7" style="text-align:center; padding:2rem;">Keine passenden Anlässe gefunden.</td>
         </tr>
       <% } %>
     </tbody>
   </table>
 </div>
+
+<script>
+  const searchInput = document.getElementById('adminSearch');
+  const titleFilter = document.getElementById('filterTitle');
+  const yearFilter = document.getElementById('filterYear');
+  
+  function applyAdminFilters() {
+    if (!searchInput) return;
+    
+    const term = searchInput.value.toLowerCase();
+    const titleVal = titleFilter.value;
+    const yearVal = yearFilter.value;
+    const toggleArchiv = document.getElementById('toggleArchiv');
+    const showArchived = toggleArchiv ? toggleArchiv.checked : false;
+    
+    const rows = document.querySelectorAll('.anlass-row');
+    let hasVisible = false;
+    
+    rows.forEach(row => {
+      const rowTitle = row.getAttribute('data-title');
+      const rawYear = row.getAttribute('data-year');
+      const rowYear = rawYear === '0' ? 'none' : rawYear;
+      const isArchived = row.getAttribute('data-archived') === '1';
+      
+      const matchesSearch = rowTitle.includes(term);
+      const matchesTitle = titleVal === 'all' || rowTitle === titleVal;
+      const matchesYear = yearVal === 'all' || rowYear === yearVal;
+      const matchesArchived = showArchived ? isArchived : !isArchived;
+      
+      if (matchesSearch && matchesTitle && matchesYear && matchesArchived) {
+        row.style.display = '';
+        hasVisible = true;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    
+    const noResults = document.getElementById('noResultsRow');
+    if (noResults) {
+      noResults.style.display = hasVisible ? 'none' : '';
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyAdminFilters);
+    titleFilter.addEventListener('change', applyAdminFilters);
+    yearFilter.addEventListener('change', applyAdminFilters);
+    
+    const toggleArchiv = document.getElementById('toggleArchiv');
+    if (toggleArchiv) {
+      toggleArchiv.addEventListener('change', applyAdminFilters);
+    }
+    
+    // Initial anwenden
+    applyAdminFilters();
+  }
+
+  // Table Sorting Logic
+  const tableBody = document.getElementById('adminAnlaesseTbody');
+  const headers = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, asc: true };
+
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      const column = header.getAttribute('data-sort');
+      const asc = currentSort.column === column ? !currentSort.asc : true;
+      currentSort = { column, asc };
+
+      // Update UI Icons
+      headers.forEach(h => {
+        const icon = h.querySelector('.sort-icon');
+        icon.innerHTML = '↕';
+        icon.style.opacity = '0.3';
+        icon.style.color = 'inherit';
+      });
+      const currentIcon = header.querySelector('.sort-icon');
+      currentIcon.innerHTML = asc ? '↓' : '↑';
+      currentIcon.style.opacity = '1';
+      currentIcon.style.color = 'var(--fcz-red)';
+
+      // Sort rows
+      const rows = Array.from(tableBody.querySelectorAll('.anlass-row'));
+      rows.sort((a, b) => {
+        let valA = a.getAttribute(`data-${column}`);
+        let valB = b.getAttribute(`data-${column}`);
+
+        // Numeric parsing
+        if (column === 'year' || column === 'sort_order') {
+          valA = parseFloat(valA) || 0;
+          valB = parseFloat(valB) || 0;
+        } else if (column === 'deadline') {
+           // String comparison for dates works fine in YYYY-MM-DD
+        }
+
+        if (valA < valB) return asc ? -1 : 1;
+        if (valA > valB) return asc ? 1 : -1;
+        return 0;
+      });
+
+      // Re-append rows
+      rows.forEach(row => tableBody.appendChild(row));
+    });
+  });
+</script>
 
 <%- include('_admin-footer') %>

@@ -10,18 +10,21 @@
   <% if (items.length === 0) { %>
     <p class="empty">Noch keine News erfasst.</p>
   <% } else { %>
-    <table class="admin-table">
+    <table class="admin-table" id="adminNewsTable">
       <thead>
         <tr>
-          <th>Datum</th>
-          <th>Titel</th>
-          <th>Kategorie</th>
+          <th class="sortable" data-sort="date" style="cursor: pointer; user-select: none;">Datum <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="title" style="cursor: pointer; user-select: none;">Titel <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
+          <th class="sortable" data-sort="category" style="cursor: pointer; user-select: none;">Kategorie <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
           <th class="actions">Aktionen</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="adminNewsTbody">
         <% items.forEach(n => { %>
-          <tr>
+          <tr class="news-row" 
+              data-date="<%= new Date(n.published_at).getTime() %>" 
+              data-title="<%= n.title.toLowerCase() %>" 
+              data-category="<%= n.category.toLowerCase() %>">
             <td><%= formatDate(n.published_at) %></td>
             <td><strong><%= n.title %></strong><% if (n.excerpt) { %><br><span class="muted"><%= n.excerpt %></span><% } %></td>
             <td><%= n.category %></td>
@@ -38,5 +41,58 @@
     </table>
   <% } %>
 </div>
+
+<script>
+  // Table Sorting Logic
+  const tableBody = document.getElementById('adminNewsTbody');
+  const headers = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, asc: true };
+
+  if (headers.length > 0) {
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        const asc = currentSort.column === column ? !currentSort.asc : true;
+        currentSort = { column, asc };
+
+        // Update UI Icons
+        headers.forEach(h => {
+          const icon = h.querySelector('.sort-icon');
+          if (icon) {
+            icon.innerHTML = '↕';
+            icon.style.opacity = '0.3';
+            icon.style.color = 'inherit';
+          }
+        });
+        const currentIcon = header.querySelector('.sort-icon');
+        if (currentIcon) {
+          currentIcon.innerHTML = asc ? '↓' : '↑';
+          currentIcon.style.opacity = '1';
+          currentIcon.style.color = 'var(--fcz-red)';
+        }
+
+        // Sort rows
+        const rows = Array.from(tableBody.querySelectorAll('.news-row'));
+        rows.sort((a, b) => {
+          let valA = a.getAttribute(`data-${column}`);
+          let valB = b.getAttribute(`data-${column}`);
+
+          // Numeric parsing for dates (milliseconds)
+          if (column === 'date') {
+            valA = parseInt(valA) || 0;
+            valB = parseInt(valB) || 0;
+          }
+
+          if (valA < valB) return asc ? -1 : 1;
+          if (valA > valB) return asc ? 1 : -1;
+          return 0;
+        });
+
+        // Re-append rows
+        rows.forEach(row => tableBody.appendChild(row));
+      });
+    });
+  }
+</script>
 
 <%- include('_admin-footer') %>
