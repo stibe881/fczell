@@ -1218,6 +1218,21 @@ app.post('/admin/gallery/new', requireRole('content'), uploadGallery.single('ima
   res.redirect('/admin/gallery');
 });
 
+app.post('/admin/gallery/bulk-delete', requireRole('content'), async (req, res) => {
+  const { photoIds } = req.body;
+  if (!photoIds) {
+    req.session.flash = { type: 'error', msg: 'Keine Fotos ausgewählt.' };
+    return res.redirect('/admin/gallery');
+  }
+  const ids = Array.isArray(photoIds) ? photoIds : [photoIds];
+  if (ids.length > 0) {
+    const placeholders = ids.map(() => '?').join(',');
+    await db.query(`DELETE FROM gallery_photos WHERE id IN (${placeholders})`, ids);
+    req.session.flash = { type: 'success', msg: `${ids.length} Foto(s) gelöscht.` };
+  }
+  res.redirect('/admin/gallery');
+});
+
 app.post('/admin/gallery/:id/delete', requireRole('content'), async (req, res) => {
   await db.query(`DELETE FROM gallery_photos WHERE id = ?`, [req.params.id]);
   req.session.flash = { type: 'success', msg: 'Foto gelöscht.' };
