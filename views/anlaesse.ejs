@@ -34,6 +34,22 @@
     <div class="prose" style="margin-bottom: 3rem;">
       <% if (anlass.slug === 'archiv') { %>
         <%- anlass.body %>
+        
+        <% const archiveNames = Object.keys(archiveGalleries); %>
+        <% if (archiveNames.length > 0) { %>
+          <% archiveNames.forEach(name => { %>
+            <div class="anlass-subsection" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(0,0,0,0.08);">
+              <h3 style="text-transform: capitalize; margin-bottom: 1.5rem;"><%= name %></h3>
+              <div class="gallery-grid">
+                <% archiveGalleries[name].forEach(photo => { %>
+                  <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
+                    <img src="<%= photo.image_path %>" alt="<%= photo.caption || 'Foto' %>" loading="lazy" />
+                  </figure>
+                <% }) %>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
       <% } else { %>
         <%- mdToHtml(anlass.body) %>
       <% } %>

@@ -287,8 +287,18 @@ app.get('/anlaesse', async (req, res) => {
   const [juniorenlagerNews] = await db.query(`SELECT * FROM news WHERE category = 'Juniorenlager' ORDER BY published_at DESC`);
 
   // Photos
-  const [juniorenlagerPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'juniorenlager' ORDER BY sort_order ASC`);
-  const [dorfturnierPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'dorfturnier' ORDER BY sort_order ASC`);
+  const [allPhotos] = await db.query(`SELECT * FROM gallery_photos ORDER BY gallery ASC, sort_order ASC, id DESC`);
+  const juniorenlagerPhotos = allPhotos.filter(p => p.gallery === 'juniorenlager');
+  const dorfturnierPhotos = allPhotos.filter(p => p.gallery === 'dorfturnier');
+  
+  const archiveGalleries = {};
+  const excludeFromArchive = ['juniorenlager', 'dorfturnier', 'sponsorentafel'];
+  allPhotos.forEach(p => {
+    if (!excludeFromArchive.includes(p.gallery) && !p.gallery.startsWith('team-')) {
+      if (!archiveGalleries[p.gallery]) archiveGalleries[p.gallery] = [];
+      archiveGalleries[p.gallery].push(p);
+    }
+  });
 
   // Documents
   const [juniorenlagerDocs] = await db.query(`SELECT * FROM documents WHERE category = 'juniorenlager' ORDER BY upload_date DESC`);
@@ -306,6 +316,7 @@ app.get('/anlaesse', async (req, res) => {
     juniorenlagerNews,
     juniorenlagerPhotos,
     dorfturnierPhotos,
+    archiveGalleries,
     juniorenlagerDocs,
     amtscupDocs,
     dorfturnierDocs,
