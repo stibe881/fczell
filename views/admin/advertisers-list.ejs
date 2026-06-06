@@ -8,6 +8,9 @@
       <p>Übersicht aller Bandenwerber.</p>
     </div>
     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <div class="form-group" style="margin: 0; display: flex; align-items: center;">
+        <input type="text" id="searchInput" placeholder="Suchen..." style="padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--fcz-gray-200); margin: 0; width: 200px;" />
+      </div>
       <div class="form-group" style="margin: 0; display: flex; align-items: center; gap: 0.5rem; background: #fff; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--fcz-gray-200);">
         <input type="checkbox" id="toggleArchived" style="width: auto; margin: 0;">
         <label for="toggleArchived" style="margin: 0; font-size: 0.9rem; font-weight: 500; cursor: pointer;">Archivierte anzeigen</label>
@@ -23,12 +26,12 @@
       <table class="admin-table sortable-table" id="advertisersTable">
         <thead>
           <tr>
-            <th>Logo</th>
-            <th class="sort-header" data-sort="name" style="cursor: pointer; user-select: none;">Name <span class="sort-icon"></span></th>
-            <th class="sort-header" data-sort="location" style="cursor: pointer; user-select: none;">Ort <span class="sort-icon"></span></th>
-            <th class="sort-header" data-sort="active_from" style="cursor: pointer; user-select: none;">Aktiv ab <span class="sort-icon"></span></th>
-            <th class="sort-header" data-sort="active_until" style="cursor: pointer; user-select: none;">Aktiv bis <span class="sort-icon"></span></th>
-            <th class="actions">Aktionen</th>
+            <th style="white-space: nowrap;">Logo</th>
+            <th class="sort-header" data-sort="name" style="cursor: pointer; user-select: none; white-space: nowrap;">Name <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="location" style="cursor: pointer; user-select: none; white-space: nowrap;">Ort <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="active_from" style="cursor: pointer; user-select: none; white-space: nowrap;">Aktiv ab <span class="sort-icon"></span></th>
+            <th class="sort-header" data-sort="active_until" style="cursor: pointer; user-select: none; white-space: nowrap;">Aktiv bis <span class="sort-icon"></span></th>
+            <th class="actions" style="white-space: nowrap; text-align: right;">Aktionen</th>
           </tr>
         </thead>
         <tbody>
@@ -82,21 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('toggleArchived');
   const rows = document.querySelectorAll('.item-row');
   
-  if (toggle) {
-    toggle.addEventListener('change', (e) => {
-      const showArchived = e.target.checked;
-      rows.forEach(row => {
-        const isArchived = row.getAttribute('data-archived') === 'true';
-        if (showArchived) {
-          // Show ONLY archived
-          row.style.display = isArchived ? '' : 'none';
-        } else {
-          // Show ONLY active
-          row.style.display = isArchived ? 'none' : '';
-        }
-      });
+  const searchInput = document.getElementById('searchInput');
+  
+  function filterRows() {
+    const showArchived = toggle ? toggle.checked : false;
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    
+    rows.forEach(row => {
+      const isArchived = row.getAttribute('data-archived') === 'true';
+      const text = row.textContent.toLowerCase();
+      
+      let matchesArchive = showArchived ? isArchived : !isArchived;
+      let matchesSearch = searchTerm === '' || text.includes(searchTerm);
+      
+      if (matchesArchive && matchesSearch) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
     });
   }
+
+  if (toggle) toggle.addEventListener('change', filterRows);
+  if (searchInput) searchInput.addEventListener('input', filterRows);
 
   const table = document.getElementById('advertisersTable');
   if (table) {

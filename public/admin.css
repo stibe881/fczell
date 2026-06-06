@@ -270,7 +270,7 @@ body.admin {
   color: var(--fcz-gray-500);
 }
 .admin-table tr:last-child td { border-bottom: 0; }
-.admin-table .actions {
+.admin-table td.actions {
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
