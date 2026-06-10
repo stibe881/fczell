@@ -141,6 +141,29 @@
       document.querySelectorAll('select[name="staff_role[]"]').forEach(sel => {
         sel.addEventListener('change', sortStaffRows);
       });
+
+      async function deleteImageAsync(field, btn) {
+        if (!confirm('Möchtest du dieses Bild wirklich sofort löschen? (Das kann nicht rückgängig gemacht werden)')) return;
+        try {
+          const teamId = '<%= item ? item.id : "" %>';
+          if (!teamId) {
+            btn.closest('.image-preview-container').remove();
+            return;
+          }
+          const res = await fetch('/admin/teams/' + teamId + '/delete-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ field })
+          });
+          if (res.ok) {
+            btn.closest('.image-preview-container').remove();
+          } else {
+            alert('Fehler beim Löschen des Bildes.');
+          }
+        } catch (e) {
+          alert('Fehler: ' + e.message);
+        }
+      }
     </script>
 
     <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
@@ -148,9 +171,12 @@
         <label>Teamfoto</label>
         <input type="hidden" name="existing_photo" value="<%= item ? item.photo : '' %>" />
         <% if (item && item.photo) { %>
-          <div style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
+          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
             <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.photo %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <label style="font-size:0.8rem; color:#dc2626; display:flex; align-items:center; gap:0.25rem; cursor:pointer;"><input type="checkbox" name="delete_photo" value="1"> Löschen</label>
+            <button type="button" onclick="deleteImageAsync('photo', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              Löschen
+            </button>
           </div>
         <% } %>
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
@@ -166,9 +192,12 @@
         <label>Dresssponsor 1</label>
         <input type="hidden" name="existing_sponsor_logo" value="<%= item ? item.sponsor_logo : '' %>" />
         <% if (item && item.sponsor_logo) { %>
-          <div style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
+          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
             <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <label style="font-size:0.8rem; color:#dc2626; display:flex; align-items:center; gap:0.25rem; cursor:pointer;"><input type="checkbox" name="delete_sponsor_logo" value="1"> Löschen</label>
+            <button type="button" onclick="deleteImageAsync('sponsor_logo', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              Löschen
+            </button>
           </div>
         <% } %>
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
@@ -181,9 +210,12 @@
         <label>Dresssponsor 2</label>
         <input type="hidden" name="existing_sponsor_logo_2" value="<%= item ? item.sponsor_logo_2 : '' %>" />
         <% if (item && item.sponsor_logo_2) { %>
-          <div style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
+          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
             <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_2 %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <label style="font-size:0.8rem; color:#dc2626; display:flex; align-items:center; gap:0.25rem; cursor:pointer;"><input type="checkbox" name="delete_sponsor_logo_2" value="1"> Löschen</label>
+            <button type="button" onclick="deleteImageAsync('sponsor_logo_2', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              Löschen
+            </button>
           </div>
         <% } %>
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
@@ -196,9 +228,12 @@
         <label>Dresssponsor 3</label>
         <input type="hidden" name="existing_sponsor_logo_3" value="<%= item ? item.sponsor_logo_3 : '' %>" />
         <% if (item && item.sponsor_logo_3) { %>
-          <div style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
+          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
             <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_3 %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <label style="font-size:0.8rem; color:#dc2626; display:flex; align-items:center; gap:0.25rem; cursor:pointer;"><input type="checkbox" name="delete_sponsor_logo_3" value="1"> Löschen</label>
+            <button type="button" onclick="deleteImageAsync('sponsor_logo_3', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              Löschen
+            </button>
           </div>
         <% } %>
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">

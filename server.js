@@ -1196,6 +1196,22 @@ app.post('/admin/teams/:id/delete', requireRole('teams'), async (req, res) => {
   res.redirect('/admin/teams');
 });
 
+app.post('/admin/teams/:id/delete-image', requireRole('teams'), express.json(), async (req, res) => {
+  try {
+    const { field } = req.body;
+    const allowedFields = ['photo', 'sponsor_logo', 'sponsor_logo_2', 'sponsor_logo_3'];
+    if (!allowedFields.includes(field)) {
+      return res.status(400).json({ error: 'Invalid field' });
+    }
+    
+    await db.query(`UPDATE teams SET ${field} = '' WHERE id = ?`, [req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // --- Jobs CRUD ---
 app.get('/admin/jobs', requireRole('content'), async (req, res) => {
   const [jobs] = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
