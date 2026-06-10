@@ -288,6 +288,17 @@ app.get('/mannschaften/junioren/:slug', async (req, res) => {
   res.render('team-detail', { page: 'mannschaften', team });
 });
 
+// --- Aktive Detail ---
+app.get('/mannschaften/aktive/:slug', async (req, res) => {
+  const [rows] = await db.query(`SELECT * FROM teams WHERE type = 'aktive' AND slug = ?`, [req.params.slug]);
+  const team = rows[0];
+  if (!team) return res.status(404).render('404', { page: '404' });
+  
+  const [staff] = await db.query(`SELECT * FROM team_staff WHERE team_id = ? ORDER BY CASE role WHEN 'Trainer' THEN 1 WHEN 'Co-Trainer' THEN 2 WHEN 'Torhütertrainer' THEN 3 WHEN 'Physio' THEN 4 ELSE 5 END ASC, id ASC`, [team.id]);
+  team.staff = staff;
+  res.render('team-detail', { page: 'mannschaften', team });
+});
+
 // --- Anlässe ---
 app.get('/anlaesse', async (req, res) => {
   const [allAnlaesse] = await db.query(`SELECT * FROM anlaesse ORDER BY sort_order ASC, id ASC`);

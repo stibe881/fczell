@@ -14,9 +14,7 @@
   <div class="section-nav-inner">
     <a href="#resultate" class="section-nav-link active">Resultate &amp; Ranglisten</a>
     <a href="#spielaufnahmen" class="section-nav-link">Spielaufnahmen</a>
-    <a href="#erste-mannschaft" class="section-nav-link">1. Mannschaft</a>
-    <a href="#zweite-mannschaft" class="section-nav-link">2. Mannschaft</a>
-    <a href="#senioren" class="section-nav-link">Senioren 30+</a>
+    <a href="#aktive" class="section-nav-link">Aktive</a>
     <a href="#junioren" class="section-nav-link">Junioren</a>
   </div>
 </nav>
@@ -135,173 +133,28 @@
   </div>
 </section>
 
-<!-- ============ #erste-mannschaft ============ -->
-<section class="band band-cream" id="erste-mannschaft">
-  <% if (aktiveTeams && aktiveTeams.length > 0) { %>
-  <% const team = aktiveTeams[0]; %>
-  <div class="team-row" id="<%= team.slug %>">
-    <div class="team-head">
+<!-- ============ #aktive ============ -->
+<section class="band band-cream" id="aktive">
+  <div class="band-head" style="text-align: center; justify-content: center;">
+    <div>
       <p class="eyebrow">Aktive</p>
-      <h2><%= team.name %></h2>
-      <% if (team.league) { %><span class="tag" style="margin-top: 0.5rem; display: inline-block;"><%= team.league %></span><% } %>
-      <% if (team.extra) { %>
-        <div style="margin-top: 1rem;">
-          <%- team.extra %>
-        </div>
-      <% } %>
-      <% if (team.contact_phone || team.contact_email) { %>
-        <div style="margin-top: 1rem; font-size:0.95rem; color:var(--fcz-gray-700);">
-          <strong>Kontakt:</strong><br>
-          <% if (team.contact_phone) { %><a href="tel:<%= team.contact_phone.replace(/\s/g, '') %>" style="color:inherit; text-decoration:none; margin-right:1rem;"><%= team.contact_phone %></a><% } %>
-          <% if (team.contact_email) { %><a href="mailto:<%= team.contact_email %>" style="color:inherit; text-decoration:none;"><%= team.contact_email %></a><% } %>
-        </div>
-      <% } %>
-    
-    </div>
-    <div class="team-content">
-      <% if (team.photo) { %>
-        <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
-            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
-          </a>
-        </div>
-      <% } %>
-
-      <dl class="team-info" style="margin-top: 2rem; max-width: 800px;">
-        <% if (team.staff && team.staff.length > 0) { %>
-          <% team.staff.forEach(s => { %>
-            <div>
-              <dt><%= s.role %></dt>
-              <dd>
-                <%= s.name %>
-                <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
-                <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
-              </dd>
-            </details>
-        <% }) %>
-        <% } %>
-        <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
-        <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
-      </dl>
-      
+      <h2>Unsere Aktivmannschaften</h2>
     </div>
   </div>
-  <% } %>
-</section>
-
-
-<!-- ============ #zweite-mannschaft ============ -->
-<section class="band band-dark" id="zweite-mannschaft">
-  <% if (aktiveTeams && aktiveTeams.length > 1) { %>
-  <% const team = aktiveTeams[1]; %>
-  <div class="team-row" id="<%= team.slug %>">
-    <div class="team-head">
-      <p class="eyebrow eyebrow-light">Aktive</p>
-      <h2><%= team.name %></h2>
-      <% if (team.league) { %><span class="tag" style="margin-top: 0.5rem; display: inline-block;"><%= team.league %></span><% } %>
-      <% if (team.extra) { %>
-        <div style="margin-top: 1rem;">
-          <%- team.extra %>
-        </div>
-      <% } %>
-      <% if (team.contact_phone || team.contact_email) { %>
-        <div style="margin-top: 1rem; font-size:0.95rem; color:var(--fcz-gray-700);">
-          <strong>Kontakt:</strong><br>
-          <% if (team.contact_phone) { %><a href="tel:<%= team.contact_phone.replace(/\s/g, '') %>" style="color:inherit; text-decoration:none; margin-right:1rem;"><%= team.contact_phone %></a><% } %>
-          <% if (team.contact_email) { %><a href="mailto:<%= team.contact_email %>" style="color:inherit; text-decoration:none;"><%= team.contact_email %></a><% } %>
-        </div>
-      <% } %>
-    
-    </div>
-    <div class="team-content">
-      <% if (team.photo) { %>
-        <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
-            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
-          </a>
-        </div>
-      <% } %>
-
-      <dl class="team-info" style="margin-top: 2rem; max-width: 800px;">
-        <% if (team.staff && team.staff.length > 0) { %>
-          <% team.staff.forEach(s => { %>
-            <div>
-              <dt><%= s.role %></dt>
-              <dd>
-                <%= s.name %>
-                <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
-                <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
-              </dd>
-            </details>
-        <% }) %>
-        <% } %>
-        <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
-        <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
-      </dl>
-      
-    </div>
+  <div class="teams-grid">
+    <% aktiveTeams.forEach(team => { %>
+      <a href="/mannschaften/aktive/<%= team.slug %>" class="team-tile">
+        <h3><%= team.name %></h3>
+        <% if (team.league) { %><span class="tag"><%= team.league %></span><% } %>
+        <span class="team-tile-link">Team Details →</span>
+      </a>
+    <% }) %>
   </div>
-  <% } %>
-</section>
-
-
-<!-- ============ #senioren ============ -->
-<section class="band band-light" id="senioren">
-  <% if (aktiveTeams && aktiveTeams.length > 2) { %>
-  <% const team = aktiveTeams[2]; %>
-  <div class="team-row" id="<%= team.slug %>">
-    <div class="team-head">
-      <p class="eyebrow">Aktive</p>
-      <h2><%= team.name %></h2>
-      <% if (team.league) { %><span class="tag" style="margin-top: 0.5rem; display: inline-block;"><%= team.league %></span><% } %>
-      <% if (team.extra) { %>
-        <div style="margin-top: 1rem;">
-          <%- team.extra %>
-        </div>
-      <% } %>
-      <% if (team.contact_phone || team.contact_email) { %>
-        <div style="margin-top: 1rem; font-size:0.95rem; color:var(--fcz-gray-700);">
-          <strong>Kontakt:</strong><br>
-          <% if (team.contact_phone) { %><a href="tel:<%= team.contact_phone.replace(/\s/g, '') %>" style="color:inherit; text-decoration:none; margin-right:1rem;"><%= team.contact_phone %></a><% } %>
-          <% if (team.contact_email) { %><a href="mailto:<%= team.contact_email %>" style="color:inherit; text-decoration:none;"><%= team.contact_email %></a><% } %>
-        </div>
-      <% } %>
-    
-    </div>
-    <div class="team-content">
-      <% if (team.photo) { %>
-        <div class="team-photo-wrap" style="border-radius: var(--radius); overflow: hidden; max-width: 800px;">
-          <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
-            <img src="<%= team.photo %>" alt="Gruppenfoto <%= team.name %>" style="width: 100%; height: auto; display: block;" />
-          </a>
-        </div>
-      <% } %>
-
-      <dl class="team-info" style="margin-top: 2rem; max-width: 800px;">
-        <% if (team.staff && team.staff.length > 0) { %>
-          <% team.staff.forEach(s => { %>
-            <div>
-              <dt><%= s.role %></dt>
-              <dd>
-                <%= s.name %>
-                <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
-                <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
-              </dd>
-            </details>
-        <% }) %>
-        <% } %>
-        <% if (team.times) { %><div><dt>Trainingszeiten</dt><dd><%= team.times %></dd></div><% } %>
-        <% if (team.location) { %><div><dt>Trainingsort</dt><dd><%= team.location %></dd></div><% } %>
-      </dl>
-      
-    </div>
-  </div>
-  <% } %>
 </section>
 
 
 <!-- ============ #junioren ============ -->
-<section class="band band-cream" id="junioren">
+<section class="band band-light" id="junioren">
   <div class="band-head" style="text-align: center; justify-content: center;">
     <div>
       <p class="eyebrow">Nachwuchs</p>

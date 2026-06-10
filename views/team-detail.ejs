@@ -3,7 +3,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <p class="eyebrow">Junioren</p>
+    <p class="eyebrow"><%= team.type === 'junioren' ? 'Junioren' : 'Aktive' %></p>
     <h1><%= team.name %></h1>
     <% if (team.league) { %><p><%= team.league %></p><% } %>
   </div>
