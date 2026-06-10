@@ -33,7 +33,13 @@
       </div>
       <div style="flex:1;">
         <label for="sfv_team_id">SFV Team ID (für football.ch Widget, z.B. 31390)</label>
-        <input type="text" id="sfv_team_id" name="sfv_team_id" value="<%= item ? item.sfv_team_id : '' %>" placeholder="Nur ID, z.B. 31390" />
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <input type="text" id="sfv_team_id" name="sfv_team_id" value="<%= item ? item.sfv_team_id : '' %>" placeholder="Nur ID, z.B. 31390" style="flex:1;" />
+          <label style="display:flex; align-items:center; gap:0.25rem; font-size:0.9rem; margin:0; cursor:pointer; white-space:nowrap;">
+            <input type="checkbox" name="sfv_widget_active" value="1" <%= (item && item.sfv_widget_active) ? 'checked' : '' %> style="width:auto; margin:0;" />
+            Widget aktivieren
+          </label>
+        </div>
       </div>
     </div>
 

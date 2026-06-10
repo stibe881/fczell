@@ -1074,9 +1074,11 @@ app.post('/admin/teams/new', requireRole('teams'), uploadAny.any(), async (req, 
     if (sponsorFile3) sponsorLogo3 = '/images/mannschaften/' + sponsorFile3.filename;
   }
 
+  const sfv_widget_active = req.body.sfv_widget_active ? 1 : 0;
+
   const [result] = await db.query(
-    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id, photo, sponsor_logo, sponsor_logo_2, sponsor_logo_3) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3]
+    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id, sfv_widget_active, photo, sponsor_logo, sponsor_logo_2, sponsor_logo_3) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', sfv_widget_active, teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3]
   );
   const teamId = result.insertId;
 
@@ -1146,9 +1148,11 @@ app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (
     if (sponsorFile3) sponsorLogo3 = '/images/mannschaften/' + sponsorFile3.filename;
   }
 
+  const sfv_widget_active = req.body.sfv_widget_active ? 1 : 0;
+
   await db.query(
-    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=?, contact_phone=?, contact_email=?, sfv_team_id=?, photo=?, sponsor_logo=?, sponsor_logo_2=?, sponsor_logo_3=? WHERE id=?`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3, req.params.id]
+    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=?, contact_phone=?, contact_email=?, sfv_team_id=?, sfv_widget_active=?, photo=?, sponsor_logo=?, sponsor_logo_2=?, sponsor_logo_3=? WHERE id=?`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', sfv_widget_active, teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3, req.params.id]
   );
   
   // Process dynamic staff

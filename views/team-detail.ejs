@@ -9,9 +9,19 @@
   </div>
 </section>
 
+<style>
+  .team-layout { display: flex; flex-wrap: wrap; gap: 2rem; }
+  .team-main { flex: 1 1 60%; min-width: 320px; }
+  .team-sidebar { flex: 1 1 350px; max-width: 100%; align-self: flex-start; }
+  @media (min-width: 1024px) {
+    .team-sidebar { max-width: 400px; }
+  }
+</style>
+
 <section class="band band-light">
-  <div class="team-detail-card" style="max-width: var(--max-w); margin: 0 auto; background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
-    
+  <div class="team-layout" style="max-width: var(--max-w); margin: 0 auto;">
+    <div class="team-main team-detail-card" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
+      
     <% if (team.photo) { %>
       <div class="team-photo" style="width: 100%; background: #f4f4f4;">
         <a href="<%= team.photo %>" class="lightbox-trigger" style="display: block;">
@@ -78,20 +88,20 @@
         </div>
       <% } %>
 
-      <% if (team.sfv_team_id) { %>
-        <div class="team-widget" style="margin-top: 4rem;">
-          <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
-          <div style="overflow: hidden; width: 100%;">
-            <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>"  class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -130px;"></iframe>
-          </div>
-          <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
-        </div>
-      <% } %>
-
-      <div style="margin-top: 3rem; text-align: center;">
-        <a href="/mannschaften#junioren" class="btn btn-outline">&larr; Zurück zur Übersicht</a>
+      <div style="margin-top: 3rem; text-align: center; padding-bottom: 2rem;">
+        <a href="/mannschaften" class="btn btn-outline">&larr; Zurück zur Übersicht</a>
       </div>
     </div>
+
+    <% if (team.sfv_team_id && team.sfv_widget_active) { %>
+      <div class="team-sidebar" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); padding: 2rem; box-sizing: border-box; overflow: hidden;">
+        <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
+        <div style="overflow: hidden; width: 100%;">
+          <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>"  class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -130px;"></iframe>
+        </div>
+        <script src="https://widget.football.ch/portaldata/30/scripts/sfvVereinWidget.js"></script>
+      </div>
+    <% } %>
   </div>
 </section>
 
