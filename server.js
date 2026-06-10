@@ -224,7 +224,7 @@ app.get('/verein', async (req, res) => {
     AND (active_until IS NULL OR active_until = '' OR active_until >= ?)
     ORDER BY name ASC
   `, [todayStr, todayStr]);
-  const [trainers] = await db.query(`SELECT ts.*, t.name AS team_name, t.slug AS team_slug, t.type AS team_type FROM team_staff ts JOIN teams t ON ts.team_id = t.id WHERE ts.role IN ('Trainer', 'Co-Trainer') ORDER BY t.sort_order ASC, ts.id ASC`);
+  const [trainers] = await db.query(`SELECT ts.*, t.name AS team_name, t.slug AS team_slug, t.type AS team_type FROM team_staff ts JOIN teams t ON ts.team_id = t.id WHERE ts.role IN ('Trainer', 'Co-Trainer') ORDER BY CASE t.type WHEN 'aktive' THEN 0 ELSE 1 END ASC, t.sort_order ASC, t.id ASC, CASE ts.role WHEN 'Trainer' THEN 1 WHEN 'Co-Trainer' THEN 2 ELSE 3 END ASC, ts.id ASC`);
 
   const [sponsorentafelPhotos] = await db.query(`SELECT * FROM gallery_photos WHERE gallery = 'sponsorentafel' ORDER BY sort_order ASC`);
 
