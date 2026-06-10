@@ -72,9 +72,8 @@
                   <img src="<%= doc.file %>" alt="<%= doc.label %> – <%= anlass.title %>" loading="lazy" />
                 </div>
               <% } else { %>
-                <div class="anlass-doc-preview anlass-doc-embed" onclick="openDocModal('<%= doc.file %>')" style="cursor:zoom-in;">
+                <div class="anlass-doc-preview anlass-doc-embed">
                   <iframe src="<%= doc.file %>#toolbar=0&navpanes=0" title="<%= doc.label %> – <%= anlass.title %>"></iframe>
-                  <div class="anlass-doc-embed-overlay"></div>
                 </div>
               <% } %>
             </div>
@@ -844,15 +843,6 @@
   width: 100%;
   height: 100%;
   border: none;
-  pointer-events: none;
-}
-.anlass-doc-embed-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
 }
 
 @media (max-width: 600px) {
