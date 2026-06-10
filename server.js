@@ -1052,9 +1052,29 @@ app.get('/admin/teams/new', requireRole('teams'), (req, res) => {
 
 app.post('/admin/teams/new', requireRole('teams'), uploadAny.any(), async (req, res) => {
   const { type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id } = req.body;
+  
+  let teamPhoto = '';
+  let sponsorLogo = '';
+  let sponsorLogo2 = '';
+  let sponsorLogo3 = '';
+
+  if (req.files) {
+    const photoFile = req.files.find(f => f.fieldname === 'photo');
+    if (photoFile) teamPhoto = '/images/mannschaften/' + photoFile.filename;
+    
+    const sponsorFile = req.files.find(f => f.fieldname === 'sponsor_logo');
+    if (sponsorFile) sponsorLogo = '/images/mannschaften/' + sponsorFile.filename;
+
+    const sponsorFile2 = req.files.find(f => f.fieldname === 'sponsor_logo_2');
+    if (sponsorFile2) sponsorLogo2 = '/images/mannschaften/' + sponsorFile2.filename;
+
+    const sponsorFile3 = req.files.find(f => f.fieldname === 'sponsor_logo_3');
+    if (sponsorFile3) sponsorLogo3 = '/images/mannschaften/' + sponsorFile3.filename;
+  }
+
   const [result] = await db.query(
-    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '']
+    `INSERT INTO teams (type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id, photo, sponsor_logo, sponsor_logo_2, sponsor_logo_3) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3]
   );
   const teamId = result.insertId;
 
@@ -1104,9 +1124,29 @@ app.get('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
 
 app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (req, res) => {
   const { type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id } = req.body;
+  
+  let teamPhoto = req.body.existing_photo || '';
+  let sponsorLogo = req.body.existing_sponsor_logo || '';
+  let sponsorLogo2 = req.body.existing_sponsor_logo_2 || '';
+  let sponsorLogo3 = req.body.existing_sponsor_logo_3 || '';
+
+  if (req.files) {
+    const photoFile = req.files.find(f => f.fieldname === 'photo');
+    if (photoFile) teamPhoto = '/images/mannschaften/' + photoFile.filename;
+    
+    const sponsorFile = req.files.find(f => f.fieldname === 'sponsor_logo');
+    if (sponsorFile) sponsorLogo = '/images/mannschaften/' + sponsorFile.filename;
+
+    const sponsorFile2 = req.files.find(f => f.fieldname === 'sponsor_logo_2');
+    if (sponsorFile2) sponsorLogo2 = '/images/mannschaften/' + sponsorFile2.filename;
+
+    const sponsorFile3 = req.files.find(f => f.fieldname === 'sponsor_logo_3');
+    if (sponsorFile3) sponsorLogo3 = '/images/mannschaften/' + sponsorFile3.filename;
+  }
+
   await db.query(
-    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=?, contact_phone=?, contact_email=?, sfv_team_id=? WHERE id=?`,
-    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', req.params.id]
+    `UPDATE teams SET type=?, name=?, slug=?, league=?, extra=?, times=?, location=?, sort_order=?, contact_phone=?, contact_email=?, sfv_team_id=?, photo=?, sponsor_logo=?, sponsor_logo_2=?, sponsor_logo_3=? WHERE id=?`,
+    [type || 'aktive', name, slug || '', league || '', extra || '', times || '', location || '', sort_order || 0, contact_phone || '', contact_email || '', sfv_team_id || '', teamPhoto, sponsorLogo, sponsorLogo2, sponsorLogo3, req.params.id]
   );
   
   // Process dynamic staff

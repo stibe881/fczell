@@ -44,10 +44,20 @@
       <p style="color: var(--fcz-gray-500); text-align: center;">Die Team-Details werden in Kürze aktualisiert.</p>
     <% } %>
 
-    <% if (team.sponsor_logo) { %>
+    <% if (team.sponsor_logo || team.sponsor_logo_2 || team.sponsor_logo_3) { %>
       <div class="team-sponsor" style="margin-top: 3rem; text-align: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 2.5rem;">
-        <p style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">Dresssponsor</p>
-        <img src="<%= team.sponsor_logo %>" alt="Dresssponsor <%= team.name %>" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+        <p style="font-size: 0.85rem; font-weight: 600; color: var(--fcz-gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">Dresssponsoren</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: center;">
+          <% if (team.sponsor_logo) { %>
+            <img src="<%= team.sponsor_logo %>" alt="Dresssponsor 1 <%= team.name %>" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+          <% } %>
+          <% if (team.sponsor_logo_2) { %>
+            <img src="<%= team.sponsor_logo_2 %>" alt="Dresssponsor 2 <%= team.name %>" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+          <% } %>
+          <% if (team.sponsor_logo_3) { %>
+            <img src="<%= team.sponsor_logo_3 %>" alt="Dresssponsor 3 <%= team.name %>" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+          <% } %>
+        </div>
       </div>
     <% } %>
 
