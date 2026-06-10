@@ -9,20 +9,32 @@
   </div>
 </section>
 
-<% const showWidget = team.sfv_team_id && team.sfv_widget_active; %>
+<% const showWidget = (team.sfv_team_id && (team.sfv_widget_active == 1 || team.sfv_widget_active == true)) ? true : false; %>
 <style>
   .team-layout {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
-    grid-template-columns: 1fr;
   }
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     .team-layout.has-widget {
-      grid-template-columns: 1fr 380px;
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    .team-layout.has-widget .team-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .team-layout.has-widget .team-sidebar {
+      flex: 0 0 350px;
+      width: 350px;
     }
   }
-  .team-sidebar {
-    align-self: start;
+  @media (min-width: 1024px) {
+    .team-layout.has-widget .team-sidebar {
+      flex: 0 0 380px;
+      width: 380px;
+    }
   }
 </style>
 
@@ -101,7 +113,7 @@
       </div>
     </div>
 
-    <% if (team.sfv_team_id && team.sfv_widget_active) { %>
+    <% if (showWidget) { %>
       <div class="team-sidebar" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); padding: 2rem; box-sizing: border-box; overflow: hidden;">
         <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
         <div style="overflow: hidden; width: 100%;">
