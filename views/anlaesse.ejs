@@ -39,6 +39,53 @@
     </div>
   <% } %>
 
+  <% if (anlass.flyer_file || anlass.spielplan_file || anlass.reglement_file) { %>
+    <div class="anlass-docs">
+      <% if (anlass.flyer_file) { %>
+        <a href="<%= anlass.flyer_file %>" target="_blank" rel="noopener" class="anlass-doc-card">
+          <div class="anlass-doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="anlass-doc-info">
+            <span class="anlass-doc-label">Flyer</span>
+            <span class="anlass-doc-title"><%= anlass.title %></span>
+          </div>
+          <div class="anlass-doc-dl">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+        </a>
+      <% } %>
+      <% if (anlass.spielplan_file) { %>
+        <a href="<%= anlass.spielplan_file %>" target="_blank" rel="noopener" class="anlass-doc-card">
+          <div class="anlass-doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="anlass-doc-info">
+            <span class="anlass-doc-label">Spielplan</span>
+            <span class="anlass-doc-title"><%= anlass.title %></span>
+          </div>
+          <div class="anlass-doc-dl">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+        </a>
+      <% } %>
+      <% if (anlass.reglement_file) { %>
+        <a href="<%= anlass.reglement_file %>" target="_blank" rel="noopener" class="anlass-doc-card">
+          <div class="anlass-doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="anlass-doc-info">
+            <span class="anlass-doc-label">Reglement</span>
+            <span class="anlass-doc-title"><%= anlass.title %></span>
+          </div>
+          <div class="anlass-doc-dl">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+
   <!-- Registration Form -->
   <% if (anlass.has_form) { 
        const isClosed = anlass.deadline && new Date() > new Date(anlass.deadline);
@@ -669,6 +716,88 @@
 
 @media (max-width: 600px) {
   .gv-detail { grid-template-columns: 1fr; gap: 0.25rem; }
+}
+
+/* ---------- ANLASS DOCUMENT CARDS ---------- */
+.anlass-docs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+.anlass-doc-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.25s ease;
+}
+.anlass-doc-card:hover {
+  border-color: var(--fcz-red);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-3px);
+}
+.anlass-doc-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(200,16,46,0.08), rgba(26,128,182,0.08));
+  color: var(--fcz-red);
+}
+.anlass-doc-card:hover .anlass-doc-icon {
+  background: linear-gradient(135deg, rgba(200,16,46,0.15), rgba(26,128,182,0.15));
+}
+.anlass-doc-info {
+  flex: 1;
+  min-width: 0;
+}
+.anlass-doc-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fcz-red);
+  margin-bottom: 0.15rem;
+}
+.anlass-doc-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fcz-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.anlass-doc-dl {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--fcz-gray-100);
+  color: var(--fcz-gray-500);
+  transition: all 0.25s ease;
+}
+.anlass-doc-card:hover .anlass-doc-dl {
+  background: var(--fcz-red);
+  color: #fff;
+}
+
+@media (max-width: 500px) {
+  .anlass-docs { grid-template-columns: 1fr; }
 }
 </style>
 
