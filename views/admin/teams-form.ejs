@@ -159,6 +159,9 @@
           <input type="file" name="photo" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
         </label>
       </div>
+    </div>
+
+    <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
       <div style="flex:1; min-width:220px;">
         <label>Dresssponsor 1</label>
         <input type="hidden" name="existing_sponsor_logo" value="<%= item ? item.sponsor_logo : '' %>" />
