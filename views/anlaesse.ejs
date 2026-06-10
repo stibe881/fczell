@@ -68,12 +68,13 @@
                 </a>
               </div>
               <% if (isImage) { %>
-                <a href="<%= doc.file %>" class="lightbox-trigger anlass-doc-preview" style="display:block;">
+                <div class="anlass-doc-preview" onclick="openAnlassLightbox('<%= doc.file %>')" style="cursor:zoom-in;">
                   <img src="<%= doc.file %>" alt="<%= doc.label %> – <%= anlass.title %>" loading="lazy" />
-                </a>
+                </div>
               <% } else { %>
-                <div class="anlass-doc-preview anlass-doc-embed">
+                <div class="anlass-doc-preview anlass-doc-embed" onclick="openDocModal('<%= doc.file %>')" style="cursor:zoom-in;">
                   <iframe src="<%= doc.file %>#toolbar=0&navpanes=0" title="<%= doc.label %> – <%= anlass.title %>"></iframe>
+                  <div class="anlass-doc-embed-overlay"></div>
                 </div>
               <% } %>
             </div>
@@ -475,6 +476,14 @@
   <img class="lightbox-content" id="anlassLightboxImg">
 </div>
 
+<!-- ========== DOC MODAL (fullscreen PDF viewer) ========== -->
+<div id="docModal" class="doc-modal" onclick="closeDocModal()">
+  <div class="doc-modal-inner" onclick="event.stopPropagation()">
+    <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
+    <iframe id="docModalIframe" src="" title="Dokument"></iframe>
+  </div>
+</div>
+
 <!-- ========== PAGE STYLES ========== -->
 <style>
 /* ---------- SECTION NAV ---------- */
@@ -826,7 +835,7 @@
 .anlass-doc-embed {
   position: relative;
   width: 100%;
-  padding-top: 130%; /* tall aspect ratio for PDF pages */
+  padding-top: 100%;
 }
 .anlass-doc-embed iframe {
   position: absolute;
@@ -835,11 +844,72 @@
   width: 100%;
   height: 100%;
   border: none;
+  pointer-events: none;
+}
+.anlass-doc-embed-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .anlass-docs { grid-template-columns: 1fr; }
-  .anlass-doc-embed { padding-top: 140%; }
+}
+
+/* ---------- DOC MODAL (fullscreen) ---------- */
+.doc-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.doc-modal.show {
+  display: flex;
+}
+.doc-modal-inner {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.doc-modal-inner iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.doc-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.doc-modal-close:hover {
+  background: var(--fcz-red);
 }
 </style>
 
@@ -863,8 +933,24 @@ function closeAnlassLightbox() {
   document.getElementById('anlassLightbox').classList.remove('show');
   document.body.style.overflow = '';
 }
+
+// ---------- Doc Modal (fullscreen PDF) ----------
+function openDocModal(src) {
+  document.getElementById('docModalIframe').src = src;
+  document.getElementById('docModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeDocModal() {
+  document.getElementById('docModal').classList.remove('show');
+  document.getElementById('docModalIframe').src = '';
+  document.body.style.overflow = '';
+}
+
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeAnlassLightbox();
+  if (e.key === 'Escape') {
+    closeAnlassLightbox();
+    closeDocModal();
+  }
 });
 
 // ---------- Section nav active state ----------
