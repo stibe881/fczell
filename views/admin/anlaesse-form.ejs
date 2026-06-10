@@ -38,24 +38,24 @@
     </div>
 
     <div class="form-group">
+      <label for="form_type">Anlass-Typ / Template</label>
+      <select id="form_type" name="form_type">
+        <option value="standard" <%= anlass && anlass.form_type === 'standard' ? 'selected' : '' %>>Standard (Name, E-Mail, Telefon, Bemerkungen)</option>
+        <option value="juniorenlager" <%= anlass && anlass.form_type === 'juniorenlager' ? 'selected' : '' %>>Juniorenlager Spezial-Formular</option>
+        <option value="dorfturnier" <%= anlass && anlass.form_type === 'dorfturnier' ? 'selected' : '' %>>Dorfturnier Spezial-Formular</option>
+        <option value="amtscup" <%= anlass && anlass.form_type === 'amtscup' ? 'selected' : '' %>>Amtscup (Spielplan & Reglement)</option>
+      </select>
+      <small>Bestimmt das Formular-Schema und welche Dokumente hochgeladen werden können.</small>
+    </div>
+
+    <div class="form-group">
       <label class="checkbox-label" style="font-weight: 600;">
         <input type="checkbox" id="has_form" name="has_form" value="1" <%= anlass && anlass.has_form ? 'checked' : '' %> onchange="document.getElementById('form-options').style.display = this.checked ? 'block' : 'none'" />
-        Anmeldeformular aktivieren
+        Anmeldeformular aktivieren (öffentlich sichtbar)
       </label>
     </div>
 
     <div id="form-options" style="display: <%= anlass && anlass.has_form ? 'block' : 'none' %>; padding: 1.5rem; background: #f9fafb; border-radius: 8px; margin-bottom: 1.5rem;">
-      <div class="form-group">
-        <label for="form_type">Formular-Typ</label>
-        <select id="form_type" name="form_type">
-          <option value="standard" <%= anlass && anlass.form_type === 'standard' ? 'selected' : '' %>>Standard (Name, E-Mail, Telefon, Bemerkungen)</option>
-          <option value="juniorenlager" <%= anlass && anlass.form_type === 'juniorenlager' ? 'selected' : '' %>>Juniorenlager Spezial-Formular</option>
-          <option value="dorfturnier" <%= anlass && anlass.form_type === 'dorfturnier' ? 'selected' : '' %>>Dorfturnier Spezial-Formular</option>
-          <option value="amtscup" <%= anlass && anlass.form_type === 'amtscup' ? 'selected' : '' %>>Amtscup (Spielplan & Reglement)</option>
-        </select>
-        <small>Wähle aus, welches Formular-Schema verwendet werden soll.</small>
-      </div>
-
       <div class="form-group" style="margin-bottom: 0;">
         <label for="deadline">Anmeldeschluss (optional)</label>
         <input type="date" id="deadline" name="deadline" value="<%= anlass && anlass.deadline ? anlass.deadline : '' %>" />
