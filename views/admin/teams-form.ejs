@@ -77,7 +77,7 @@
                 <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                   <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
-                  <input type="file" name="staff_photo_<%= idx %>" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Foto wählen...'; this.previousElementSibling.style.color = '#0f172a';" />
+                  <input type="file" name="staff_photo_<%= idx %>" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
                 </label>
               </div>
               <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
@@ -123,7 +123,7 @@
             <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
               <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
-              <input type="file" name="staff_photo_${count}" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Foto wählen...'; this.previousElementSibling.style.color = '#0f172a';" />
+              <input type="file" name="staff_photo_${count}" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
             </label>
           </div>
           <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
@@ -164,6 +164,44 @@
           alert('Fehler: ' + e.message);
         }
       }
+
+      function handleImageSelect(input) {
+        const file = input.files[0];
+        const span = input.previousElementSibling;
+        
+        if (file) {
+          span.textContent = file.name;
+          span.style.color = '#0f172a';
+          span.style.fontWeight = '500';
+          
+          if (file.type.startsWith('image/')) {
+            const objectUrl = URL.createObjectURL(file);
+            const label = input.parentElement;
+            let previewContainer = label.previousElementSibling;
+            
+            if (previewContainer && (previewContainer.classList.contains('image-preview-container') || previewContainer.classList.contains('local-preview'))) {
+              const img = previewContainer.querySelector('img');
+              if (img) img.src = objectUrl;
+            } else {
+              previewContainer = document.createElement('div');
+              previewContainer.className = 'local-preview';
+              previewContainer.style.cssText = 'margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;';
+              const imgWrapper = document.createElement('div');
+              imgWrapper.style.cssText = 'border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;';
+              const img = document.createElement('img');
+              img.style.cssText = 'max-height:50px; border-radius:4px; display:block;';
+              img.src = objectUrl;
+              imgWrapper.appendChild(img);
+              previewContainer.appendChild(imgWrapper);
+              label.parentElement.insertBefore(previewContainer, label);
+            }
+          }
+        } else {
+          span.textContent = 'Datei wählen...';
+          span.style.color = '#64748b';
+          span.style.fontWeight = 'normal';
+        }
+      }
     </script>
 
     <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
@@ -182,7 +220,7 @@
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="photo" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+          <input type="file" name="photo" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
         </label>
       </div>
     </div>
@@ -203,7 +241,7 @@
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+          <input type="file" name="sponsor_logo" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
         </label>
       </div>
       <div style="flex:1; min-width:220px;">
@@ -221,7 +259,7 @@
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo_2" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+          <input type="file" name="sponsor_logo_2" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
         </label>
       </div>
       <div style="flex:1; min-width:220px;">
@@ -239,7 +277,7 @@
         <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo_3" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+          <input type="file" name="sponsor_logo_3" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
         </label>
       </div>
     </div>
