@@ -1127,10 +1127,10 @@ app.get('/admin/teams/:id/edit', requireRole('teams'), async (req, res) => {
 app.post('/admin/teams/:id/edit', requireRole('teams'), uploadAny.any(), async (req, res) => {
   const { type, name, slug, league, extra, times, location, sort_order, contact_phone, contact_email, sfv_team_id } = req.body;
   
-  let teamPhoto = req.body.existing_photo || '';
-  let sponsorLogo = req.body.existing_sponsor_logo || '';
-  let sponsorLogo2 = req.body.existing_sponsor_logo_2 || '';
-  let sponsorLogo3 = req.body.existing_sponsor_logo_3 || '';
+  let teamPhoto = req.body.delete_photo ? '' : (req.body.existing_photo || '');
+  let sponsorLogo = req.body.delete_sponsor_logo ? '' : (req.body.existing_sponsor_logo || '');
+  let sponsorLogo2 = req.body.delete_sponsor_logo_2 ? '' : (req.body.existing_sponsor_logo_2 || '');
+  let sponsorLogo3 = req.body.delete_sponsor_logo_3 ? '' : (req.body.existing_sponsor_logo_3 || '');
 
   if (req.files) {
     const photoFile = req.files.find(f => f.fieldname === 'photo');
