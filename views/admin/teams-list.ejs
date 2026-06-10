@@ -22,7 +22,7 @@
       </thead>
       <tbody id="adminTeamsTbody">
         <% items.forEach(t => { %>
-          <tr class="team-row" 
+          <tr class="admin-team-row" 
               data-type="<%= t.type.toLowerCase() %>" 
               data-name="<%= t.name.toLowerCase() %>" 
               data-league="<%= (t.league || '').toLowerCase() %>">
@@ -85,7 +85,7 @@
         }
 
         // Sort rows
-        const rows = Array.from(tableBody.querySelectorAll('.team-row'));
+        const rows = Array.from(tableBody.querySelectorAll('.admin-team-row'));
         rows.sort((a, b) => {
           let valA = a.getAttribute(`data-${column}`);
           let valB = b.getAttribute(`data-${column}`);

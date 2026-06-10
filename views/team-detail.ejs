@@ -9,6 +9,7 @@
   </div>
 </section>
 
+<% const showWidget = team.sfv_team_id && team.sfv_widget_active; %>
 <style>
   .team-layout {
     display: grid;
@@ -16,7 +17,7 @@
     grid-template-columns: 1fr;
   }
   @media (min-width: 992px) {
-    .team-layout {
+    .team-layout.has-widget {
       grid-template-columns: 1fr 380px;
     }
   }
@@ -26,7 +27,7 @@
 </style>
 
 <section class="band band-light">
-  <div class="team-layout" style="max-width: var(--max-w); margin: 0 auto;">
+  <div class="team-layout <%= showWidget ? 'has-widget' : '' %>" style="max-width: var(--max-w); margin: 0 auto;">
     <div class="team-main team-detail-card" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
       
     <% if (team.photo) { %>
