@@ -10,11 +10,18 @@
 </section>
 
 <style>
-  .team-layout { display: flex; flex-wrap: wrap; gap: 2rem; }
-  .team-main { flex: 1 1 60%; min-width: 320px; }
-  .team-sidebar { flex: 1 1 350px; max-width: 100%; align-self: flex-start; }
-  @media (min-width: 1024px) {
-    .team-sidebar { max-width: 400px; }
+  .team-layout {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 992px) {
+    .team-layout {
+      grid-template-columns: 1fr 380px;
+    }
+  }
+  .team-sidebar {
+    align-self: start;
   }
 </style>
 
