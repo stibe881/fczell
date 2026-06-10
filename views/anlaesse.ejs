@@ -40,35 +40,46 @@
   <% } %>
 
   <% if (anlass.flyer_file || anlass.spielplan_file || anlass.reglement_file) { %>
-    <div class="anlass-docs">
-      <%
-        const docs = [];
-        if (anlass.flyer_file) docs.push({ label: 'Flyer', file: anlass.flyer_file });
-        if (anlass.spielplan_file) docs.push({ label: 'Spielplan', file: anlass.spielplan_file });
-        if (anlass.reglement_file) docs.push({ label: 'Reglement', file: anlass.reglement_file });
-      %>
-      <% docs.forEach(doc => { %>
-        <% const ext = doc.file.split('.').pop().toLowerCase(); %>
-        <% const isImage = ['jpg','jpeg','png','gif','webp'].includes(ext); %>
-        <div class="anlass-doc-block">
-          <div class="anlass-doc-block-header">
-            <span class="anlass-doc-label"><%= doc.label %></span>
-            <a href="<%= doc.file %>" target="_blank" rel="noopener" class="anlass-doc-open-btn">
-              Öffnen
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </a>
-          </div>
-          <% if (isImage) { %>
-            <a href="<%= doc.file %>" class="lightbox-trigger anlass-doc-preview" style="display:block;">
-              <img src="<%= doc.file %>" alt="<%= doc.label %> – <%= anlass.title %>" loading="lazy" />
-            </a>
-          <% } else { %>
-            <div class="anlass-doc-preview anlass-doc-embed">
-              <iframe src="<%= doc.file %>" title="<%= doc.label %> – <%= anlass.title %>"></iframe>
+    <div class="anlass-docs-wrapper">
+      <button class="anlass-docs-toggle" onclick="toggleDocs(this)">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Dokumente & Downloads
+        </span>
+        <svg class="anlass-docs-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="anlass-docs-content" style="display: none;">
+        <div class="anlass-docs">
+          <%
+            const docs = [];
+            if (anlass.flyer_file) docs.push({ label: 'Flyer', file: anlass.flyer_file });
+            if (anlass.spielplan_file) docs.push({ label: 'Spielplan', file: anlass.spielplan_file });
+            if (anlass.reglement_file) docs.push({ label: 'Reglement', file: anlass.reglement_file });
+          %>
+          <% docs.forEach(doc => { %>
+            <% const ext = doc.file.split('.').pop().toLowerCase(); %>
+            <% const isImage = ['jpg','jpeg','png','gif','webp'].includes(ext); %>
+            <div class="anlass-doc-block">
+              <div class="anlass-doc-block-header">
+                <span class="anlass-doc-label"><%= doc.label %></span>
+                <a href="<%= doc.file %>" target="_blank" rel="noopener" class="anlass-doc-open-btn">
+                  Öffnen
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+              </div>
+              <% if (isImage) { %>
+                <a href="<%= doc.file %>" class="lightbox-trigger anlass-doc-preview" style="display:block;">
+                  <img src="<%= doc.file %>" alt="<%= doc.label %> – <%= anlass.title %>" loading="lazy" />
+                </a>
+              <% } else { %>
+                <div class="anlass-doc-preview anlass-doc-embed">
+                  <iframe src="<%= doc.file %>#toolbar=0&navpanes=0" title="<%= doc.label %> – <%= anlass.title %>"></iframe>
+                </div>
+              <% } %>
             </div>
-          <% } %>
+          <% }) %>
         </div>
-      <% }) %>
+      </div>
     </div>
   <% } %>
 
@@ -704,12 +715,60 @@
   .gv-detail { grid-template-columns: 1fr; gap: 0.25rem; }
 }
 
+/* ---------- ANLASS DOCUMENT TOGGLE ---------- */
+.anlass-docs-wrapper {
+  margin-bottom: 3rem;
+}
+.anlass-docs-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--fcz-gray-800);
+  transition: all 0.25s ease;
+}
+.anlass-docs-toggle:hover {
+  border-color: var(--fcz-red);
+  color: var(--fcz-red);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.anlass-docs-toggle span {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.anlass-docs-toggle svg { flex-shrink: 0; }
+.anlass-docs-chevron {
+  transition: transform 0.3s ease;
+}
+.anlass-docs-toggle.open .anlass-docs-chevron {
+  transform: rotate(180deg);
+}
+.anlass-docs-toggle.open {
+  border-radius: 14px 14px 0 0;
+  border-bottom-color: transparent;
+}
+.anlass-docs-content {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 1.5rem;
+  background: rgba(0,0,0,0.01);
+}
+
 /* ---------- ANLASS DOCUMENT BLOCKS ---------- */
 .anlass-docs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 3rem;
 }
 .anlass-doc-block {
   background: #fff;
@@ -786,6 +845,14 @@
 
 <!-- ========== SCRIPTS ========== -->
 <script>
+// ---------- Document Toggle ----------
+function toggleDocs(btn) {
+  const content = btn.nextElementSibling;
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  btn.classList.toggle('open', !isOpen);
+}
+
 // ---------- Lightbox ----------
 function openAnlassLightbox(src) {
   document.getElementById('anlassLightboxImg').src = src;
