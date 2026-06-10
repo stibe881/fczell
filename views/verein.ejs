@@ -161,7 +161,7 @@
       <div class="vorstand-grid" style="margin-top: 2rem;">
         <% if (typeof trainers !== 'undefined') { %>
           <% trainers.forEach(t => { %>
-            <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften#' + t.team_slug; %>
+            <% const link = t.team_type === 'junioren' ? '/mannschaften/junioren/' + t.team_slug : '/mannschaften/aktive/' + t.team_slug; %>
             <a href="<%= link %>" class="vorstand-card" data-team="<%= t.team_name %>" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
               <div class="vorstand-avatar">
                 <% const initials = t.name.split(/[\s,]+/).map(n => n[0]).join('').substring(0, 2).toUpperCase(); %>
