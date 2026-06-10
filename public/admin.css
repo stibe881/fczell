@@ -276,6 +276,17 @@ body.admin {
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+.admin-table td.actions .btn,
+.admin-table td.actions form {
+  min-width: 95px;
+}
+.admin-table td.actions .btn {
+  text-align: center;
+  justify-content: center;
+}
+.admin-table td.actions form .btn {
+  width: 100%;
+}
 .admin-table th.actions { text-align: right; }
 .admin-table code {
   background: #f0f0f0;
