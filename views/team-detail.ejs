@@ -11,36 +11,41 @@
 
 <% const showWidget = (team.sfv_team_id && (team.sfv_widget_active == 1 || team.sfv_widget_active == true)) ? true : false; %>
 <style>
-  .team-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  .fcz-layout-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: flex-start !important;
+    gap: 2rem !important;
   }
-  @media (min-width: 768px) {
-    .team-layout.has-widget {
-      flex-direction: row;
-      align-items: flex-start;
-    }
-    .team-layout.has-widget .team-main {
-      flex: 1;
-      min-width: 0;
-    }
-    .team-layout.has-widget .team-sidebar {
-      flex: 0 0 350px;
-      width: 350px;
-    }
+  .fcz-layout-main {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .fcz-layout-sidebar {
+    flex: 0 0 350px !important;
+    width: 350px !important;
   }
   @media (min-width: 1024px) {
-    .team-layout.has-widget .team-sidebar {
-      flex: 0 0 380px;
-      width: 380px;
+    .fcz-layout-sidebar {
+      flex: 0 0 380px !important;
+      width: 380px !important;
+    }
+  }
+  @media (max-width: 850px) {
+    .fcz-layout-wrapper {
+      flex-direction: column !important;
+    }
+    .fcz-layout-sidebar {
+      flex: 1 1 auto !important;
+      width: 100% !important;
     }
   }
 </style>
 
 <section class="band band-light">
-  <div class="team-layout <%= showWidget ? 'has-widget' : '' %>" style="max-width: var(--max-w); margin: 0 auto;">
-    <div class="team-main team-detail-card" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
+  <div class="fcz-layout-wrapper" style="max-width: var(--max-w); margin: 0 auto;">
+    <div class="fcz-layout-main team-detail-card" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
       
     <% if (team.photo) { %>
       <div class="team-photo" style="width: 100%; background: #f4f4f4;">
@@ -114,7 +119,7 @@
     </div>
 
     <% if (showWidget) { %>
-      <div class="team-sidebar" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); padding: 2rem; box-sizing: border-box; overflow: hidden;">
+      <div class="fcz-layout-sidebar" style="background: #fff; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.06); padding: 2rem; box-sizing: border-box; overflow: hidden;">
         <h3 style="margin-bottom: 1.5rem; color: var(--fcz-gray-800);">Resultate &amp; Rangliste</h3>
         <div style="overflow: hidden; width: 100%;">
           <iframe name="sfvWidget_<%= team.sfv_team_id %>" id="sfvWidget_<%= team.sfv_team_id %>"  class="sfvFullHeight" src="https://widget.football.ch/Widgets.aspx/v-384/t-<%= team.sfv_team_id %>/a-trr/" width="100%" frameborder="0" scrolling="auto" style="border: none; background: transparent; min-height: 950px; width: 100%; margin-top: -130px;"></iframe>
