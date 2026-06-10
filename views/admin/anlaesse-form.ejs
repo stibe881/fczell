@@ -6,7 +6,7 @@
 </div>
 
 <div class="admin-card">
-  <form action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" class="admin-form">
+  <form action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
     
     <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
       <div class="form-group">
@@ -51,6 +51,7 @@
           <option value="standard" <%= anlass && anlass.form_type === 'standard' ? 'selected' : '' %>>Standard (Name, E-Mail, Telefon, Bemerkungen)</option>
           <option value="juniorenlager" <%= anlass && anlass.form_type === 'juniorenlager' ? 'selected' : '' %>>Juniorenlager Spezial-Formular</option>
           <option value="dorfturnier" <%= anlass && anlass.form_type === 'dorfturnier' ? 'selected' : '' %>>Dorfturnier Spezial-Formular</option>
+          <option value="amtscup" <%= anlass && anlass.form_type === 'amtscup' ? 'selected' : '' %>>Amtscup (Spielplan & Reglement)</option>
         </select>
         <small>Wähle aus, welches Formular-Schema verwendet werden soll.</small>
       </div>
@@ -59,6 +60,59 @@
         <label for="deadline">Anmeldeschluss (optional)</label>
         <input type="date" id="deadline" name="deadline" value="<%= anlass && anlass.deadline ? anlass.deadline : '' %>" />
         <small>Wenn ein Datum gesetzt ist, wird das Formular nach diesem Tag nicht mehr angezeigt.</small>
+      </div>
+    </div>
+
+    <!-- Dokumente (Flyer / Spielplan / Reglement) -->
+    <% const ft = anlass ? anlass.form_type : 'standard'; %>
+    <% const showDocs = ft === 'standard' || ft === 'dorfturnier' || ft === 'amtscup'; %>
+    <% const showSpielplan = ft === 'dorfturnier' || ft === 'amtscup'; %>
+    <div id="docs-section" style="display: <%= showDocs ? 'block' : 'none' %>; padding: 1.5rem; background: #f0f7fb; border-radius: 8px; border: 1px solid rgba(26,128,182,0.15); margin-bottom: 1.5rem;">
+      <h3 style="margin: 0 0 1rem; font-size: 1rem;">📎 Dokumente</h3>
+
+      <!-- Flyer (standard, dorfturnier, amtscup) -->
+      <div class="form-group" id="flyer-group">
+        <label>Flyer (PDF/Bild)</label>
+        <% if (anlass && anlass.flyer_file) { %>
+          <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <a href="<%= anlass.flyer_file %>" target="_blank" class="btn btn-sm btn-primary" style="gap: 0.3rem;">📄 Aktueller Flyer</a>
+            <label class="checkbox-label" style="font-size: 0.85rem; margin: 0;">
+              <input type="checkbox" name="delete_flyer" value="1" /> Löschen
+            </label>
+          </div>
+        <% } %>
+        <input type="file" name="flyer_file" accept=".pdf,.png,.jpg,.jpeg" />
+        <small>Flyer zum Anlass hochladen.</small>
+      </div>
+
+      <!-- Spielplan (dorfturnier, amtscup) -->
+      <div class="form-group spielplan-group" style="display: <%= showSpielplan ? 'block' : 'none' %>;">
+        <label>Spielplan (PDF)</label>
+        <% if (anlass && anlass.spielplan_file) { %>
+          <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <a href="<%= anlass.spielplan_file %>" target="_blank" class="btn btn-sm btn-primary" style="gap: 0.3rem;">📄 Aktueller Spielplan</a>
+            <label class="checkbox-label" style="font-size: 0.85rem; margin: 0;">
+              <input type="checkbox" name="delete_spielplan" value="1" /> Löschen
+            </label>
+          </div>
+        <% } %>
+        <input type="file" name="spielplan_file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" />
+        <small>Spielplan hochladen (ersetzt vorhandenen).</small>
+      </div>
+
+      <!-- Reglement (dorfturnier, amtscup) -->
+      <div class="form-group reglement-group" style="display: <%= showSpielplan ? 'block' : 'none' %>; margin-bottom: 0;">
+        <label>Reglement (PDF)</label>
+        <% if (anlass && anlass.reglement_file) { %>
+          <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <a href="<%= anlass.reglement_file %>" target="_blank" class="btn btn-sm btn-primary" style="gap: 0.3rem;">📄 Aktuelles Reglement</a>
+            <label class="checkbox-label" style="font-size: 0.85rem; margin: 0;">
+              <input type="checkbox" name="delete_reglement" value="1" /> Löschen
+            </label>
+          </div>
+        <% } %>
+        <input type="file" name="reglement_file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" />
+        <small>Reglement hochladen (ersetzt vorhandenes).</small>
       </div>
     </div>
 
@@ -100,6 +154,21 @@
     document.getElementById('title').addEventListener('input', updateSlug);
     document.getElementById('year').addEventListener('input', updateSlug);
   <% } %>
+
+  // Toggle Dokumente section based on form_type
+  const formTypeSelect = document.getElementById('form_type');
+  if (formTypeSelect) {
+    function updateDocsVisibility() {
+      const val = formTypeSelect.value;
+      const showDocs = val === 'standard' || val === 'dorfturnier' || val === 'amtscup';
+      const showSpielplan = val === 'dorfturnier' || val === 'amtscup';
+      document.getElementById('docs-section').style.display = showDocs ? 'block' : 'none';
+      document.querySelectorAll('.spielplan-group, .reglement-group').forEach(el => {
+        el.style.display = showSpielplan ? 'block' : 'none';
+      });
+    }
+    formTypeSelect.addEventListener('change', updateDocsVisibility);
+  }
 </script>
 
 <%- include('_admin-footer') %>

@@ -33,6 +33,7 @@ const uploadAny = multer({
       if (file.fieldname.startsWith('staff_photo')) cb(null, path.join(__dirname, 'public/images/trainers'));
       else if (file.fieldname === 'image') cb(null, path.join(__dirname, 'public/images/news'));
       else if (file.fieldname === 'photo' || file.fieldname.startsWith('sponsor_logo')) cb(null, path.join(__dirname, 'public/images/mannschaften'));
+      else if (file.fieldname === 'spielplan_file' || file.fieldname === 'reglement_file' || file.fieldname === 'flyer_file') cb(null, path.join(__dirname, 'public/documents'));
       else cb(null, path.join(__dirname, 'public/uploads'));
     },
     filename: (req, file, cb) => cb(null, 'upload-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))
@@ -693,17 +694,29 @@ app.get('/admin/anlaesse/new', requireRole('content'), async (req, res) => {
   res.render('admin/anlaesse-form', { page: 'admin', active: 'anlaesse', anlass: null });
 });
 
-app.post('/admin/anlaesse/new', requireRole('content'), async (req, res) => {
+app.post('/admin/anlaesse/new', requireRole('content'), uploadAny.any(), async (req, res) => {
   const { title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived } = req.body;
+  let spielplan_file = null;
+  let reglement_file = null;
+  let flyer_file = null;
+  if (req.files) {
+    const sp = req.files.find(f => f.fieldname === 'spielplan_file');
+    if (sp) spielplan_file = '/documents/' + sp.filename;
+    const rg = req.files.find(f => f.fieldname === 'reglement_file');
+    if (rg) reglement_file = '/documents/' + rg.filename;
+    const fl = req.files.find(f => f.fieldname === 'flyer_file');
+    if (fl) flyer_file = '/documents/' + fl.filename;
+  }
   try {
     await db.query(`
-      INSERT INTO anlaesse (title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0]);
+      INSERT INTO anlaesse (title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived, spielplan_file, reglement_file, flyer_file)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file]);
     req.session.flash = { type: 'success', msg: 'Anlass erstellt.' };
     res.redirect(is_archived ? '/admin/anlaesse/archiv' : '/admin/anlaesse');
   } catch (err) {
-    req.session.flash = { type: 'error', msg: 'Fehler beim Erstellen (Slug schon vergeben?).' };
+    console.error('Anlass create error:', err);
+    req.session.flash = { type: 'error', msg: 'Fehler beim Erstellen: ' + err.message };
     res.redirect('/admin/anlaesse/new');
   }
 });
@@ -715,18 +728,41 @@ app.get('/admin/anlaesse/:id/edit', requireRole('content'), async (req, res) => 
   res.render('admin/anlaesse-form', { page: 'admin', active: anlass.is_archived ? 'archiv' : 'anlaesse', anlass });
 });
 
-app.post('/admin/anlaesse/:id/edit', requireRole('content'), async (req, res) => {
+app.post('/admin/anlaesse/:id/edit', requireRole('content'), uploadAny.any(), async (req, res) => {
   const { title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived } = req.body;
+  
+  // Get existing values
+  const [existing] = await db.query('SELECT spielplan_file, reglement_file, flyer_file FROM anlaesse WHERE id = ?', [req.params.id]);
+  let spielplan_file = existing[0] ? existing[0].spielplan_file : null;
+  let reglement_file = existing[0] ? existing[0].reglement_file : null;
+  let flyer_file = existing[0] ? existing[0].flyer_file : null;
+  
+  // Handle deletions
+  if (req.body.delete_spielplan) spielplan_file = null;
+  if (req.body.delete_reglement) reglement_file = null;
+  if (req.body.delete_flyer) flyer_file = null;
+  
+  // Handle new uploads
+  if (req.files) {
+    const sp = req.files.find(f => f.fieldname === 'spielplan_file');
+    if (sp) spielplan_file = '/documents/' + sp.filename;
+    const rg = req.files.find(f => f.fieldname === 'reglement_file');
+    if (rg) reglement_file = '/documents/' + rg.filename;
+    const fl = req.files.find(f => f.fieldname === 'flyer_file');
+    if (fl) flyer_file = '/documents/' + fl.filename;
+  }
+  
   try {
     await db.query(`
       UPDATE anlaesse 
-      SET title=?, year=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?, is_archived=?
+      SET title=?, year=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?, is_archived=?, spielplan_file=?, reglement_file=?, flyer_file=?
       WHERE id=?
-    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, req.params.id]);
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file, req.params.id]);
     req.session.flash = { type: 'success', msg: 'Anlass aktualisiert.' };
     res.redirect('/admin/anlaesse/' + req.params.id + '/edit');
   } catch (err) {
-    req.session.flash = { type: 'error', msg: 'Fehler beim Aktualisieren (Slug schon vergeben?).' };
+    console.error('Anlass update error:', err);
+    req.session.flash = { type: 'error', msg: 'Fehler beim Aktualisieren: ' + err.message };
     res.redirect('/admin/anlaesse/' + req.params.id + '/edit');
   }
 });
