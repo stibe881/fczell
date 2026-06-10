@@ -31,6 +31,8 @@ const uploadAny = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       if (file.fieldname.startsWith('staff_photo')) cb(null, path.join(__dirname, 'public/images/trainers'));
+      else if (file.fieldname === 'image') cb(null, path.join(__dirname, 'public/images/news'));
+      else if (file.fieldname === 'photo' || file.fieldname.startsWith('sponsor_logo')) cb(null, path.join(__dirname, 'public/images/mannschaften'));
       else cb(null, path.join(__dirname, 'public/uploads'));
     },
     filename: (req, file, cb) => cb(null, 'upload-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))

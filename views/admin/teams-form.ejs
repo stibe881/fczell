@@ -72,9 +72,13 @@
               <div style="width:250px;">
                 <input type="hidden" name="staff_existing_photo[]" value="<%= s.photo %>" />
                 <% if (s.photo) { %>
-                  <img src="<%= s.photo %>" style="height:30px; border-radius:4px; vertical-align:middle; margin-right:5px;" />
+                  <img src="<%= s.photo %>" style="height:30px; border-radius:4px; vertical-align:middle; margin-bottom:5px; border:1px solid #ddd; padding:2px; background:#fff;" />
                 <% } %>
-                <input type="file" name="staff_photo_<%= idx %>" accept="image/*" style="width:160px; font-size:0.8rem;" />
+                <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
+                  <input type="file" name="staff_photo_<%= idx %>" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Foto wählen...'; this.previousElementSibling.style.color = '#0f172a';" />
+                </label>
               </div>
               <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
             </div>
@@ -116,7 +120,11 @@
           <input type="email" name="staff_email[]" placeholder="E-Mail" style="width:200px;" />
           <div style="width:250px;">
             <input type="hidden" name="staff_existing_photo[]" value="" />
-            <input type="file" name="staff_photo_${count}" accept="image/*" style="width:160px; font-size:0.8rem;" />
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
+              <input type="file" name="staff_photo_${count}" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Foto wählen...'; this.previousElementSibling.style.color = '#0f172a';" />
+            </label>
           </div>
           <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
         `;
@@ -136,29 +144,45 @@
     </script>
 
     <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-      <div style="flex:1; min-width:200px;">
+      <div style="flex:1; min-width:220px;">
         <label>Teamfoto</label>
         <input type="hidden" name="existing_photo" value="<%= item ? item.photo : '' %>" />
-        <% if (item && item.photo) { %><div style="margin-bottom:0.5rem;"><img src="<%= item.photo %>" style="max-height:40px; border-radius:4px;" /></div><% } %>
-        <input type="file" name="photo" accept="image/*" />
+        <% if (item && item.photo) { %><div style="margin-bottom:0.5rem; border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.photo %>" style="max-height:50px; border-radius:4px; display:block;" /></div><% } %>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
+          <input type="file" name="photo" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+        </label>
       </div>
-      <div style="flex:1; min-width:200px;">
+      <div style="flex:1; min-width:220px;">
         <label>Dresssponsor 1</label>
         <input type="hidden" name="existing_sponsor_logo" value="<%= item ? item.sponsor_logo : '' %>" />
-        <% if (item && item.sponsor_logo) { %><div style="margin-bottom:0.5rem;"><img src="<%= item.sponsor_logo %>" style="max-height:40px; border-radius:4px;" /></div><% } %>
-        <input type="file" name="sponsor_logo" accept="image/*" />
+        <% if (item && item.sponsor_logo) { %><div style="margin-bottom:0.5rem; border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo %>" style="max-height:50px; border-radius:4px; display:block;" /></div><% } %>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+        </label>
       </div>
-      <div style="flex:1; min-width:200px;">
+      <div style="flex:1; min-width:220px;">
         <label>Dresssponsor 2</label>
         <input type="hidden" name="existing_sponsor_logo_2" value="<%= item ? item.sponsor_logo_2 : '' %>" />
-        <% if (item && item.sponsor_logo_2) { %><div style="margin-bottom:0.5rem;"><img src="<%= item.sponsor_logo_2 %>" style="max-height:40px; border-radius:4px;" /></div><% } %>
-        <input type="file" name="sponsor_logo_2" accept="image/*" />
+        <% if (item && item.sponsor_logo_2) { %><div style="margin-bottom:0.5rem; border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_2 %>" style="max-height:50px; border-radius:4px; display:block;" /></div><% } %>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo_2" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+        </label>
       </div>
-      <div style="flex:1; min-width:200px;">
+      <div style="flex:1; min-width:220px;">
         <label>Dresssponsor 3</label>
         <input type="hidden" name="existing_sponsor_logo_3" value="<%= item ? item.sponsor_logo_3 : '' %>" />
-        <% if (item && item.sponsor_logo_3) { %><div style="margin-bottom:0.5rem;"><img src="<%= item.sponsor_logo_3 %>" style="max-height:40px; border-radius:4px;" /></div><% } %>
-        <input type="file" name="sponsor_logo_3" accept="image/*" />
+        <% if (item && item.sponsor_logo_3) { %><div style="margin-bottom:0.5rem; border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_3 %>" style="max-height:50px; border-radius:4px; display:block;" /></div><% } %>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo_3" accept="image/*" style="display:none;" onchange="this.previousElementSibling.textContent = this.files[0] ? this.files[0].name : 'Datei wählen...'; this.previousElementSibling.style.color = '#0f172a'; this.previousElementSibling.style.fontWeight = '500';" />
+        </label>
       </div>
     </div>
 
