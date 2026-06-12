@@ -276,22 +276,27 @@ body.admin {
 }
 .admin-table tr:last-child td { border-bottom: 0; }
 .admin-table td.actions {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  text-align: right;
+  white-space: nowrap;
 }
 .admin-table td.actions .btn,
 .admin-table td.actions form {
-  min-width: 95px;
+  display: inline-block;
+  vertical-align: middle;
 }
 .admin-table td.actions .btn {
+  width: 100px;
   text-align: center;
-  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
 }
 .admin-table td.actions form .btn {
-  width: 100%;
+  width: 100px;
 }
+.admin-table td.actions > *:not(:first-child) {
+  margin-left: 0.4rem;
+}
+
 .admin-table th.actions { text-align: right; }
 .admin-table code {
   background: #f0f0f0;
