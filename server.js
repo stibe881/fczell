@@ -646,7 +646,8 @@ app.get('/admin/events/new', requireRole('teams'), async (req, res) => {
 });
 
 app.post('/admin/events/new', requireRole('teams'), async (req, res) => {
-  const { title, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const { team_home, team_away, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const title = (team_home || '').trim() + ' : ' + (team_away || '').trim();
   const isMatchVal = is_match === '1' ? 1 : 0;
   await db.query(
     `INSERT INTO events (title, event_date, event_time, location, description, is_match, live_ticker) VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -664,7 +665,8 @@ app.get('/admin/events/:id/edit', requireRole('teams'), async (req, res) => {
 });
 
 app.post('/admin/events/:id/edit', requireRole('teams'), async (req, res) => {
-  const { title, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const { team_home, team_away, event_date, event_time, location, description, is_match, live_ticker } = req.body;
+  const title = (team_home || '').trim() + ' : ' + (team_away || '').trim();
   const isMatchVal = is_match === '1' ? 1 : 0;
   await db.query(
     `UPDATE events SET title=?, event_date=?, event_time=?, location=?, description=?, is_match=?, live_ticker=?, updated_at=NOW() WHERE id=?`,

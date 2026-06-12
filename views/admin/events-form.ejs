@@ -1,17 +1,33 @@
-<% const pageTitle = item ? 'Termin bearbeiten' : 'Termin erfassen'; const active = 'events'; %>
+<% const pageTitle = item ? 'Match bearbeiten' : 'Neues Match'; const active = 'events'; %>
 <%- include('_admin-header') %>
 
 <div class="admin-content">
   <div class="admin-page-head">
-    <h1><%= item ? 'Termin bearbeiten' : 'Neuer Termin' %></h1>
+    <h1><%= item ? 'Match bearbeiten' : 'Neues Match' %></h1>
     <a class="link-arrow" href="/admin/events">← zurück zur Übersicht</a>
   </div>
 
   <form class="admin-form" action="<%= item ? '/admin/events/' + item.id + '/edit' : '/admin/events/new' %>" method="post">
-    <label>
-      <span>Titel *</span>
-      <input name="title" required value="<%= item ? item.title : '' %>" />
-    </label>
+    <%
+      // Parse existing title into home/away teams
+      let teamHome = '';
+      let teamAway = '';
+      if (item && item.title) {
+        const parts = item.title.split(' : ');
+        teamHome = parts[0] || '';
+        teamAway = parts.length > 1 ? parts.slice(1).join(' : ') : '';
+      }
+    %>
+    <div class="form-row">
+      <label>
+        <span>Heimmannschaft *</span>
+        <input name="team_home" required value="<%= teamHome %>" placeholder="z.B. FC Zell" />
+      </label>
+      <label>
+        <span>Gastmannschaft *</span>
+        <input name="team_away" required value="<%= teamAway %>" placeholder="z.B. FC Beispiel" />
+      </label>
+    </div>
 
     <div class="form-row">
       <label>
