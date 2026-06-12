@@ -90,10 +90,11 @@
        const isClosed = anlass.deadline && new Date() > new Date(anlass.deadline);
   %>
     <div class="anlass-card" id="<%= anlass.slug %>-anmeldung">
-      <div class="anlass-card-header">
+      <button class="anlass-card-header form-toggle-btn" onclick="toggleAnmeldung(this)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; text-align: left;">
         <h3>Anmeldung <%= anlass.title %></h3>
-      </div>
-      <div class="anlass-card-body">
+        <svg class="form-toggle-chevron" style="transition: transform 0.3s;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="anlass-card-body" style="display: none;">
         <% if (isClosed) { %>
           <div style="background: #ffebee; color: #c62828; padding: 1.5rem; border-radius: 8px; font-weight: 600; text-align: center;">
             Der Anmeldeschluss für diesen Anlass ist leider bereits erreicht.
@@ -355,13 +356,24 @@
             
             <div class="archive-content" style="display: none; padding: 0 1.5rem 1.5rem;">
               <% if (archAnlass.body) { %>
-                <div class="prose" style="margin-bottom: 2rem; color: rgba(255,255,255,0.8);">
-                  <%- mdToHtml(archAnlass.body) %>
+                <div class="anlass-docs-wrapper archive-docs-wrapper" style="margin-bottom: 2rem;">
+                  <button class="anlass-docs-toggle" onclick="toggleDocs(this)">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                      Informationen zum Anlass
+                    </span>
+                    <svg class="anlass-docs-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="anlass-docs-content" style="display: none;">
+                    <div class="prose" style="color: rgba(255,255,255,0.8);">
+                      <%- mdToHtml(archAnlass.body) %>
+                    </div>
+                  </div>
                 </div>
               <% } %>
 
               <% if (archAnlass.flyer_file || archAnlass.spielplan_file || archAnlass.reglement_file || archAnlass.traktanden_file || archAnlass.protokoll_file) { %>
-                <div class="anlass-docs-wrapper" style="margin-bottom: 2rem;">
+                <div class="anlass-docs-wrapper archive-docs-wrapper" style="margin-bottom: 2rem;">
                   <button class="anlass-docs-toggle" onclick="toggleDocs(this)">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -452,6 +464,18 @@
       icon.style.transform = 'rotate(0deg)';
       btn.style.borderBottom = 'none';
       btn.style.paddingBottom = '1.5rem';
+    }
+  }
+
+  function toggleAnmeldung(btn) {
+    const content = btn.nextElementSibling;
+    const chevron = btn.querySelector('.form-toggle-chevron');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      chevron.style.transform = 'rotate(180deg)';
+    } else {
+      content.style.display = 'none';
+      chevron.style.transform = 'rotate(0deg)';
     }
   }
 
@@ -891,6 +915,38 @@
   width: 100%;
   height: 100%;
   border: none;
+  background: #f8f9fa;
+  pointer-events: none;
+}
+
+/* Dark theme overrides for docs in archive section */
+.archive-docs-wrapper .anlass-docs-toggle {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.archive-docs-wrapper .anlass-docs-toggle:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+.archive-docs-wrapper .anlass-docs-content {
+  background: transparent;
+  border-color: rgba(255,255,255,0.1);
+}
+.archive-docs-wrapper .anlass-doc-block {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.1);
+}
+.archive-docs-wrapper .anlass-doc-label {
+  color: rgba(255,255,255,0.7);
+}
+.archive-docs-wrapper .anlass-doc-open-btn {
+  color: #fff;
+}
+.archive-docs-wrapper .anlass-doc-preview {
+  border-color: rgba(255,255,255,0.1);
+  background: #000;
 }
 
 @media (max-width: 600px) {
