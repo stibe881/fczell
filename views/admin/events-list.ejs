@@ -11,7 +11,14 @@
     <p class="empty">Noch keine Matchs erfasst.</p>
   <% } else { %>
     <div class="admin-table-wrap">
-    <table class="admin-table" id="adminEventsTable">
+    <table class="admin-table" id="adminEventsTable" style="table-layout: fixed;">
+      <colgroup>
+        <col style="width: 120px;">
+        <col style="width: 70px;">
+        <col style="width: auto;">
+        <col style="width: 180px;">
+        <col style="width: 200px;">
+      </colgroup>
       <thead>
         <tr>
           <th class="sortable" data-sort="date" style="cursor: pointer; user-select: none;">Datum <span class="sort-icon" style="opacity: 0.3; font-size: 0.8em; margin-left: 4px;">↕</span></th>
@@ -34,7 +41,7 @@
             <td><%= ev.location || '–' %></td>
             <td class="actions">
               <a class="btn btn-sm btn-primary" href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
-              <form action="/admin/events/<%= ev.id %>/delete" method="post" onsubmit="return confirm('Termin wirklich löschen?');" style="display:inline">
+              <form action="/admin/events/<%= ev.id %>/delete" method="post" onsubmit="return confirm('Match wirklich löschen?');" style="display:inline">
                 <button class="btn btn-sm btn-danger" type="submit">löschen</button>
               </form>
             </td>
