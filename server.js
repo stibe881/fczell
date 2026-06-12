@@ -32,6 +32,7 @@ const uploadAny = multer({
     destination: (req, file, cb) => {
       if (file.fieldname.startsWith('staff_photo')) cb(null, path.join(__dirname, 'public/images/trainers'));
       else if (file.fieldname === 'image') cb(null, path.join(__dirname, 'public/images/news'));
+      else if (file.fieldname === 'vorstand_photo') cb(null, path.join(__dirname, 'public/images/vorstand'));
       else if (file.fieldname === 'photo' || file.fieldname.startsWith('sponsor_logo')) cb(null, path.join(__dirname, 'public/images/mannschaften'));
       else if (file.fieldname === 'spielplan_file' || file.fieldname === 'reglement_file' || file.fieldname === 'flyer_file') cb(null, path.join(__dirname, 'public/documents'));
       else cb(null, path.join(__dirname, 'public/uploads'));
@@ -961,9 +962,11 @@ app.get('/admin/vorstand/new', requireRole('content'), async (req, res) => {
   res.render('admin/vorstand-form', { page: 'admin', item: null });
 });
 
-app.post('/admin/vorstand/new', requireRole('content'), async (req, res) => {
+app.post('/admin/vorstand/new', requireRole('content'), uploadAny.any(), async (req, res) => {
   const { name, role, address, phone, email, sort_order } = req.body;
-  await db.query(`INSERT INTO vorstand (name, role, address, phone, email, sort_order) VALUES (?, ?, ?, ?, ?, ?)`, [name, role||'', address||'', phone||'', email||'', sort_order||0]);
+  const photoFile = (req.files || []).find(f => f.fieldname === 'vorstand_photo');
+  const photo = photoFile ? '/images/vorstand/' + photoFile.filename : '';
+  await db.query(`INSERT INTO vorstand (name, role, address, phone, email, sort_order, photo) VALUES (?, ?, ?, ?, ?, ?, ?)`, [name, role||'', address||'', phone||'', email||'', sort_order||0, photo]);
   req.session.flash = { type: 'success', msg: 'Vorstandsmitglied hinzugefügt.' };
   res.redirect('/admin/vorstand');
 });
@@ -975,9 +978,15 @@ app.get('/admin/vorstand/:id/edit', requireRole('content'), async (req, res) => 
   res.render('admin/vorstand-form', { page: 'admin', item });
 });
 
-app.post('/admin/vorstand/:id/edit', requireRole('content'), async (req, res) => {
+app.post('/admin/vorstand/:id/edit', requireRole('content'), uploadAny.any(), async (req, res) => {
   const { name, role, address, phone, email, sort_order } = req.body;
-  await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=? WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, req.params.id]);
+  const photoFile = (req.files || []).find(f => f.fieldname === 'vorstand_photo');
+  if (photoFile) {
+    const photo = '/images/vorstand/' + photoFile.filename;
+    await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=?, photo=? WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, photo, req.params.id]);
+  } else {
+    await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=? WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, req.params.id]);
+  }
   req.session.flash = { type: 'success', msg: 'Vorstandsmitglied aktualisiert.' };
   res.redirect('/admin/vorstand');
 });
@@ -1524,9 +1533,20 @@ app.use(async (req, res) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`FC Zell Webseite läuft auf http://localhost:${PORT}`);
-  });
+  (async () => {
+    // Auto-migration: add photo column to vorstand if missing
+    try {
+      const [cols] = await db.query(`SHOW COLUMNS FROM vorstand LIKE 'photo'`);
+      if (cols.length === 0) {
+        await db.query(`ALTER TABLE vorstand ADD COLUMN photo VARCHAR(255) DEFAULT '' AFTER sort_order`);
+        console.log('Migration: added photo column to vorstand table');
+      }
+    } catch (e) { console.log('Migration check skipped:', e.message); }
+
+    app.listen(PORT, () => {
+      console.log(`FC Zell Webseite läuft auf http://localhost:${PORT}`);
+    });
+  })();
 }
 
 module.exports = app;

@@ -7,15 +7,37 @@
     <a href="/admin/vorstand" class="link-arrow">← Zurück zur Übersicht</a>
   </div>
 
-  <form class="admin-form" action="/admin/vorstand/<%= item ? item.id + '/edit' : 'new' %>" method="post">
-    <div class="form-group">
-      <label for="name">Name *</label>
-      <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
-    </div>
+  <form class="admin-form" action="/admin/vorstand/<%= item ? item.id + '/edit' : 'new' %>" method="post" enctype="multipart/form-data">
+    
+    <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.5rem;">
+      <div style="flex-shrink: 0; text-align: center;">
+        <div id="photoPreview" style="width: 120px; height: 120px; border-radius: 50%; background: var(--fcz-gray-100); display: flex; align-items: center; justify-content: center; overflow: hidden; margin: 0 auto 0.75rem; border: 3px solid var(--fcz-gray-300); cursor: pointer;" onclick="document.getElementById('photoInput').click()">
+          <% if (item && item.photo) { %>
+            <img src="<%= item.photo %>" alt="Profilbild" style="width: 100%; height: 100%; object-fit: cover;" id="previewImg" />
+          <% } else { %>
+            <div id="previewPlaceholder" style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: var(--fcz-gray-500);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span style="font-size: 0.7rem;">Foto</span>
+            </div>
+            <img src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: none;" id="previewImg" />
+          <% } %>
+        </div>
+        <input type="file" name="vorstand_photo" id="photoInput" accept="image/*" style="display: none;" onchange="previewPhoto(this)" />
+        <button type="button" onclick="document.getElementById('photoInput').click()" class="btn btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.8rem; background: var(--fcz-gray-100); border: 1px solid var(--fcz-gray-300); cursor: pointer;">
+          📷 Foto wählen
+        </button>
+      </div>
 
-    <div class="form-group">
-      <label for="role">Funktion/Rolle</label>
-      <input type="text" id="role" name="role" value="<%= item ? item.role : '' %>" />
+      <div style="flex: 1;">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required />
+        </div>
+        <div class="form-group">
+          <label for="role">Funktion/Rolle</label>
+          <input type="text" id="role" name="role" value="<%= item ? item.role : '' %>" />
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -23,14 +45,15 @@
       <input type="text" id="address" name="address" value="<%= item ? item.address : '' %>" />
     </div>
 
-    <div class="form-group">
-      <label for="phone">Telefon</label>
-      <input type="text" id="phone" name="phone" value="<%= item ? item.phone : '' %>" />
-    </div>
-
-    <div class="form-group">
-      <label for="email">E-Mail</label>
-      <input type="email" id="email" name="email" value="<%= item ? item.email : '' %>" />
+    <div class="form-row" style="display: flex; gap: 1rem;">
+      <div class="form-group" style="flex: 1;">
+        <label for="phone">Telefon</label>
+        <input type="text" id="phone" name="phone" value="<%= item ? item.phone : '' %>" />
+      </div>
+      <div class="form-group" style="flex: 1;">
+        <label for="email">E-Mail</label>
+        <input type="email" id="email" name="email" value="<%= item ? item.email : '' %>" />
+      </div>
     </div>
 
     <div class="form-group">
@@ -40,8 +63,25 @@
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary btn-lg"><%= item ? 'Aktualisieren' : 'Speichern' %></button>
+      <a class="btn btn-ghost" href="/admin/vorstand">Abbrechen</a>
     </div>
   </form>
 </div>
+
+<script>
+function previewPhoto(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = document.getElementById('previewImg');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      var placeholder = document.getElementById('previewPlaceholder');
+      if (placeholder) placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
 
 <%- include('_admin-footer') %>

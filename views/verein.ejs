@@ -97,8 +97,12 @@
     <% vorstand.forEach(p => { %>
       <div class="vorstand-card">
         <div class="vorstand-avatar">
-          <% const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2); %>
-          <%= initials %>
+          <% if (p.photo) { %>
+            <img src="<%= p.photo %>" alt="<%= p.name %>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          <% } else { %>
+            <% const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2); %>
+            <%= initials %>
+          <% } %>
         </div>
         <div class="vorstand-info">
           <h3 class="vorstand-name"><%= p.name %></h3>
