@@ -285,13 +285,13 @@ body.admin {
   vertical-align: middle;
 }
 .admin-table td.actions .btn {
-  width: 100px;
+  width: 105px;
   text-align: center;
   padding-left: 0;
   padding-right: 0;
 }
 .admin-table td.actions form .btn {
-  width: 100px;
+  width: 105px;
 }
 .admin-table td.actions > *:not(:first-child) {
   margin-left: 0.4rem;
