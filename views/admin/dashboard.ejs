@@ -116,7 +116,7 @@
 
     <% if (isAdmin || roles.includes('teams')) { %>
     <section>
-      <h2>Kommende Matchs</h2>
+      <h2>Kommende Termine</h2>
       <% if (upcomingEvents.length === 0) { %>
         <p class="empty">Keine bevorstehenden Termine.</p>
       <% } else { %>
@@ -128,6 +128,27 @@
                 <span class="muted"><%= formatDate(ev.event_date) %><%= ev.event_time ? ' · ' + ev.event_time : '' %></span>
               </div>
               <a href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+    <% } %>
+
+    <% if (isAdmin || roles.includes('content')) { %>
+    <section>
+      <h2>Aktive Anlässe</h2>
+      <% if (upcomingAnlaesse.length === 0) { %>
+        <p class="empty">Keine aktiven Anlässe.</p>
+      <% } else { %>
+        <ul class="admin-list">
+          <% upcomingAnlaesse.forEach(a => { %>
+            <li>
+              <div>
+                <strong><%= a.title %></strong>
+                <span class="muted"><%= a.year %><%= a.deadline ? ' · Frist: ' + formatDate(a.deadline) : '' %></span>
+              </div>
+              <a href="/admin/anlaesse/<%= a.id %>/edit">bearbeiten</a>
             </li>
           <% }) %>
         </ul>

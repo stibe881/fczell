@@ -526,6 +526,9 @@ app.get('/admin', requireAuth, async (req, res) => {
   const [upcomingEvents] = await db.query(
     `SELECT * FROM events WHERE DATE(event_date) >= CURDATE() ORDER BY event_date ASC LIMIT 5`
   );
+  const [upcomingAnlaesse] = await db.query(
+    `SELECT * FROM anlaesse WHERE is_archived = 0 ORDER BY sort_order ASC, id DESC LIMIT 5`
+  );
   const [recentNews] = await db.query(
     `SELECT * FROM news ORDER BY published_at DESC, id DESC LIMIT 5`
   );
@@ -544,6 +547,7 @@ app.get('/admin', requireAuth, async (req, res) => {
     regJuniorenlager,
     regDorfturnier,
     upcomingEvents,
+    upcomingAnlaesse,
     recentNews
   });
 });
