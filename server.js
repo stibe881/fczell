@@ -1350,7 +1350,7 @@ app.get('/admin/gallery', requireRole('content'), async (req, res) => {
 
 app.get('/admin/gallery/new-gallery', requireRole('content'), async (req, res) => {
   const [anlaesse] = await db.query('SELECT id, title, year FROM anlaesse ORDER BY title ASC, year DESC');
-  res.render('admin/galleries-form', { page: 'admin', gallery: null, anlaesse });
+  res.render('admin/gallery-edit', { page: 'admin', gallery: null, anlaesse, photos: [] });
 });
 
 app.post('/admin/gallery/new-gallery', requireRole('content'), async (req, res) => {
