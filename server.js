@@ -749,11 +749,11 @@ app.post('/admin/anlaesse/:id/edit', requireRole('content'), uploadAny.any(), as
   let protokoll_file = existing[0] ? existing[0].protokoll_file : null;
   
   // Handle deletions
-  if (req.body.delete_spielplan) spielplan_file = null;
-  if (req.body.delete_reglement) reglement_file = null;
-  if (req.body.delete_flyer) flyer_file = null;
-  if (req.body.delete_traktanden) traktanden_file = null;
-  if (req.body.delete_protokoll) protokoll_file = null;
+  if (req.body.delete_spielplan === '1') spielplan_file = null;
+  if (req.body.delete_reglement === '1') reglement_file = null;
+  if (req.body.delete_flyer === '1') flyer_file = null;
+  if (req.body.delete_traktanden === '1') traktanden_file = null;
+  if (req.body.delete_protokoll === '1') protokoll_file = null;
   
   // Handle new uploads
   if (req.files) {
