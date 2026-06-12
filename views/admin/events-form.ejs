@@ -40,36 +40,12 @@
     </label>
 
     <div style="background: var(--fcz-cream); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem;">
-      <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">Live-Ticker</h3>
-      <label style="flex-direction: row; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+      <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">Live-Stream Link</h3>
+      <label style="flex-direction: row; align-items: center; gap: 0.5rem; margin-bottom: 0;">
         <input type="checkbox" name="is_match" value="1" <%= item && item.is_match ? 'checked' : '' %> style="width: auto;" />
-        <span style="font-weight: 600;">Dies ist ein Spiel/Match (Live-Ticker aktivieren)</span>
-      </label>
-      
-      <label>
-        <span>Live-Ticker Text (HTML für Formatierungen erlaubt)</span>
-        <textarea name="live_ticker" rows="5" placeholder="z.B. 15' Tor für Zell durch ..."><%= item ? item.live_ticker : '' %></textarea>
+        <span style="font-weight: 600;">Live-Stream Badge mit Link zu Veo anzeigen</span>
       </label>
     </div>
-
-    <div style="background: rgba(255, 59, 48, 0.05); border: 1px solid rgba(255, 59, 48, 0.2); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem;">
-      <h3 style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--fcz-red);">Veo Livestream (Stadion-Modus)</h3>
-      <label style="flex-direction: row; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-        <input type="checkbox" name="has_livestream" id="has_livestream" value="1" <%= item && item.has_livestream ? 'checked' : '' %> style="width: auto;" />
-        <span style="font-weight: 600; color: var(--fcz-red);">Livestream JETZT auf der Startseite anzeigen</span>
-      </label>
-      
-      <label id="livestream_url_wrapper" style="display: <%= item && item.has_livestream ? 'flex' : 'none' %>;">
-        <span>Veo Livestream URL (z.B. https://app.veo.co/...)</span>
-        <input type="url" name="livestream_url" placeholder="https://app.veo.co/matches/..." value="<%= item ? item.livestream_url : '' %>" />
-      </label>
-    </div>
-    
-    <script>
-      document.getElementById('has_livestream').addEventListener('change', function() {
-        document.getElementById('livestream_url_wrapper').style.display = this.checked ? 'flex' : 'none';
-      });
-    </script>
 
     <div class="form-actions">
       <button class="btn btn-primary btn-lg" type="submit"><%= item ? 'Speichern' : 'Anlegen' %></button>

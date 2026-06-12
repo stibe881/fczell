@@ -33,10 +33,10 @@
             <h3 style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
               <a href="/events/<%= ev.id %>" style="color: inherit; text-decoration: none;"><%= ev.title %></a>
               <% if (ev.is_match) { %>
-                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #fff; background: var(--fcz-red); padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #fff; background: var(--fcz-red); padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.3rem; text-decoration: none;">
                   <span style="display: inline-block; width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse-small 2s infinite;"></span>
                   Live
-                </span>
+                </a>
               <% } %>
             </h3>
             <% if (ev.location) { %><p class="event-loc"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <%= ev.location %></p><% } %>
