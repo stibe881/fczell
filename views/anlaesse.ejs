@@ -360,6 +360,53 @@
                 </div>
               <% } %>
 
+              <% if (archAnlass.flyer_file || archAnlass.spielplan_file || archAnlass.reglement_file || archAnlass.traktanden_file || archAnlass.protokoll_file) { %>
+                <div class="anlass-docs-wrapper" style="margin-bottom: 2rem;">
+                  <button class="anlass-docs-toggle" onclick="toggleDocs(this)">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Dokumente & Downloads
+                    </span>
+                    <svg class="anlass-docs-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="anlass-docs-content" style="display: none;">
+                    <div class="anlass-docs">
+                      <%
+                        const archDocsList = [];
+                        if (archAnlass.flyer_file) archDocsList.push({ label: 'Flyer', file: archAnlass.flyer_file });
+                        if (archAnlass.spielplan_file) archDocsList.push({ label: 'Spielplan', file: archAnlass.spielplan_file });
+                        if (archAnlass.reglement_file) archDocsList.push({ label: 'Reglement', file: archAnlass.reglement_file });
+                        if (archAnlass.traktanden_file) archDocsList.push({ label: 'Traktanden', file: archAnlass.traktanden_file });
+                        if (archAnlass.protokoll_file) archDocsList.push({ label: 'Protokoll', file: archAnlass.protokoll_file });
+                      %>
+                      <% archDocsList.forEach(doc => { %>
+                        <% const ext = doc.file.split('.').pop().toLowerCase(); %>
+                        <% const isImage = ['jpg','jpeg','png','gif','webp'].includes(ext); %>
+                        <div class="anlass-doc-block">
+                          <div class="anlass-doc-block-header">
+                            <span class="anlass-doc-label"><%= doc.label %></span>
+                            <a href="<%= doc.file %>" target="_blank" rel="noopener" class="anlass-doc-open-btn">
+                              Öffnen
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                          </div>
+                          <% if (isImage) { %>
+                            <div class="anlass-doc-preview" onclick="openAnlassLightbox('<%= doc.file %>')" style="cursor:zoom-in;">
+                              <img src="<%= doc.file %>" alt="<%= doc.label %> – <%= archAnlass.title %>" loading="lazy" />
+                            </div>
+                          <% } else { %>
+                            <div class="anlass-doc-preview anlass-doc-embed">
+                              <iframe src="<%= doc.file %>#toolbar=0&navpanes=0" title="<%= doc.label %> – <%= archAnlass.title %>"></iframe>
+                            </div>
+                          <% } %>
+                        </div>
+                      <% }) %>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+
+
               <!-- Galleries for this archived anlass -->
               <% if (archAnlass.galleries && archAnlass.galleries.length > 0) { %>
                 <% archAnlass.galleries.forEach(g => { %>
