@@ -702,6 +702,8 @@ app.post('/admin/anlaesse/new', requireRole('content'), uploadAny.any(), async (
   let spielplan_file = null;
   let reglement_file = null;
   let flyer_file = null;
+  let traktanden_file = null;
+  let protokoll_file = null;
   if (req.files) {
     const sp = req.files.find(f => f.fieldname === 'spielplan_file');
     if (sp) spielplan_file = '/documents/' + sp.filename;
@@ -709,12 +711,16 @@ app.post('/admin/anlaesse/new', requireRole('content'), uploadAny.any(), async (
     if (rg) reglement_file = '/documents/' + rg.filename;
     const fl = req.files.find(f => f.fieldname === 'flyer_file');
     if (fl) flyer_file = '/documents/' + fl.filename;
+    const tr = req.files.find(f => f.fieldname === 'traktanden_file');
+    if (tr) traktanden_file = '/documents/' + tr.filename;
+    const pr = req.files.find(f => f.fieldname === 'protokoll_file');
+    if (pr) protokoll_file = '/documents/' + pr.filename;
   }
   try {
     await db.query(`
-      INSERT INTO anlaesse (title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived, spielplan_file, reglement_file, flyer_file)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file]);
+      INSERT INTO anlaesse (title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived, spielplan_file, reglement_file, flyer_file, traktanden_file, protokoll_file)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file, traktanden_file, protokoll_file]);
     req.session.flash = { type: 'success', msg: 'Anlass erstellt.' };
     res.redirect(is_archived ? '/admin/anlaesse/archiv' : '/admin/anlaesse');
   } catch (err) {
@@ -735,15 +741,19 @@ app.post('/admin/anlaesse/:id/edit', requireRole('content'), uploadAny.any(), as
   const { title, year, slug, body, has_form, form_type, deadline, sort_order, is_archived } = req.body;
   
   // Get existing values
-  const [existing] = await db.query('SELECT spielplan_file, reglement_file, flyer_file FROM anlaesse WHERE id = ?', [req.params.id]);
+  const [existing] = await db.query('SELECT spielplan_file, reglement_file, flyer_file, traktanden_file, protokoll_file FROM anlaesse WHERE id = ?', [req.params.id]);
   let spielplan_file = existing[0] ? existing[0].spielplan_file : null;
   let reglement_file = existing[0] ? existing[0].reglement_file : null;
   let flyer_file = existing[0] ? existing[0].flyer_file : null;
+  let traktanden_file = existing[0] ? existing[0].traktanden_file : null;
+  let protokoll_file = existing[0] ? existing[0].protokoll_file : null;
   
   // Handle deletions
   if (req.body.delete_spielplan) spielplan_file = null;
   if (req.body.delete_reglement) reglement_file = null;
   if (req.body.delete_flyer) flyer_file = null;
+  if (req.body.delete_traktanden) traktanden_file = null;
+  if (req.body.delete_protokoll) protokoll_file = null;
   
   // Handle new uploads
   if (req.files) {
@@ -753,14 +763,18 @@ app.post('/admin/anlaesse/:id/edit', requireRole('content'), uploadAny.any(), as
     if (rg) reglement_file = '/documents/' + rg.filename;
     const fl = req.files.find(f => f.fieldname === 'flyer_file');
     if (fl) flyer_file = '/documents/' + fl.filename;
+    const tr = req.files.find(f => f.fieldname === 'traktanden_file');
+    if (tr) traktanden_file = '/documents/' + tr.filename;
+    const pr = req.files.find(f => f.fieldname === 'protokoll_file');
+    if (pr) protokoll_file = '/documents/' + pr.filename;
   }
   
   try {
     await db.query(`
       UPDATE anlaesse 
-      SET title=?, year=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?, is_archived=?, spielplan_file=?, reglement_file=?, flyer_file=?
+      SET title=?, year=?, slug=?, body=?, has_form=?, form_type=?, deadline=?, sort_order=?, is_archived=?, spielplan_file=?, reglement_file=?, flyer_file=?, traktanden_file=?, protokoll_file=?
       WHERE id=?
-    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file, req.params.id]);
+    `, [title, year || null, slug, body, has_form ? 1 : 0, form_type || 'standard', deadline || null, sort_order || 0, is_archived ? 1 : 0, spielplan_file, reglement_file, flyer_file, traktanden_file, protokoll_file, req.params.id]);
     req.session.flash = { type: 'success', msg: 'Anlass aktualisiert.' };
     res.redirect('/admin/anlaesse/' + req.params.id + '/edit');
   } catch (err) {
@@ -984,6 +998,8 @@ app.post('/admin/vorstand/:id/edit', requireRole('content'), uploadAny.any(), as
   if (photoFile) {
     const photo = '/images/vorstand/' + photoFile.filename;
     await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=?, photo=? WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, photo, req.params.id]);
+  } else if (req.body.delete_photo === '1') {
+    await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=?, photo='' WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, req.params.id]);
   } else {
     await db.query(`UPDATE vorstand SET name=?, role=?, address=?, phone=?, email=?, sort_order=? WHERE id=?`, [name, role||'', address||'', phone||'', email||'', sort_order||0, req.params.id]);
   }
@@ -1540,6 +1556,16 @@ if (require.main === module) {
       if (cols.length === 0) {
         await db.query(`ALTER TABLE vorstand ADD COLUMN photo VARCHAR(255) DEFAULT '' AFTER sort_order`);
         console.log('Migration: added photo column to vorstand table');
+      }
+    } catch (e) { console.log('Migration check skipped:', e.message); }
+
+    // Auto-migration: add traktanden_file and protokoll_file to anlaesse if missing
+    try {
+      const [cols2] = await db.query(`SHOW COLUMNS FROM anlaesse LIKE 'traktanden_file'`);
+      if (cols2.length === 0) {
+        await db.query(`ALTER TABLE anlaesse ADD COLUMN traktanden_file VARCHAR(255) DEFAULT NULL AFTER flyer_file`);
+        await db.query(`ALTER TABLE anlaesse ADD COLUMN protokoll_file VARCHAR(255) DEFAULT NULL AFTER traktanden_file`);
+        console.log('Migration: added traktanden_file and protokoll_file columns to anlaesse table');
       }
     } catch (e) { console.log('Migration check skipped:', e.message); }
 
