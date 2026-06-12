@@ -43,10 +43,10 @@
             </td>
             <td><%= formatDate(u.created_at) %></td>
             <td class="actions">
-              <a class="btn btn-sm btn-outline-dark" href="/admin/users/<%= u.id %>/edit">Bearbeiten</a>
+              <a class="btn btn-sm btn-primary" href="/admin/users/<%= u.id %>/edit">Bearbeiten</a>
               <% if (u.id !== user.id) { %>
                 <form action="/admin/users/<%= u.id %>/delete" method="post" onsubmit="return confirm('Möchtest du diesen Benutzer wirklich löschen?');" style="display:inline">
-                  <button class="btn btn-sm btn-ghost" type="submit" style="color:var(--fcz-red);">Löschen</button>
+                  <button class="btn btn-sm btn-danger" type="submit">Löschen</button>
                 </form>
               <% } %>
             </td>

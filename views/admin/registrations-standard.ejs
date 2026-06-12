@@ -29,10 +29,10 @@
           <td><%= r.notes ? r.notes.substring(0, 30) + '...' : '-' %></td>
           <td><%= formatDateTime(r.created_at) %></td>
           <td class="actions">
-            <a href="/admin/registrations/standard/<%= r.id %>/edit?anlass_id=<%= anlass.id %>" class="btn btn-ghost btn-sm">Bearbeiten</a>
+            <a class="btn btn-sm btn-primary" href="/admin/registrations/standard/<%= r.id %>/edit?anlass_id=<%= anlass.id %>">Bearbeiten</a>
             <form action="/admin/registrations/standard/<%= r.id %>/delete" method="POST" onsubmit="return confirm('Wirklich löschen?');" style="display:inline;">
               <input type="hidden" name="anlass_id" value="<%= anlass.id %>">
-              <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--fcz-red);">Löschen</button>
+              <button class="btn btn-sm btn-danger" type="submit">Löschen</button>
             </form>
           </td>
         </tr>

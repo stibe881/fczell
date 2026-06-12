@@ -106,7 +106,7 @@
                 <strong><%= n.title %></strong>
                 <span class="muted"><%= formatDate(n.published_at) %> · <%= n.category %></span>
               </div>
-              <a href="/admin/news/<%= n.id %>/edit">bearbeiten</a>
+              <a class="btn btn-sm btn-primary" href="/admin/news/<%= n.id %>/edit">Bearbeiten</a>
             </li>
           <% }) %>
         </ul>
@@ -127,7 +127,7 @@
                 <strong><%= ev.title %></strong>
                 <span class="muted"><%= formatDate(ev.event_date) %><%= ev.event_time ? ' · ' + ev.event_time : '' %></span>
               </div>
-              <a href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
+              <a class="btn btn-sm btn-primary" href="/admin/events/<%= ev.id %>/edit">Bearbeiten</a>
             </li>
           <% }) %>
         </ul>
@@ -148,7 +148,7 @@
                 <strong><%= a.title %></strong>
                 <span class="muted"><%= a.year %><%= a.deadline ? ' · Frist: ' + formatDate(a.deadline) : '' %></span>
               </div>
-              <a href="/admin/anlaesse/<%= a.id %>/edit">bearbeiten</a>
+              <a class="btn btn-sm btn-primary" href="/admin/anlaesse/<%= a.id %>/edit">Bearbeiten</a>
             </li>
           <% }) %>
         </ul>

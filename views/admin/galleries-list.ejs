@@ -40,7 +40,7 @@
               <td><%= g.photo_count %> Fotos</td>
               <td>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                  <a class="btn btn-sm btn-outline-dark" href="/admin/gallery/<%= g.id %>/edit">Bearbeiten</a>
+                  <a class="btn btn-sm btn-primary" href="/admin/gallery/<%= g.id %>/edit">Bearbeiten</a>
                   <button class="btn btn-sm btn-danger" type="button" onclick="deleteGallery(this, <%= g.id %>)">löschen</button>
                 </div>
               </td>

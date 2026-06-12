@@ -35,9 +35,9 @@
               </td>
               <td><%= formatDate(job.created_at) %></td>
               <td class="actions">
-                <a href="/admin/jobs/<%= job.id %>/edit" class="btn btn-sm btn-outline-dark">Bearbeiten</a>
+                <a class="btn btn-sm btn-primary" href="/admin/jobs/<%= job.id %>/edit">Bearbeiten</a>
                 <form action="/admin/jobs/<%= job.id %>/delete" method="post" style="display:inline" onsubmit="return confirm('Möchtest du diesen Job wirklich löschen?');">
-                  <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--fcz-red);">Löschen</button>
+                  <button class="btn btn-sm btn-danger" type="submit">Löschen</button>
                 </form>
               </td>
             </tr>

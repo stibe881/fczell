@@ -33,9 +33,9 @@
             <td><strong><%= ev.title %></strong></td>
             <td><%= ev.location || '–' %></td>
             <td class="actions">
-              <a class="btn btn-sm btn-primary" href="/admin/events/<%= ev.id %>/edit">bearbeiten</a>
+              <a class="btn btn-sm btn-primary" href="/admin/events/<%= ev.id %>/edit">Bearbeiten</a>
               <form action="/admin/events/<%= ev.id %>/delete" method="post" onsubmit="return confirm('Match wirklich löschen?');" style="display:inline">
-                <button class="btn btn-sm btn-danger" type="submit">löschen</button>
+                <button class="btn btn-sm btn-danger" type="submit">Löschen</button>
               </form>
             </td>
           </tr>
