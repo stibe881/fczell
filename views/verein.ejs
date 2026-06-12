@@ -707,7 +707,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
-  align-items: flex-start;
+  align-items: stretch;
 }
 @media (max-width: 900px) {
   .clubhaus-grid {
@@ -723,6 +723,8 @@
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
   border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
 }
 .pricing-header {
   background: var(--fcz-black);
@@ -739,6 +741,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  flex: 1;
 }
 .pricing-list li {
   display: flex;
@@ -759,6 +762,7 @@
 .pricing-footer {
   padding: 2rem;
   background: #fafafa;
+  margin-top: auto;
 }
 
 /* Features Card */
@@ -768,11 +772,14 @@
   padding: 2.5rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
   border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
 }
 .feature-list {
   list-style: none;
   padding: 0;
   margin: 0 0 2.5rem 0;
+  flex: 1;
 }
 .feature-list li {
   display: flex;
@@ -788,10 +795,11 @@
   margin-top: 2px;
 }
 .info-box {
-  background: var(--fcz-red);
+  background: var(--fcz-blue);
   padding: 1.5rem;
   border-radius: 12px;
   color: #fff;
+  margin-top: auto;
 }
 
 /* ---------- SPONSORENTAFEL ---------- */
