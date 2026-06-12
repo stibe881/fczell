@@ -21,7 +21,7 @@
       </thead>
       <tbody id="adminNewsTbody">
         <% items.forEach(n => { %>
-          <tr class="news-row" 
+          <tr class="admin-news-row" 
               data-date="<%= new Date(n.published_at).getTime() %>" 
               data-title="<%= n.title.toLowerCase() %>" 
               data-category="<%= n.category.toLowerCase() %>">
@@ -71,7 +71,7 @@
         }
 
         // Sort rows
-        const rows = Array.from(tableBody.querySelectorAll('.news-row'));
+        const rows = Array.from(tableBody.querySelectorAll('.admin-news-row'));
         rows.sort((a, b) => {
           let valA = a.getAttribute(`data-${column}`);
           let valB = b.getAttribute(`data-${column}`);
