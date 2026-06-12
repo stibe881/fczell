@@ -281,17 +281,18 @@ body.admin {
 }
 .admin-table td.actions .btn,
 .admin-table td.actions form {
-  display: inline-block;
+  display: inline-flex;
   vertical-align: middle;
 }
 .admin-table td.actions .btn {
-  width: 105px;
+  width: 105px !important;
+  min-width: 105px !important;
+  max-width: 105px !important;
+  box-sizing: border-box !important;
   text-align: center;
-  padding-left: 0;
-  padding-right: 0;
-}
-.admin-table td.actions form .btn {
-  width: 105px;
+  justify-content: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 .admin-table td.actions > *:not(:first-child) {
   margin-left: 0.4rem;
