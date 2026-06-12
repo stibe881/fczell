@@ -10,6 +10,7 @@
   <% if (items.length === 0) { %>
     <p class="empty">Noch keine Matchs erfasst.</p>
   <% } else { %>
+    <div class="admin-table-wrap">
     <table class="admin-table" id="adminEventsTable">
       <thead>
         <tr>
@@ -41,6 +42,7 @@
         <% }) %>
       </tbody>
     </table>
+    </div>
   <% } %>
 </div>
 

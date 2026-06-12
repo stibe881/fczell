@@ -247,13 +247,18 @@ body.admin {
 .muted { color: var(--fcz-gray-500); font-size: 0.88rem; }
 
 /* table */
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+}
 .admin-table {
   width: 100%;
   background: #fff;
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: var(--radius);
   border-collapse: collapse;
-  overflow: hidden;
+  min-width: 520px;
 }
 .admin-table th, .admin-table td {
   padding: 1rem 1.2rem;
@@ -336,9 +341,10 @@ body.admin {
   .admin-cols { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 768px) {
-  /* Convert tables to stacked list layout to eliminate horizontal scrolling */
-  .admin-table { display: block; border: none; }
+@media (max-width: 580px) {
+  /* Convert tables to stacked list layout on small screens */
+  .admin-table-wrap { border: none; }
+  .admin-table { display: block; min-width: 0; }
   .admin-table thead { display: none; }
   .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
   
