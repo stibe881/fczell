@@ -29,7 +29,6 @@
             <td><strong><%= n.title %></strong><% if (n.excerpt) { %><br><span class="muted"><%= n.excerpt %></span><% } %></td>
             <td><%= n.category %></td>
             <td class="actions">
-              <a class="btn btn-sm btn-outline-dark" href="/news/<%= n.id %>" target="_blank">ansehen</a>
               <a class="btn btn-sm btn-primary" href="/admin/news/<%= n.id %>/edit">bearbeiten</a>
               <form action="/admin/news/<%= n.id %>/delete" method="post" onsubmit="return confirm('Beitrag wirklich löschen?');" style="display:inline">
                 <button class="btn btn-sm btn-danger" type="submit">löschen</button>
