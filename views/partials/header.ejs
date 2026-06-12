@@ -28,15 +28,89 @@
 
     <div class="header-ticker" style="display: flex; flex: 1; justify-content: center; align-items: center; padding: 0 0.5rem; text-align: center; max-width: 600px; overflow: hidden;">
       <% if (locals.activeMatch) { %>
-        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          <span style="display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; animation: pulse-small 2s infinite; flex-shrink: 0;"></span>
-          <span class="ticker-text">LIVE: <%= activeMatch.title %></span>
+        <%
+          const amDate = new Date(activeMatch.event_date);
+          const amDateStr = amDate.getFullYear() + '-' + String(amDate.getMonth()+1).padStart(2,'0') + '-' + String(amDate.getDate()).padStart(2,'0');
+          const amTime = activeMatch.event_time || '00:00';
+        %>
+        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <span id="tickerDot" style="display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; flex-shrink: 0;"></span>
+          <span class="ticker-text" id="tickerText">LIVE: <%= activeMatch.title %></span>
         </a>
+        <script>
+        (function() {
+          var matchDate = '<%= amDateStr %>';
+          var matchTime = '<%= amTime %>';
+          var matchTitle = '<%= activeMatch.title.replace(/'/g, "\\'") %>';
+          var parts = matchTime.split(':');
+          var kickoff = new Date(matchDate + 'T' + String(parts[0]).padStart(2,'0') + ':' + String(parts[1] || '00').padStart(2,'0') + ':00');
+          var dot = document.getElementById('tickerDot');
+          var text = document.getElementById('tickerText');
+
+          function update() {
+            var now = new Date();
+            var diff = kickoff - now;
+            if (diff <= 0) {
+              // Match has started
+              dot.style.animation = 'pulse-small 2s infinite';
+              text.textContent = 'LIVE: ' + matchTitle;
+            } else {
+              // Countdown
+              dot.style.animation = 'none';
+              dot.style.background = 'var(--fcz-red)';
+              var h = Math.floor(diff / 3600000);
+              var m = Math.floor((diff % 3600000) / 60000);
+              var s = Math.floor((diff % 60000) / 1000);
+              var countdown = '';
+              if (h > 0) countdown += h + 'h ';
+              countdown += String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+              text.textContent = matchTitle + ' startet in ' + countdown;
+            }
+          }
+          update();
+          setInterval(update, 1000);
+        })();
+        </script>
       <% } else if (locals.nextMatch) { %>
-        <a href="/events" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <%
+          const nmDate = new Date(nextMatch.event_date);
+          const nmDateStr = nmDate.getFullYear() + '-' + String(nmDate.getMonth()+1).padStart(2,'0') + '-' + String(nmDate.getDate()).padStart(2,'0');
+          const nmTime = nextMatch.event_time || '00:00';
+        %>
+        <a href="/events" id="tickerBadge" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <span class="ticker-text">Spiel: <%= new Date(nextMatch.event_date).toLocaleDateString('de-CH', {day: '2-digit', month: '2-digit'}) %></span>
+          <span class="ticker-text" id="tickerText"><%= nextMatch.title %></span>
         </a>
+        <script>
+        (function() {
+          var matchDate = '<%= nmDateStr %>';
+          var matchTime = '<%= nmTime %>';
+          var matchTitle = '<%= nextMatch.title.replace(/'/g, "\\'") %>';
+          var parts = matchTime.split(':');
+          var kickoff = new Date(matchDate + 'T' + String(parts[0]).padStart(2,'0') + ':' + String(parts[1] || '00').padStart(2,'0') + ':00');
+          var text = document.getElementById('tickerText');
+
+          function update() {
+            var now = new Date();
+            var diff = kickoff - now;
+            if (diff <= 0) {
+              text.textContent = 'LIVE: ' + matchTitle;
+              return;
+            }
+            var days = Math.floor(diff / 86400000);
+            var h = Math.floor((diff % 86400000) / 3600000);
+            var m = Math.floor((diff % 3600000) / 60000);
+            var s = Math.floor((diff % 60000) / 1000);
+            var countdown = '';
+            if (days > 0) countdown += days + 'd ';
+            if (h > 0) countdown += h + 'h ';
+            countdown += String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            text.textContent = matchTitle + ' in ' + countdown;
+          }
+          update();
+          setInterval(update, 1000);
+        })();
+        </script>
       <% } %>
     </div>
     
@@ -45,8 +119,6 @@
         .ticker-live, .ticker-next { padding: 0.4rem 1rem !important; font-size: 0.9rem !important; gap: 0.5rem !important; }
         .ticker-live span:first-child { width: 8px !important; height: 8px !important; }
         .ticker-next svg { width: 14px !important; height: 14px !important; }
-        .ticker-next .ticker-text::before { content: 'Nächstes '; }
-        .ticker-next .ticker-text::after { content: ' - <%= locals.nextMatch ? locals.nextMatch.title.replace(/'/g, "\\'") : "" %>'; }
       }
     </style>
 
