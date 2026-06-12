@@ -18,16 +18,46 @@
       <input type="text" id="category" name="category" value="<%= item ? item.category : '' %>" />
     </div>
 
-    <div class="form-group">
-      <label for="logo_file">Logo hochladen</label>
-      <input type="file" id="logo_file" name="logo_file" accept="image/*" />
-      <small>Oder URL angeben (wird überschrieben wenn Datei hochgeladen):</small>
-      <input type="text" id="logo" name="logo" value="<%= item ? item.logo : '' %>" style="margin-top:0.5rem;" />
-      <% if (item && item.logo) { %>
-        <div style="margin-top:0.5rem;">
-          <img src="<%= item.logo %>" alt="Aktuelles Logo" style="max-height: 50px; background: #eee; padding: 5px; border-radius: 4px;" />
-        </div>
-      <% } %>
+    <div class="form-group" style="margin-top: 1rem;">
+      <label>Logo (Bilddatei hochladen)</label>
+      <div class="admin-image-upload full-width">
+        <% if (item && item.logo && !item.logo.startsWith('http')) { %>
+          <div class="admin-image-preview" id="logo-preview-container">
+            <img id="logo-preview" src="<%= item.logo %>" alt="Aktuelles Logo" />
+            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('logo-preview').src=''; document.getElementById('logo-preview-container').style.display='none';">✕ Entfernen</button>
+          </div>
+        <% } else { %>
+          <div class="admin-image-preview" id="logo-preview-container" style="display: none;">
+            <img id="logo-preview" src="" alt="Vorschau" />
+            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('logo-preview').src=''; document.getElementById('logo-preview-container').style.display='none'; document.getElementById('logo_file').value=''; document.getElementById('logo-filename').textContent='Neues Logo auswählen...';">✕ Entfernen</button>
+          </div>
+        <% } %>
+        <label class="admin-image-label" onclick="document.getElementById('logo_file').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span id="logo-filename">Neues Logo auswählen...</span>
+        </label>
+        <input type="file" name="logo_file" id="logo_file" accept="image/*" class="admin-image-input" onchange="
+          const file = this.files[0];
+          const nameSpan = document.getElementById('logo-filename');
+          const previewCont = document.getElementById('logo-preview-container');
+          const previewImg = document.getElementById('logo-preview');
+          if(file) {
+            nameSpan.textContent = file.name;
+            previewCont.style.display = 'flex';
+            previewImg.src = URL.createObjectURL(file);
+          } else {
+            nameSpan.textContent = 'Neues Logo auswählen...';
+            previewCont.style.display = '<%- (item && item.logo && !item.logo.startsWith(\'http\')) ? 'flex' : 'none' %>';
+            previewImg.src = '<%- (item && item.logo && !item.logo.startsWith(\'http\')) ? item.logo : '' %>';
+          }
+        " />
+        <small class="muted" style="margin-top: 0.25rem;">Erlaubt: JPG, PNG, WEBP, GIF, SVG. Ein neues Bild überschreibt das bestehende.</small>
+      </div>
+      
+      <div style="margin-top: 1rem;">
+        <label for="logo" style="font-weight:normal; font-size: 0.9rem;">Oder ext. URL angeben (wird überschrieben wenn Datei hochgeladen):</label>
+        <input type="text" id="logo" name="logo" value="<%= item && item.logo && item.logo.startsWith('http') ? item.logo : '' %>" />
+      </div>
     </div>
 
     <div class="form-group">

@@ -92,9 +92,9 @@ body.admin {
   color: #fff;
 }
 .nav-group a.active {
-  background: rgba(230, 0, 0, 0.15); /* light red tint */
+  background: rgba(26, 128, 182, 0.15); /* light blue tint */
   color: #fff;
-  border-left-color: var(--fcz-red);
+  border-left-color: var(--fcz-blue);
 }
 
 /* CONTENT WRAPPER */

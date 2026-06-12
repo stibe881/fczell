@@ -75,17 +75,19 @@
               <input type="tel" name="staff_phone[]" value="<%= s.phone || '' %>" placeholder="Telefon" style="width:150px;" />
               <input type="email" name="staff_email[]" value="<%= s.email || '' %>" placeholder="E-Mail" style="width:200px;" />
               
-              <div style="width:250px;">
-                <input type="hidden" name="staff_existing_photo[]" value="<%= s.photo %>" />
-                <% if (s.photo) { %>
-                  <img src="<%= s.photo %>" style="height:30px; border-radius:4px; vertical-align:middle; margin-bottom:5px; border:1px solid #ddd; padding:2px; background:#fff;" />
-                <% } %>
-                <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
-                  <input type="file" name="staff_photo_<%= idx %>" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
-                </label>
-              </div>
+                <div style="width:250px;" class="admin-image-upload">
+                  <input type="hidden" name="staff_existing_photo[]" value="<%= s.photo %>" />
+                  <% if (s.photo) { %>
+                    <div class="admin-image-preview" style="margin-bottom:0.25rem;">
+                      <img src="<%= s.photo %>" style="max-height:40px; border-radius:4px;" />
+                    </div>
+                  <% } %>
+                  <label class="admin-image-label" style="padding:0.25rem 0.5rem; border-radius:4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
+                    <input type="file" name="staff_photo_<%= idx %>" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
+                  </label>
+                </div>
               <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
             </div>
           <% }) %>
@@ -124,12 +126,12 @@
           <input type="text" name="staff_name[]" placeholder="Name" style="flex:1; min-width:150px;" />
           <input type="tel" name="staff_phone[]" placeholder="Telefon" style="width:150px;" />
           <input type="email" name="staff_email[]" placeholder="E-Mail" style="width:200px;" />
-          <div style="width:250px;">
+          <div style="width:250px;" class="admin-image-upload">
             <input type="hidden" name="staff_existing_photo[]" value="" />
-            <label style="cursor:pointer; display:flex; align-items:center; gap:0.25rem; border:1px dashed #cbd5e1; padding:0.25rem 0.5rem; border-radius:4px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <label class="admin-image-label" style="padding:0.25rem 0.5rem; border-radius:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
               <span style="font-size:0.75rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Foto wählen...</span>
-              <input type="file" name="staff_photo_${count}" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
+              <input type="file" name="staff_photo_${count}" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
             </label>
           </div>
           <button type="button" class="btn btn-ghost" onclick="this.parentElement.remove()" style="padding:0.25rem 0.5rem; color:red;">X</button>
@@ -185,20 +187,15 @@
             const label = input.parentElement;
             let previewContainer = label.previousElementSibling;
             
-            if (previewContainer && (previewContainer.classList.contains('image-preview-container') || previewContainer.classList.contains('local-preview'))) {
+            if (previewContainer && previewContainer.classList.contains('image-preview-container')) {
               const img = previewContainer.querySelector('img');
               if (img) img.src = objectUrl;
             } else {
               previewContainer = document.createElement('div');
-              previewContainer.className = 'local-preview';
-              previewContainer.style.cssText = 'margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;';
-              const imgWrapper = document.createElement('div');
-              imgWrapper.style.cssText = 'border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;';
+              previewContainer.className = 'image-preview-container admin-image-preview';
               const img = document.createElement('img');
-              img.style.cssText = 'max-height:50px; border-radius:4px; display:block;';
               img.src = objectUrl;
-              imgWrapper.appendChild(img);
-              previewContainer.appendChild(imgWrapper);
+              previewContainer.appendChild(img);
               label.parentElement.insertBefore(previewContainer, label);
             }
           }
@@ -211,79 +208,79 @@
     </script>
 
     <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-      <div style="flex:1; min-width:220px;">
-        <label>Teamfoto</label>
+      <div style="flex:1; min-width:220px;" class="admin-image-upload">
+        <label style="margin-bottom:0.5rem; display:block;">Teamfoto</label>
         <input type="hidden" name="existing_photo" value="<%= item ? item.photo : '' %>" />
         <% if (item && item.photo) { %>
-          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
-            <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.photo %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <button type="button" onclick="deleteImageAsync('photo', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+          <div class="image-preview-container admin-image-preview">
+            <img src="<%= item.photo %>" />
+            <button type="button" class="admin-image-delete-btn" onclick="deleteImageAsync('photo', this)">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
               Löschen
             </button>
           </div>
         <% } %>
-        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="photo" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
+        <label class="admin-image-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem;">Datei wählen...</span>
+          <input type="file" name="photo" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
         </label>
       </div>
     </div>
 
     <div class="form-group" style="display:flex; gap:1rem; flex-wrap:wrap; background:#f0f4f8; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-      <div style="flex:1; min-width:220px;">
-        <label>Dresssponsor 1</label>
+      <div style="flex:1; min-width:220px;" class="admin-image-upload">
+        <label style="margin-bottom:0.5rem; display:block;">Dresssponsor 1</label>
         <input type="hidden" name="existing_sponsor_logo" value="<%= item ? item.sponsor_logo : '' %>" />
         <% if (item && item.sponsor_logo) { %>
-          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
-            <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <button type="button" onclick="deleteImageAsync('sponsor_logo', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+          <div class="image-preview-container admin-image-preview">
+            <img src="<%= item.sponsor_logo %>" />
+            <button type="button" class="admin-image-delete-btn" onclick="deleteImageAsync('sponsor_logo', this)">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
               Löschen
             </button>
           </div>
         <% } %>
-        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
+        <label class="admin-image-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
         </label>
       </div>
-      <div style="flex:1; min-width:220px;">
-        <label>Dresssponsor 2</label>
+      <div style="flex:1; min-width:220px;" class="admin-image-upload">
+        <label style="margin-bottom:0.5rem; display:block;">Dresssponsor 2</label>
         <input type="hidden" name="existing_sponsor_logo_2" value="<%= item ? item.sponsor_logo_2 : '' %>" />
         <% if (item && item.sponsor_logo_2) { %>
-          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
-            <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_2 %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <button type="button" onclick="deleteImageAsync('sponsor_logo_2', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+          <div class="image-preview-container admin-image-preview">
+            <img src="<%= item.sponsor_logo_2 %>" />
+            <button type="button" class="admin-image-delete-btn" onclick="deleteImageAsync('sponsor_logo_2', this)">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
               Löschen
             </button>
           </div>
         <% } %>
-        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo_2" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
+        <label class="admin-image-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo_2" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
         </label>
       </div>
-      <div style="flex:1; min-width:220px;">
-        <label>Dresssponsor 3</label>
+      <div style="flex:1; min-width:220px;" class="admin-image-upload">
+        <label style="margin-bottom:0.5rem; display:block;">Dresssponsor 3</label>
         <input type="hidden" name="existing_sponsor_logo_3" value="<%= item ? item.sponsor_logo_3 : '' %>" />
         <% if (item && item.sponsor_logo_3) { %>
-          <div class="image-preview-container" style="margin-bottom:0.5rem; display:flex; align-items:flex-end; gap:0.5rem;">
-            <div style="border:1px solid #ddd; padding:4px; border-radius:6px; background:#fff; display:inline-block;"><img src="<%= item.sponsor_logo_3 %>" style="max-height:50px; border-radius:4px; display:block;" /></div>
-            <button type="button" onclick="deleteImageAsync('sponsor_logo_3', this)" style="font-size:0.8rem; color:#dc2626; border:none; background:none; cursor:pointer; padding:0; display:flex; align-items:center; gap:0.25rem;">
+          <div class="image-preview-container admin-image-preview">
+            <img src="<%= item.sponsor_logo_3 %>" />
+            <button type="button" class="admin-image-delete-btn" onclick="deleteImageAsync('sponsor_logo_3', this)">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
               Löschen
             </button>
           </div>
         <% } %>
-        <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; border:1px dashed #cbd5e1; padding:0.5rem 0.75rem; border-radius:6px; background:#fff; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--fcz-red)'; this.style.backgroundColor='#fef2f2';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#fff';">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fcz-red);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span style="font-size:0.85rem; color:#64748b; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Datei wählen...</span>
-          <input type="file" name="sponsor_logo_3" accept="image/*" style="display:none;" onchange="handleImageSelect(this)" />
+        <label class="admin-image-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span style="font-size:0.85rem;">Datei wählen...</span>
+          <input type="file" name="sponsor_logo_3" accept="image/*" class="admin-image-input" onchange="handleImageSelect(this)" />
         </label>
       </div>
     </div>

@@ -49,16 +49,42 @@
       <textarea name="excerpt" rows="2" placeholder="Kurzer Teaser für Übersichtsseiten"><%= item ? item.excerpt : '' %></textarea>
     </label>
 
-    <label>
-      <span>Beitragsbild (Featured Image)</span>
-      <% if (item && item.image) { %>
-        <div style="margin-bottom: 0.5rem;">
-          <img src="<%= item.image %>" alt="Aktuelles Bild" style="max-height: 100px; border-radius: 4px;" />
-        </div>
-      <% } %>
-      <input type="file" name="image" accept="image/*" />
-      <small class="muted">Lade ein neues Bild hoch (optional). Dies überschreibt das bestehende Bild.</small>
-    </label>
+    <div class="form-group" style="margin-top: 1rem;">
+      <label>Beitragsbild (Featured Image)</label>
+      <div class="admin-image-upload full-width">
+        <% if (item && item.image) { %>
+          <div class="admin-image-preview" id="image-preview-container">
+            <img id="image-preview" src="<%= item.image %>" alt="Aktuelles Bild" />
+            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('image-preview').src=''; document.getElementById('image-preview-container').style.display='none';">✕ Entfernen</button>
+          </div>
+        <% } else { %>
+          <div class="admin-image-preview" id="image-preview-container" style="display: none;">
+            <img id="image-preview" src="" alt="Vorschau" />
+            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('image-preview').src=''; document.getElementById('image-preview-container').style.display='none'; document.getElementById('image-input').value=''; document.getElementById('image-filename').textContent='Neues Bild auswählen...';">✕ Entfernen</button>
+          </div>
+        <% } %>
+        <label class="admin-image-label" onclick="document.getElementById('image-input').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span id="image-filename">Neues Bild auswählen...</span>
+        </label>
+        <input type="file" name="image" id="image-input" accept="image/*" class="admin-image-input" onchange="
+          const file = this.files[0];
+          const nameSpan = document.getElementById('image-filename');
+          const previewCont = document.getElementById('image-preview-container');
+          const previewImg = document.getElementById('image-preview');
+          if(file) {
+            nameSpan.textContent = file.name;
+            previewCont.style.display = 'flex';
+            previewImg.src = URL.createObjectURL(file);
+          } else {
+            nameSpan.textContent = 'Neues Bild auswählen...';
+            previewCont.style.display = '<%- item && item.image ? 'flex' : 'none' %>';
+            previewImg.src = '<%- item && item.image ? item.image : '' %>';
+          }
+        " />
+        <small class="muted" style="margin-top: 0.25rem;">Erlaubt: JPG, PNG, WEBP, GIF. Ein neues Bild überschreibt das bestehende.</small>
+      </div>
+    </div>
 
     <div class="form-group">
       <label>Inhalt *</label>

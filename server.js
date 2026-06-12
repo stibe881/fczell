@@ -500,6 +500,11 @@ app.post('/logout', async (req, res) => {
 });
 
 // ========== ADMIN ==========
+app.use('/admin', (req, res, next) => {
+  const parts = req.path.split('/');
+  res.locals.active = parts[1] || 'dashboard';
+  next();
+});
 app.get('/admin', requireAuth, async (req, res) => {
   const [newsCountRows] = await db.query(`SELECT COUNT(*) AS c FROM news`);
   const newsCount = newsCountRows[0].c;
