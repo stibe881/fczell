@@ -34,7 +34,7 @@ const uploadAny = multer({
       else if (file.fieldname === 'image') cb(null, path.join(__dirname, 'public/images/news'));
       else if (file.fieldname === 'vorstand_photo') cb(null, path.join(__dirname, 'public/images/vorstand'));
       else if (file.fieldname === 'photo' || file.fieldname.startsWith('sponsor_logo')) cb(null, path.join(__dirname, 'public/images/mannschaften'));
-      else if (file.fieldname === 'spielplan_file' || file.fieldname === 'reglement_file' || file.fieldname === 'flyer_file') cb(null, path.join(__dirname, 'public/documents'));
+      else if (file.fieldname === 'spielplan_file' || file.fieldname === 'reglement_file' || file.fieldname === 'flyer_file' || file.fieldname === 'traktanden_file' || file.fieldname === 'protokoll_file') cb(null, path.join(__dirname, 'public/documents'));
       else cb(null, path.join(__dirname, 'public/uploads'));
     },
     filename: (req, file, cb) => cb(null, 'upload-' + Date.now() + '-' + Math.round(Math.random() * 1000) + path.extname(file.originalname))
