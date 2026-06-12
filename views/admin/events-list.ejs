@@ -1,14 +1,14 @@
-<% const pageTitle = 'Termine verwalten'; const active = 'events'; %>
+<% const pageTitle = 'Matchs verwalten'; const active = 'events'; %>
 <%- include('_admin-header') %>
 
 <div class="admin-content">
   <div class="admin-page-head">
-    <h1>Termine &amp; Events</h1>
-    <a class="btn btn-primary" href="/admin/events/new">+ Neuer Termin</a>
+    <h1>Matchs</h1>
+    <a class="btn btn-primary" href="/admin/events/new">+ Neues Match</a>
   </div>
 
   <% if (items.length === 0) { %>
-    <p class="empty">Noch keine Termine erfasst.</p>
+    <p class="empty">Noch keine Matchs erfasst.</p>
   <% } else { %>
     <table class="admin-table" id="adminEventsTable">
       <thead>
