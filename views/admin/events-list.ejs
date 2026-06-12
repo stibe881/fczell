@@ -30,7 +30,7 @@
       </thead>
       <tbody id="adminEventsTbody">
         <% items.forEach(ev => { %>
-          <tr class="event-row" 
+          <tr class="admin-event-row" 
               data-date="<%= new Date(ev.event_date).getTime() %>" 
               data-time="<%= ev.event_time || '' %>" 
               data-title="<%= ev.title.toLowerCase() %>" 
@@ -83,7 +83,7 @@
         }
 
         // Sort rows
-        const rows = Array.from(tableBody.querySelectorAll('.event-row'));
+        const rows = Array.from(tableBody.querySelectorAll('.admin-event-row'));
         rows.sort((a, b) => {
           let valA = a.getAttribute(`data-${column}`);
           let valB = b.getAttribute(`data-${column}`);
