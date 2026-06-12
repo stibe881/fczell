@@ -77,7 +77,7 @@
           const nmDateStr = nmDate.getFullYear() + '-' + String(nmDate.getMonth()+1).padStart(2,'0') + '-' + String(nmDate.getDate()).padStart(2,'0');
           const nmTime = nextMatch.event_time || '00:00';
         %>
-        <a href="/events" id="tickerBadge" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <span class="ticker-text" id="tickerText"><%= nextMatch.title %></span>
         </a>
