@@ -6,7 +6,7 @@
 </div>
 
 <div class="admin-card">
-  <form action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <form id="anlassForm" action="<%= anlass ? '/admin/anlaesse/' + anlass.id + '/edit' : '/admin/anlaesse/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
     
     <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
       <div class="form-group">
@@ -242,6 +242,32 @@
     }
     formTypeSelect.addEventListener('change', updateDocsVisibility);
   }
+  <% if (anlass) { %>
+  // Archive document cleanup
+  const anlassForm = document.getElementById('anlassForm');
+  const archiveCheckbox = document.getElementById('is_archived');
+  const wasArchived = <%= anlass && anlass.is_archived ? 'true' : 'false' %>;
+
+  anlassForm.addEventListener('submit', function(e) {
+    if (archiveCheckbox && archiveCheckbox.checked && !wasArchived) {
+      const docFields = [
+        { id: 'delete_flyer', label: 'Flyer' },
+        { id: 'delete_spielplan', label: 'Spielplan' },
+        { id: 'delete_reglement', label: 'Reglement' },
+        { id: 'delete_traktanden', label: 'Traktanden' },
+        { id: 'delete_protokoll', label: 'Protokoll' }
+      ];
+      docFields.forEach(function(doc) {
+        var field = document.getElementById(doc.id);
+        if (field && field.value !== '1') {
+          if (confirm(doc.label + ' löschen? Das Dokument wird beim Archivieren entfernt.')) {
+            field.value = '1';
+          }
+        }
+      });
+    }
+  });
+  <% } %>
 </script>
 
 <%- include('_admin-footer') %>
