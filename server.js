@@ -944,6 +944,87 @@ app.post('/admin/pages/:id/edit', requireRole('content'), async (req, res) => {
   res.redirect('/admin/pages');
 });
 
+// --- Email Settings ---
+app.get('/admin/email-settings', requireRole('admin'), async (req, res) => {
+  const [rows] = await db.query('SELECT form_key, recipients FROM email_settings');
+  const settings = {};
+  rows.forEach(r => { settings[r.form_key] = r.recipients; });
+  const [smtpRows] = await db.query('SELECT * FROM smtp_settings WHERE id = 1');
+  const smtp = smtpRows[0] || {};
+  const testResult = req.session.testResult || null;
+  delete req.session.testResult;
+  res.render('admin/email-settings', { page: 'admin', active: 'email-settings', settings, smtp, testResult });
+});
+
+app.post('/admin/email-settings/smtp', requireRole('admin'), async (req, res) => {
+  const { host, port, username, password, from_name, from_email } = req.body;
+  const secure = req.body.secure ? 1 : 0;
+  await db.query(
+    'UPDATE smtp_settings SET host=?, port=?, secure=?, username=?, password=?, from_name=?, from_email=? WHERE id=1',
+    [host || '', parseInt(port) || 587, secure, username || '', password || '', from_name || 'FC Zell', from_email || 'info@fczell.ch']
+  );
+  const { resetTransporterCache } = require('./email');
+  resetTransporterCache();
+  req.session.flash = { type: 'success', msg: 'SMTP-Einstellungen gespeichert.' };
+  res.redirect('/admin/email-settings');
+});
+
+app.get('/admin/email-settings/test', requireRole('admin'), async (req, res) => {
+  try {
+    const [smtpRows] = await db.query('SELECT * FROM smtp_settings WHERE id = 1');
+    const smtp = smtpRows[0] || {};
+    if (!smtp.host) {
+      req.session.testResult = { success: false, error: 'SMTP-Server ist nicht konfiguriert.' };
+      return res.redirect('/admin/email-settings');
+    }
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      host: smtp.host, port: smtp.port, secure: smtp.secure === 1,
+      auth: { user: smtp.username, pass: smtp.password }
+    });
+    const testHtml = `<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:24px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+<tr><td style="background:#1a80b6;padding:20px 32px;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="color:#fff;font-size:20px;font-weight:700;">FC Zell</td><td style="text-align:right;color:rgba(255,255,255,.7);font-size:13px;">fczell.ch</td></tr></table></td></tr>
+<tr><td style="padding:32px;color:#1e293b;font-size:15px;line-height:1.65;">
+<p style="margin:0 0 16px;font-size:18px;font-weight:600;">✅ Test erfolgreich</p>
+<p style="margin:0 0 16px;">Der E-Mail-Versand über die FC Zell Webseite funktioniert einwandfrei.</p>
+<p style="margin:0;color:#64748b;font-size:13px;">Diese Nachricht wurde automatisch gesendet, um die SMTP-Konfiguration zu überprüfen.</p>
+</td></tr>
+<tr><td style="padding:20px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:12px;">FC Zell &middot; fczell.ch</td></tr>
+</table></td></tr></table></body></html>`;
+    const testTo = req.query.to || smtp.username;
+    await transporter.sendMail({
+      from: `"${smtp.from_name}" <${smtp.from_email}>`,
+      to: testTo,
+      subject: 'FC Zell – Test-Mail',
+      html: testHtml,
+      text: 'Test erfolgreich – Der E-Mail-Versand funktioniert einwandfrei.'
+    });
+    req.session.testResult = { success: true };
+  } catch (err) {
+    req.session.testResult = { success: false, error: err.message };
+  }
+  res.redirect('/admin/email-settings');
+});
+
+app.post('/admin/email-settings', requireRole('admin'), async (req, res) => {
+  const keys = [
+    'kontakt_allgemein', 'kontakt_adressaenderung', 'kontakt_clubhausbuchung',
+    'anmeldung_juniorenlager', 'anmeldung_dorfturnier', 'anmeldung_standard',
+    'matchballspende'
+  ];
+  for (const key of keys) {
+    const val = (req.body[key] || 'info@fczell.ch').trim();
+    await db.query('UPDATE email_settings SET recipients = ? WHERE form_key = ?', [val, key]);
+  }
+  req.session.flash = { type: 'success', msg: 'E-Mail Einstellungen gespeichert.' };
+  res.redirect('/admin/email-settings');
+});
+
 // --- Account / password change ---
 app.get('/admin/account', requireAuth, async (req, res) => {
   res.render('admin/account', { page: 'admin' });

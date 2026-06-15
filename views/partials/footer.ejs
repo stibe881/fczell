@@ -75,12 +75,20 @@
     </div>
   </div>
 
-  <div class="footer-bottom">
-    <p>© <%= new Date().getFullYear() %> FC Zell. Alle Rechte vorbehalten.</p>
-    <p class="footer-meta">
+  <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; width: 100%;">
+    <p style="margin: 0;">© <%= new Date().getFullYear() %> FC Zell. Alle Rechte vorbehalten.</p>
+    
+    <p class="footer-meta" style="margin: 0; text-align: center;">
       <a href="/impressum">Impressum</a> &middot; <a href="/datenschutz">Datenschutz</a> · 
       <a href="/login">Admin-Login</a>
     </p>
+
+    <div class="footer-creator" style="display: flex; align-items: center; gap: 0.75rem; justify-content: flex-end;">
+      <span>Webseite erstellt von</span>
+      <a href="https://gross-ict.ch" target="_blank" rel="noopener" style="display: flex; align-items: center;">
+        <img src="/images/gross-ict-logo.png" alt="Gross ICT" style="height: 24px; opacity: 0.7; transition: all 0.2s; filter: grayscale(100%) contrast(1.2);" onmouseover="this.style.opacity=1; this.style.filter='none'" onmouseout="this.style.opacity=0.7; this.style.filter='grayscale(100%) contrast(1.2)'">
+      </a>
+    </div>
   </div>
 </footer>
 

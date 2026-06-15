@@ -1,0 +1,209 @@
+<%- include('_admin-header', { pageTitle: 'E-Mail Versand', active: 'email-settings' }) %>
+
+<div class="admin-content">
+
+<div class="admin-page-head">
+  <h1>E-Mail Versand</h1>
+</div>
+
+<% if (typeof testResult !== 'undefined' && testResult) { %>
+  <div class="admin-card" style="margin-bottom: 1.5rem; border-left: 4px solid <%= testResult.success ? '#22c55e' : '#ef4444' %>;">
+    <p style="margin: 0; font-weight: 600; color: <%= testResult.success ? '#166534' : '#991b1b' %>;">
+      <%= testResult.success ? '✅ Test-Mail wurde erfolgreich gesendet!' : '❌ Fehler beim Senden: ' + testResult.error %>
+    </p>
+  </div>
+<% } %>
+
+<!-- SMTP Configuration -->
+<div class="admin-card" style="margin-bottom: 1.5rem;">
+  <button type="button" class="email-section-toggle collapsed" onclick="toggleSection(this)">
+    <span>⚙️ SMTP-Server Konfiguration</span>
+    <span class="toggle-icon">▾</span>
+  </button>
+  <div class="email-section-body hidden">
+    <p style="margin: 0 0 1.5rem; color: var(--fcz-gray-500); font-size: 0.85rem;">Zugangsdaten für den ausgehenden E-Mail-Versand</p>
+    <form method="POST" action="/admin/email-settings/smtp" class="admin-form" style="padding: 0;">
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="smtp-host">SMTP Server</label>
+          <input type="text" id="smtp-host" name="host" value="<%= smtp.host || '' %>" placeholder="z.B. mail.fczell.ch" required />
+        </div>
+        <div class="form-group">
+          <label for="smtp-port">Port</label>
+          <input type="number" id="smtp-port" name="port" value="<%= smtp.port || 587 %>" placeholder="587" required />
+          <small>587 (TLS) oder 465 (SSL)</small>
+        </div>
+      </div>
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="smtp-user">Benutzername / E-Mail</label>
+          <input type="text" id="smtp-user" name="username" value="<%= smtp.username || '' %>" placeholder="info@fczell.ch" required />
+        </div>
+        <div class="form-group">
+          <label for="smtp-pass">Passwort</label>
+          <input type="password" id="smtp-pass" name="password" value="<%= smtp.password || '' %>" placeholder="••••••••" required />
+        </div>
+      </div>
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="smtp-from-name">Absender-Name</label>
+          <input type="text" id="smtp-from-name" name="from_name" value="<%= smtp.from_name || 'FC Zell' %>" placeholder="FC Zell" />
+        </div>
+        <div class="form-group">
+          <label for="smtp-from-email">Absender E-Mail</label>
+          <input type="email" id="smtp-from-email" name="from_email" value="<%= smtp.from_email || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 400;">
+          <input type="checkbox" name="secure" value="1" <%= smtp.secure ? 'checked' : '' %> />
+          SSL/TLS verwenden (Port 465)
+        </label>
+      </div>
+      <div class="form-actions" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary">SMTP speichern</button>
+      </div>
+    </form>
+    <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(0,0,0,0.06); display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap;">
+      <div class="form-group" style="flex: 1; min-width: 200px; margin: 0;">
+        <label for="test-email-to" style="font-size: 0.85rem;">Test-Mail Empfänger</label>
+        <input type="email" id="test-email-to" value="<%= smtp.username || '' %>" placeholder="empfaenger@beispiel.ch" style="width: 100%;" />
+      </div>
+      <a id="testMailBtn" href="/admin/email-settings/test?to=<%= encodeURIComponent(smtp.username || '') %>" onclick="this.href='/admin/email-settings/test?to='+encodeURIComponent(document.getElementById('test-email-to').value); return true;" style="display: inline-block; padding: 0.6rem 1.25rem; background: #334155; color: #fff !important; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; white-space: nowrap; <%= smtp.host ? '' : 'pointer-events: none; opacity: 0.4;' %>">📨 Test-Mail senden</a>
+    </div>
+    </form>
+  </div>
+</div>
+
+<!-- Empfänger Konfiguration -->
+<form method="POST" action="/admin/email-settings" class="admin-form" style="padding: 0;">
+
+  <div class="admin-card" style="margin-bottom: 1.5rem;">
+    <button type="button" class="email-section-toggle collapsed" onclick="toggleSection(this)">
+      <span>💬 Kontaktformular</span>
+      <span class="toggle-icon">▾</span>
+    </button>
+    <div class="email-section-body hidden">
+      <p style="margin: 0 0 1.5rem; color: var(--fcz-gray-500); font-size: 0.85rem;">Wer wird benachrichtigt, wenn jemand das Kontaktformular ausfüllt?</p>
+      <div class="form-group">
+        <label for="em-allgemein">Allgemeiner Kontakt</label>
+        <input type="text" id="em-allgemein" name="kontakt_allgemein" value="<%= settings.kontakt_allgemein || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+      <div class="form-group">
+        <label for="em-adresse">Adressänderung</label>
+        <input type="text" id="em-adresse" name="kontakt_adressaenderung" value="<%= settings.kontakt_adressaenderung || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+      <div class="form-group">
+        <label for="em-club">Clubhausbuchung</label>
+        <input type="text" id="em-club" name="kontakt_clubhausbuchung" value="<%= settings.kontakt_clubhausbuchung || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card" style="margin-bottom: 1.5rem;">
+    <button type="button" class="email-section-toggle collapsed" onclick="toggleSection(this)">
+      <span>📝 Anmeldungen</span>
+      <span class="toggle-icon">▾</span>
+    </button>
+    <div class="email-section-body hidden">
+      <p style="margin: 0 0 1.5rem; color: var(--fcz-gray-500); font-size: 0.85rem;">Wer wird bei neuen Anlass-Anmeldungen benachrichtigt?</p>
+      <div class="form-group">
+        <label for="em-julag">Juniorenlager</label>
+        <input type="text" id="em-julag" name="anmeldung_juniorenlager" value="<%= settings.anmeldung_juniorenlager || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+      <div class="form-group">
+        <label for="em-dorft">Dorfturnier</label>
+        <input type="text" id="em-dorft" name="anmeldung_dorfturnier" value="<%= settings.anmeldung_dorfturnier || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+      <div class="form-group">
+        <label for="em-std">Standard-Anmeldung</label>
+        <input type="text" id="em-std" name="anmeldung_standard" value="<%= settings.anmeldung_standard || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card" style="margin-bottom: 1.5rem;">
+    <button type="button" class="email-section-toggle collapsed" onclick="toggleSection(this)">
+      <span>⚽ Matchballspende</span>
+      <span class="toggle-icon">▾</span>
+    </button>
+    <div class="email-section-body hidden">
+      <p style="margin: 0 0 1.5rem; color: var(--fcz-gray-500); font-size: 0.85rem;">Wer wird bei neuen Matchballspenden (Amtscup) benachrichtigt?</p>
+      <div class="form-group">
+        <label for="em-match">Matchballspende</label>
+        <input type="text" id="em-match" name="matchballspende" value="<%= settings.matchballspende || 'info@fczell.ch' %>" placeholder="info@fczell.ch" />
+        <small>Mehrere Adressen mit Komma trennen</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top: 1.5rem;">
+    <button type="submit" class="btn btn-primary">Empfänger speichern</button>
+  </div>
+</form>
+
+</div> <!-- /admin-content -->
+
+<style>
+.email-section-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--fcz-gray-900);
+  font-family: inherit;
+  text-align: left;
+}
+.email-section-toggle:hover { color: var(--fcz-red); }
+.toggle-icon {
+  font-size: 1.1rem;
+  transition: transform 0.25s ease;
+  color: var(--fcz-gray-400);
+}
+.email-section-toggle.collapsed .toggle-icon {
+  transform: rotate(-90deg);
+}
+.email-section-body {
+  margin-top: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+.email-section-body.hidden {
+  max-height: 0 !important;
+  opacity: 0;
+  margin-top: 0;
+}
+</style>
+
+<script>
+function toggleSection(btn) {
+  const body = btn.nextElementSibling;
+  const isHidden = body.classList.contains('hidden');
+  if (isHidden) {
+    body.classList.remove('hidden');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    btn.classList.remove('collapsed');
+    setTimeout(() => { body.style.maxHeight = 'none'; }, 300);
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    requestAnimationFrame(() => {
+      body.classList.add('hidden');
+      btn.classList.add('collapsed');
+    });
+  }
+}
+</script>
+
+<%- include('_admin-footer') %>

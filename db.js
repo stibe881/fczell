@@ -175,6 +175,18 @@ async function initDb() {
       notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS registrations_matchballspende (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      anlass_id INT NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      company VARCHAR(255),
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(255),
+      notes TEXT,
+      amount DECIMAL(10,2) DEFAULT 100.00,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
     
     CREATE TABLE IF NOT EXISTS anlaesse (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -185,6 +197,16 @@ async function initDb() {
       sort_order INT DEFAULT 0,
       has_form TINYINT(1) DEFAULT 0,
       form_type VARCHAR(255) DEFAULT 'standard',
+      dorfturnier_categories VARCHAR(255) DEFAULT 'A_B,Z,C,BP',
+      cat_a_b_info TEXT,
+      cat_z_info TEXT,
+      cat_c_info TEXT,
+      cat_beerpong_info TEXT,
+      program_friday TEXT,
+      program_saturday TEXT,
+      program_sunday TEXT,
+      amtscup_groups LONGTEXT,
+      amtscup_games LONGTEXT,
       deadline DATE,
       is_archived TINYINT(1) DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

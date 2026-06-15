@@ -62,10 +62,117 @@
       </div>
 
       <div id="form-options" style="display: <%= anlass && anlass.has_form ? 'block' : 'none' %>; padding: 1.5rem; background: #f9fafb; border-radius: 8px; margin-bottom: 1.5rem;">
-        <div class="form-group" style="margin-bottom: 0;">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
           <label for="deadline">Anmeldeschluss (optional)</label>
           <input type="date" id="deadline" name="deadline" value="<%= anlass && anlass.deadline ? anlass.deadline : '' %>" />
           <small>Wenn ein Datum gesetzt ist, wird das Formular nach diesem Tag nicht mehr angezeigt.</small>
+        </div>
+        
+        <div id="dorfturnier-categories-options" style="display: <%= anlass && anlass.form_type === 'dorfturnier' ? 'block' : 'none' %>; border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+          <h4 style="margin-top:0; margin-bottom: 1rem;">Aktive Dorfturnier Kategorien</h4>
+          <% const dCats = (anlass && anlass.dorfturnier_categories) ? anlass.dorfturnier_categories.split(',') : ['A_B', 'Z', 'C', 'BP']; %>
+          
+          <label style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; cursor: pointer;">
+            <div style="position: relative; width: 40px; height: 20px;">
+              <input type="checkbox" name="cat_a_b" value="1" <%= dCats.includes('A_B') ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); this.parentElement.parentElement.nextElementSibling.style.display = this.checked ? 'block' : 'none';" />
+              <div class="toggle-track <%= dCats.includes('A_B') ? 'on' : '' %>" style="position: absolute; inset: 0; border-radius: 10px; background: var(--fcz-gray-300); transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.25s;"></div>
+              </div>
+            </div>
+            <span>Firmen & Vereine (Kategorie A & B)</span>
+          </label>
+          <div style="margin-left: 2.75rem; margin-bottom: 1.5rem; display: <%= dCats.includes('A_B') ? 'block' : 'none' %>;" class="cat-info-container">
+            <textarea name="cat_a_b_info" rows="2" placeholder="Infos zur Kategorie A & B..." style="width: 100%; border: 1px solid var(--fcz-gray-300); border-radius: 4px; padding: 0.5rem; font-size: 0.9rem;"><%= anlass && anlass.cat_a_b_info ? anlass.cat_a_b_info : '' %></textarea>
+          </div>
+          
+          <label style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; cursor: pointer;">
+            <div style="position: relative; width: 40px; height: 20px;">
+              <input type="checkbox" name="cat_z" value="1" <%= dCats.includes('Z') ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); this.parentElement.parentElement.nextElementSibling.style.display = this.checked ? 'block' : 'none';" />
+              <div class="toggle-track <%= dCats.includes('Z') ? 'on' : '' %>" style="position: absolute; inset: 0; border-radius: 10px; background: var(--fcz-gray-300); transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.25s;"></div>
+              </div>
+            </div>
+            <span>Dorfturnier (Kategorie Z)</span>
+          </label>
+          <div style="margin-left: 2.75rem; margin-bottom: 1.5rem; display: <%= dCats.includes('Z') ? 'block' : 'none' %>;" class="cat-info-container">
+            <textarea name="cat_z_info" rows="2" placeholder="Infos zur Kategorie Z..." style="width: 100%; border: 1px solid var(--fcz-gray-300); border-radius: 4px; padding: 0.5rem; font-size: 0.9rem;"><%= anlass && anlass.cat_z_info ? anlass.cat_z_info : '' %></textarea>
+          </div>
+          
+          <label style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0; cursor: pointer;">
+            <div style="position: relative; width: 40px; height: 20px;">
+              <input type="checkbox" name="cat_c" value="1" <%= dCats.includes('C') ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); this.parentElement.parentElement.nextElementSibling.style.display = this.checked ? 'block' : 'none';" />
+              <div class="toggle-track <%= dCats.includes('C') ? 'on' : '' %>" style="position: absolute; inset: 0; border-radius: 10px; background: var(--fcz-gray-300); transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.25s;"></div>
+              </div>
+            </div>
+            <span>Schüler*innenturnier (Kategorie C)</span>
+          </label>
+          <div style="margin-left: 2.75rem; margin-bottom: 1.5rem; display: <%= dCats.includes('C') ? 'block' : 'none' %>;" class="cat-info-container">
+            <textarea name="cat_c_info" rows="2" placeholder="Infos zur Kategorie C..." style="width: 100%; border: 1px solid var(--fcz-gray-300); border-radius: 4px; padding: 0.5rem; font-size: 0.9rem;"><%= anlass && anlass.cat_c_info ? anlass.cat_c_info : '' %></textarea>
+          </div>
+          
+          <label style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0; cursor: pointer;">
+            <div style="position: relative; width: 40px; height: 20px;">
+              <input type="checkbox" name="cat_bp" value="1" <%= dCats.includes('BP') ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); this.parentElement.parentElement.nextElementSibling.style.display = this.checked ? 'block' : 'none';" />
+              <div class="toggle-track <%= dCats.includes('BP') ? 'on' : '' %>" style="position: absolute; inset: 0; border-radius: 10px; background: var(--fcz-gray-300); transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.25s;"></div>
+              </div>
+            </div>
+            <span>Beerpongturnier</span>
+          </label>
+          <div style="margin-left: 2.75rem; margin-bottom: 0.5rem; display: <%= dCats.includes('BP') ? 'block' : 'none' %>;" class="cat-info-container">
+            <textarea name="cat_beerpong_info" rows="2" placeholder="Infos zum Beerpongturnier..." style="width: 100%; border: 1px solid var(--fcz-gray-300); border-radius: 4px; padding: 0.5rem; font-size: 0.9rem;"><%= anlass && anlass.cat_beerpong_info ? anlass.cat_beerpong_info : '' %></textarea>
+          </div>
+          
+          <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e5e7eb;" />
+          
+          <h4 style="margin-top:0; margin-bottom: 1rem;">Programm (Dorfturnier)</h4>
+          <p style="font-size: 0.85rem; color: var(--fcz-gray-500); margin-bottom: 1rem;">Lass die Felder leer, falls es an diesem Tag kein Programm gibt.</p>
+          
+          <div class="form-group">
+            <label for="program_friday">Freitag</label>
+            <textarea id="program_friday" name="program_friday" rows="4" placeholder="z.B. 18:30 Uhr bis 22:30 Uhr Firmen & Vereine..."><%= anlass && anlass.program_friday ? anlass.program_friday : '' %></textarea>
+          </div>
+          <div class="form-group">
+            <label for="program_saturday">Samstag</label>
+            <textarea id="program_saturday" name="program_saturday" rows="4" placeholder="z.B. 12:00 Uhr bis 15:30 Uhr Schüler*innenturnier..."><%= anlass && anlass.program_saturday ? anlass.program_saturday : '' %></textarea>
+          </div>
+          <div class="form-group">
+            <label for="program_sunday">Sonntag</label>
+            <textarea id="program_sunday" name="program_sunday" rows="4" placeholder="z.B. 11:00 Uhr bis 17:00 Uhr Plausch..."><%= anlass && anlass.program_sunday ? anlass.program_sunday : '' %></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Amtscup Section -->
+    <div id="amtscup-section" style="display: <%= anlass && anlass.form_type === 'amtscup' ? 'block' : 'none' %>; margin-top: 1.5rem; padding: 1.5rem; background: #fdfaf0; border-radius: 8px; border: 1px solid rgba(245,158,11,0.2);">
+      <h3 style="margin-top: 0; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem;" onclick="const content = document.getElementById('amtscup-setup-content'); content.style.display = content.style.display === 'none' ? 'block' : 'none'; const icon = this.querySelector('.toggle-icon'); icon.textContent = content.style.display === 'none' ? '▼' : '▲';">
+        🏆 Amtscup Setup <span class="toggle-icon" style="font-size: 0.8em; color: #666;">▼</span>
+      </h3>
+      
+      <div id="amtscup-setup-content" style="display: none;">
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1.5rem;">
+          <!-- Gruppen -->
+          <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column;">
+            <h4 style="margin-bottom: 1rem;">
+              Gruppen & Mannschaften
+            </h4>
+            <textarea name="amtscup_groups" id="amtscup_groups" style="display:none;"><%= anlass && anlass.amtscup_groups ? anlass.amtscup_groups : '[]' %></textarea>
+            <div id="amtscup-groups-container" style="flex: 1;"></div>
+            <button type="button" class="btn btn-sm" onclick="addAmtscupGroup()" style="margin-top: 1rem; align-self: flex-start; padding: 0.5rem 1rem;">+ Gruppe hinzufügen</button>
+          </div>
+
+          <!-- Spieltage -->
+          <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column;">
+            <h4 style="margin-bottom: 1rem;">
+              Spielplan / Spiele
+            </h4>
+            <textarea name="amtscup_games" id="amtscup_games" style="display:none;"><%= anlass && anlass.amtscup_games ? anlass.amtscup_games : '[]' %></textarea>
+            <div id="amtscup-games-container" style="flex: 1;"></div>
+            <button type="button" class="btn btn-sm" onclick="addAmtscupGame()" style="margin-top: 1rem; align-self: flex-start; padding: 0.5rem 1rem;">+ Spiel hinzufügen</button>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +183,10 @@
     <% const showSpielplan = ft === 'dorfturnier' || ft === 'amtscup'; %>
     <% const showGv = ft === 'gv'; %>
     <div id="docs-section" style="display: <%= showDocs ? 'block' : 'none' %>; padding: 1.5rem; background: #f0f7fb; border-radius: 8px; border: 1px solid rgba(26,128,182,0.15); margin-bottom: 1.5rem;">
-      <h3 style="margin: 0 0 1rem; font-size: 1rem;">📎 Dokumente</h3>
+      <h3 style="margin: 0; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem;" onclick="const content = document.getElementById('docs-section-content'); content.style.display = content.style.display === 'none' ? 'block' : 'none'; const icon = this.querySelector('.toggle-icon'); icon.textContent = content.style.display === 'none' ? '▼' : '▲';">
+        📎 Dokumente <span class="toggle-icon" style="font-size: 0.8em; color: #666;">▼</span>
+      </h3>
+      <div id="docs-section-content" style="display: none; margin-top: 1rem;">
 
       <!-- Flyer (standard, dorfturnier, amtscup) -->
       <div class="form-group" id="flyer-group">
@@ -120,6 +230,7 @@
         <small>Reglement hochladen (ersetzt vorhandenes).</small>
       </div>
     </div>
+  </div>
 
     <!-- GV Dokumente (Traktanden & Protokoll) -->
     <div id="gv-section" style="display: <%= showGv ? 'block' : 'none' %>; padding: 1.5rem; background: #f0faf0; border-radius: 8px; border: 1px solid rgba(34,139,34,0.15); margin-bottom: 1.5rem;">
@@ -161,7 +272,7 @@
     <div class="form-group">
       <label style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin: 0; cursor: pointer; padding: 0.75rem 1rem; border-radius: var(--radius); background: rgba(0,0,0,0.02); transition: background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='rgba(0,0,0,0.02)'">
         <div style="position: relative; width: 44px; height: 24px; flex-shrink: 0;">
-          <input type="checkbox" id="is_archived" name="is_archived" value="1" <%= anlass && anlass.is_archived ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); var ad = document.getElementById('archive-docs'); if(ad) ad.style.display = this.checked ? 'block' : 'none';" />
+          <input type="checkbox" id="is_archived" name="is_archived" value="1" <%= anlass && anlass.is_archived ? 'checked' : '' %> style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; z-index: 2;" onchange="this.parentElement.querySelector('.toggle-track').classList.toggle('on', this.checked); var ad = document.getElementById('archive-docs'); if(ad) ad.style.display = this.checked ? 'block' : 'none'; var aw = document.getElementById('archive-amtscup-winner'); if(aw) aw.style.display = this.checked ? 'block' : 'none';" />
           <div class="toggle-track <%= anlass && anlass.is_archived ? 'on' : '' %>" style="position: absolute; inset: 0; border-radius: 12px; background: var(--fcz-gray-300); transition: background 0.25s;">
             <div style="position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.25s;"></div>
           </div>
@@ -172,6 +283,28 @@
         </div>
       </label>
     </div>
+
+    <% if (anlass && anlass.form_type === 'amtscup') { %>
+      <div id="archive-amtscup-winner" style="display: <%= anlass.is_archived ? 'block' : 'none' %>; padding: 1rem 1.25rem; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; margin-bottom: 1.5rem;">
+        <p style="margin: 0 0 0.75rem; font-size: 0.9rem; font-weight: 600; color: #92400e;">🏆 Wer hat den Amtscup gewonnen?</p>
+        <select name="amtscup_winner" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+          <option value="">Bitte wählen...</option>
+          <% 
+            let teams = [];
+            try {
+              const groups = JSON.parse(anlass.amtscup_groups || '[]');
+              groups.forEach(g => {
+                if (g.teams) teams = teams.concat(g.teams);
+              });
+            } catch(e) {}
+            teams.forEach(team => {
+          %>
+            <option value="<%= team %>" <%= anlass.amtscup_winner === team ? 'selected' : '' %>><%= team %></option>
+          <% }) %>
+        </select>
+        <p style="font-size: 0.8rem; color: #92400e; margin-top: 0.5rem;">Der Gewinner wird automatisch in der Ewigen Siegerliste im Archiv angezeigt.</p>
+      </div>
+    <% } %>
 
     <% if (anlass) { %>
       <%
@@ -253,6 +386,94 @@
     document.getElementById('year').addEventListener('input', updateSlug);
   <% } %>
 
+  
+  // --- AMTSCUP LOGIC ---
+  let groupsData = [];
+  let gamesData = [];
+  try {
+    groupsData = JSON.parse(document.getElementById('amtscup_groups').value || '[]');
+  } catch(e){}
+  try {
+    gamesData = JSON.parse(document.getElementById('amtscup_games').value || '[]');
+  } catch(e){}
+
+  function renderAmtscup() {
+    const gc = document.getElementById('amtscup-groups-container');
+    if (!gc) return;
+    
+    // Render Groups
+    gc.innerHTML = groupsData.map((g, gIdx) => `
+      <div style="background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+          <input type="text" class="form-control" style="font-weight: bold; flex: 1;" placeholder="Gruppenname (z.B. Gruppe 1)" value="${g.name}" onchange="groupsData[${gIdx}].name = this.value; updateAmtscupHidden()">
+          <button type="button" onclick="groupsData.splice(${gIdx}, 1); renderAmtscup(); updateAmtscupHidden()" style="background: none; border: none; color: red; cursor: pointer; padding: 0 0.5rem;">🗑</button>
+        </div>
+        <div>
+          ${g.teams.map((t, tIdx) => `
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+              <span style="color: #999; font-size: 0.8rem;">${tIdx+1}.</span>
+              <input type="text" class="form-control form-control-sm" style="flex: 1;" placeholder="Mannschaftsname" value="${t}" onchange="groupsData[${gIdx}].teams[${tIdx}] = this.value; updateAmtscupHidden()">
+              <button type="button" onclick="groupsData[${gIdx}].teams.splice(${tIdx}, 1); renderAmtscup(); updateAmtscupHidden()" style="background: none; border: none; color: red; cursor: pointer;">✕</button>
+            </div>
+          `).join('')}
+          <button type="button" class="btn btn-sm" onclick="groupsData[${gIdx}].teams.push(''); renderAmtscup(); updateAmtscupHidden()" style="margin-top: 0.5rem; font-size: 0.75rem;">+ Mannschaft</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Render Games
+    const gamC = document.getElementById('amtscup-games-container');
+    gamC.innerHTML = gamesData.map((gm, gmIdx) => `
+      <div style="background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <strong>Spiel ${gmIdx+1}</strong>
+          <button type="button" onclick="gamesData.splice(${gmIdx}, 1); renderAmtscup(); updateAmtscupHidden()" style="background: none; border: none; color: red; cursor: pointer;">🗑 Löschen</button>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <div><label style="font-size: 0.75rem;">Tag</label><input type="text" class="form-control form-control-sm" placeholder="z.B. Freitag" value="${gm.day || ''}" onchange="gamesData[${gmIdx}].day = this.value; updateAmtscupHidden()"></div>
+          <div><label style="font-size: 0.75rem;">Datum</label><input type="text" class="form-control form-control-sm" placeholder="z.B. 24.08.2026" value="${gm.date || ''}" onchange="gamesData[${gmIdx}].date = this.value; updateAmtscupHidden()"></div>
+          <div><label style="font-size: 0.75rem;">Zeit</label><input type="text" class="form-control form-control-sm" placeholder="z.B. 18:30" value="${gm.time || ''}" onchange="gamesData[${gmIdx}].time = this.value; updateAmtscupHidden()"></div>
+          <div><label style="font-size: 0.75rem;">Resultat</label><input type="text" class="form-control form-control-sm" placeholder="z.B. 1:1" value="${gm.result || ''}" onchange="gamesData[${gmIdx}].result = this.value; updateAmtscupHidden()"></div>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="text" class="form-control form-control-sm" style="flex: 1;" placeholder="Heimteam" value="${gm.home || ''}" onchange="gamesData[${gmIdx}].home = this.value; updateAmtscupHidden()">
+          <span style="font-weight: bold;">:</span>
+          <input type="text" class="form-control form-control-sm" style="flex: 1;" placeholder="Gastteam" value="${gm.away || ''}" onchange="gamesData[${gmIdx}].away = this.value; updateAmtscupHidden()">
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function addAmtscupGroup() {
+    groupsData.push({ name: '', teams: [''] });
+    renderAmtscup();
+    updateAmtscupHidden();
+  }
+
+  function addAmtscupGame() {
+    gamesData.push({ day: '', date: '', time: '', home: '', away: '', result: '' });
+    renderAmtscup();
+    updateAmtscupHidden();
+  }
+
+  function updateAmtscupHidden() {
+    document.getElementById('amtscup_groups').value = JSON.stringify(groupsData);
+    document.getElementById('amtscup_games').value = JSON.stringify(gamesData);
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', function() {
+    const frm = document.getElementById('anlassForm');
+    if (frm) {
+      frm.addEventListener('submit', function() {
+        if(typeof updateAmtscupHidden === 'function') updateAmtscupHidden();
+      });
+    }
+    if (document.getElementById('amtscup-section')) {
+      renderAmtscup();
+    }
+  });
+
   // Toggle Dokumente section based on form_type
   const formTypeSelect = document.getElementById('form_type');
   if (formTypeSelect) {
@@ -265,6 +486,14 @@
       document.getElementById('docs-section').style.display = showDocs ? 'block' : 'none';
       document.getElementById('gv-section').style.display = showGv ? 'block' : 'none';
       document.getElementById('form-section').style.display = hideForm ? 'none' : 'block';
+
+      const amtscupSection = document.getElementById('amtscup-section');
+      if (amtscupSection) amtscupSection.style.display = val === 'amtscup' ? 'block' : 'none';
+
+      
+      const catOptions = document.getElementById('dorfturnier-categories-options');
+      if(catOptions) catOptions.style.display = val === 'dorfturnier' ? 'block' : 'none';
+      
       document.querySelectorAll('.spielplan-group, .reglement-group').forEach(el => {
         el.style.display = showSpielplan ? 'block' : 'none';
       });

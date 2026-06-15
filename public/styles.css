@@ -1835,3 +1835,66 @@ details.accordion-card summary::-webkit-details-marker {
   color: var(--fcz-gray-400);
   margin-right: 0.5rem;
 }
+
+/* ===== Amtscup Game Rows ===== */
+.amtscup-game {
+  display: grid;
+  grid-template-columns: 55px 1fr 50px;
+  align-items: center;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+.amtscup-game-dark {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.amtscup-game-time {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--fcz-gray-500);
+}
+.amtscup-game-dark .amtscup-game-time {
+  color: rgba(255,255,255,0.5);
+}
+.amtscup-game-teams {
+  text-align: center;
+  font-weight: 600;
+}
+.amtscup-game-dark .amtscup-game-teams {
+  color: rgba(255,255,255,0.9);
+}
+.amtscup-game-score {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--fcz-red);
+  text-align: right;
+}
+.amtscup-game-dark .amtscup-game-score {
+  color: var(--fcz-red);
+}
+
+@media (max-width: 500px) {
+  .amtscup-game {
+    grid-template-columns: 1fr auto;
+    gap: 0.15rem 0.5rem;
+  }
+  .amtscup-game-time {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    font-size: 0.75rem;
+  }
+  .amtscup-game-teams {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  .amtscup-game-score {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 0.9rem;
+  }
+}

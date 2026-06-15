@@ -83,6 +83,7 @@
         <h4>System</h4>
         <% if (isAdmin) { %>
           <a href="/admin/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Benutzer</a>
+          <a href="/admin/email-settings" class="<%= typeof active !== 'undefined' && active === 'email-settings' ? 'active' : '' %>">E-Mail Versand</a>
         <% } %>
         <a href="/admin/account" class="<%= typeof active !== 'undefined' && active === 'account' ? 'active' : '' %>">Konto</a>
       </div>

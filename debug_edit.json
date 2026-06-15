@@ -1,0 +1,22 @@
+{
+  "title": "Amtscup",
+  "year": "2025",
+  "slug": "amtscup-2025",
+  "sort_order": "0",
+  "form_type": "amtscup",
+  "deadline": "",
+  "cat_a_b": "1",
+  "cat_a_b_info": "",
+  "cat_z": "1",
+  "cat_z_info": "",
+  "cat_c": "1",
+  "cat_c_info": "",
+  "cat_beerpong_info": "",
+  "program_friday": "",
+  "program_saturday": "",
+  "program_sunday": "",
+  "amtscup_groups": "[{\"name\":\"Gruppe A\",\"teams\":[\"FC Dagmersellen\",\"FC Wauwil\",\"SC Nebikon\"]},{\"name\":\"Gruppe B\",\"teams\":[\"FC Algro\",\"FC Willisau\",\"FC Schötz II\"]},{\"name\":\"Gruppe C\",\"teams\":[\"FC Zell\",\"FC Sumiswald\",\"SC Huttwil\"]}]",
+  "amtscup_games": "[{\"day\":\"Samstag\",\"date\":\"19.07.2025\",\"time\":\"18:00\",\"home\":\"FC Dagmersellen\",\"away\":\"FC Wauwil-Egolzwil\",\"result\":\"5:0\"},{\"day\":\"Samstag\",\"date\":\"19.07.2025\",\"time\":\"19:00\",\"home\":\"FC Wauwil-Egolzwil\",\"away\":\"SC Nebikon\",\"result\":\"0:5\"},{\"day\":\"Samstag\",\"date\":\"19.07.2025\",\"time\":\"20:00\",\"home\":\"SC Nebikon\",\"away\":\"FC Willisau II\",\"result\":\"0:1\"},{\"day\":\"Dienstag\",\"date\":\"22.07.2025\",\"time\":\"19:00\",\"home\":\"FC Algro\",\"away\":\"FC Willisau II\",\"result\":\"1:3\"},{\"day\":\"Dienstag\",\"date\":\"22.07.2025\",\"time\":\"20:00\",\"home\":\"FC Algro\",\"away\":\"FC Schötz II\",\"result\":\"3:2\"},{\"day\":\"Dienstag\",\"date\":\"22.07.2025\",\"time\":\"21:00\",\"home\":\"FC Schötz II\",\"away\":\"FC Willisau\",\"result\":\"1:2\"},{\"day\":\"Donnerstag\",\"date\":\"24.07.2025\",\"time\":\"19:00\",\"home\":\"FC Zell\",\"away\":\"SV Sumiswald\",\"result\":\"4:1\"},{\"day\":\"Donnerstag\",\"date\":\"24.07.2025\",\"time\":\"20:00\",\"home\":\"SV Sumiswald\",\"away\":\"SC Huttwil\",\"result\":\"2:2\"},{\"day\":\"Donnerstag\",\"date\":\"24.07.2025\",\"time\":\"21:00\",\"home\":\"SC Huttwil\",\"away\":\"FC Zell\",\"result\":\"0:2\"},{\"day\":\"Samstag\",\"date\":\"26.07.2025\",\"time\":\"18:00\",\"home\":\"FC Dagmersellen\",\"away\":\"FC Willisau II\",\"result\":\"1:0\"},{\"day\":\"Samstag\",\"date\":\"26.07.2025\",\"time\":\"19:00\",\"home\":\"FC Willisau II\",\"away\":\"FC Zell\",\"result\":\"0:3\"},{\"day\":\"Samstag\",\"date\":\"26.07.2025\",\"time\":\"20:00\",\"home\":\"FC Zell\",\"away\":\"FC Dagmersellen\",\"result\":\"1:0\"}]",
+  "body": "GESCHICHTE: Der Amtscup wurde 1969 erstmal als Eintages-Turnier ausgetragen. Wie es der Name Amtscup sagt, lud der FC Zell alle Vereine des Amts Willisau zum Turnier ein. Seit 1969 fand einzig in den Jahren 1992 und 1993 sowie 1996 und 1997 keine Austragung des Turniers statt.\r\n\r\n**Seit der Austragung 2025 hat der Amtscup einen neuen Modus.**\r\n\r\nDie jeweils neun teilnehmenden Teams werden in drei 3er-Gruppen eingeteilt. Die jeweiligen Gruppenspiele finden neu alle an einem Abend statt. Dies im gleichen Modus wie die bisherigen Finalspiele. Es spielt also jedes Team 45 Minuten gegen einen Gruppengegner. Die drei Gruppensieger spielen in einem Dreierfinale am Finalabend um den ProCam-Amtscup Sieger.\r\n\r\nDamit trägt der FC Zell dem zunehmenden Wunsch von Vereinen Rechnung, ein kürzeres Vorbereitungsturnier durchzuführen, um die terminliche Flexibilität der Trainerteams zu erhöhen. Die Zuschauer können an jedem Spielabend eine Entscheidung miterleben, was die Attraktivität des Turniers erhöht.",
+  "amtscup_winner": ""
+}
