@@ -33,9 +33,9 @@
           const amDateStr = amDate.getFullYear() + '-' + String(amDate.getMonth()+1).padStart(2,'0') + '-' + String(amDate.getDate()).padStart(2,'0');
           const amTime = activeMatch.event_time || '00:00';
         %>
-        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; overflow: hidden; max-width: 100%;">
+        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-live" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-cream); border: 1px solid var(--fcz-red); color: var(--fcz-red-dark); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 600; text-decoration: none; font-size: 0.75rem; max-width: 100%;">
           <span id="tickerDot" style="display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; flex-shrink: 0;"></span>
-          <span class="ticker-text" id="tickerText" style="display: flex; gap: 0.25rem; overflow: hidden; max-width: 100%;">LIVE: <%= activeMatch.title %></span>
+          <span class="ticker-text" id="tickerText" style="white-space: normal; line-height: 1.2; text-align: center;">LIVE: <%= activeMatch.title %></span>
         </a>
         <script>
         (function() {
@@ -53,7 +53,7 @@
             if (diff <= 0) {
               // Match has started
               dot.style.animation = 'pulse-small 2s infinite';
-              text.innerHTML = '<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">LIVE: ' + matchTitle + '</span>';
+              text.textContent = 'LIVE: ' + matchTitle;
             } else {
               // Countdown
               dot.style.animation = 'none';
@@ -64,7 +64,7 @@
               var countdown = '';
               if (h > 0) countdown += h + 'h ';
               countdown += String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-              text.innerHTML = '<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + matchTitle + '</span><span style="flex-shrink: 0; white-space: nowrap;"> in ' + countdown + '</span>';
+              text.textContent = matchTitle + ' startet in ' + countdown;
             }
           }
           update();
@@ -77,9 +77,9 @@
           const nmDateStr = nmDate.getFullYear() + '-' + String(nmDate.getMonth()+1).padStart(2,'0') + '-' + String(nmDate.getDate()).padStart(2,'0');
           const nmTime = nextMatch.event_time || '00:00';
         %>
-        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; overflow: hidden; max-width: 100%;">
+        <a href="https://app.veo.co/clubs/fc-zell/teams/1-mannschaft-fc-zell/recordings/" target="_blank" id="tickerBadge" class="ticker-next" style="display: flex; align-items: center; gap: 0.25rem; background: var(--fcz-gray-100); color: var(--fcz-gray-700); padding: 0.25rem 0.5rem; border-radius: 20px; font-weight: 500; text-decoration: none; font-size: 0.75rem; max-width: 100%;">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <span class="ticker-text" id="tickerText" style="display: flex; gap: 0.25rem; overflow: hidden; max-width: 100%;"><%= nextMatch.title %></span>
+          <span class="ticker-text" id="tickerText" style="white-space: normal; line-height: 1.2; text-align: center;"><%= nextMatch.title %></span>
         </a>
         <script>
         (function() {
@@ -94,7 +94,7 @@
             var now = new Date();
             var diff = kickoff - now;
             if (diff <= 0) {
-              text.innerHTML = '<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">LIVE: ' + matchTitle + '</span>';
+              text.textContent = 'LIVE: ' + matchTitle;
               return;
             }
             var days = Math.floor(diff / 86400000);
@@ -105,7 +105,7 @@
             if (days > 0) countdown += days + 'd ';
             if (h > 0) countdown += h + 'h ';
             countdown += String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-            text.innerHTML = '<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + matchTitle + '</span><span style="flex-shrink: 0; white-space: nowrap;"> in ' + countdown + '</span>';
+            text.textContent = matchTitle + ' in ' + countdown;
           }
           update();
           setInterval(update, 1000);
