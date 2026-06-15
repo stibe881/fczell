@@ -10,9 +10,20 @@
   <form action="/admin/registrations/dorfturnier/<%= isEdit ? registration.id + '/edit' : 'new' %>" method="POST" class="admin-form">
     <input type="hidden" name="anlass_id" value="<%= anlassId %>">
     
-    <div class="form-group">
-      <label for="team_name">Teamname</label>
-      <input type="text" id="team_name" name="team_name" value="<%= isEdit ? registration.team_name : '' %>" required />
+    <div class="form-row">
+      <div class="form-group">
+        <label for="team_name">Teamname</label>
+        <input type="text" id="team_name" name="team_name" value="<%= isEdit ? registration.team_name : '' %>" required />
+      </div>
+      <div class="form-group">
+        <label for="category">Kategorie</label>
+        <select id="category" name="category" required>
+          <option value="">Bitte wählen...</option>
+          <option value="Firmen & Vereine (Kategorie A & B)" <%= isEdit && registration.category === 'Firmen & Vereine (Kategorie A & B)' ? 'selected' : '' %>>Firmen & Vereine (Kategorie A & B)</option>
+          <option value="Dorfturnier (Kategorie Z)" <%= isEdit && registration.category === 'Dorfturnier (Kategorie Z)' ? 'selected' : '' %>>Dorfturnier (Kategorie Z)</option>
+          <option value="Schülerturnier (Kategorie C)" <%= isEdit && registration.category === 'Schülerturnier (Kategorie C)' ? 'selected' : '' %>>Schülerturnier (Kategorie C)</option>
+        </select>
+      </div>
     </div>
 
     <div class="form-row">

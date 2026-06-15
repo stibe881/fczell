@@ -14,6 +14,7 @@
       <thead>
         <tr>
           <th>Teamname</th>
+          <th>Kategorie</th>
           <th>Kontaktperson</th>
           <th>E-Mail</th>
           <th>Telefon</th>
@@ -27,6 +28,7 @@
         <% registrations.forEach(r => { %>
           <tr>
             <td><strong><%= r.team_name %></strong></td>
+            <td><%= r.category || '-' %></td>
             <td><%= r.contact_name %></td>
             <td><a href="mailto:<%= r.contact_email %>"><%= r.contact_email %></a></td>
             <td><%= r.contact_phone %></td>
@@ -44,7 +46,7 @@
         <% }) %>
         <% if (registrations.length === 0) { %>
           <tr>
-            <td colspan="8" style="text-align:center; padding:2rem;">Noch keine Anmeldungen.</td>
+            <td colspan="9" style="text-align:center; padding:2rem;">Noch keine Anmeldungen.</td>
           </tr>
         <% } %>
       </tbody>

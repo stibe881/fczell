@@ -118,7 +118,17 @@
               <label><span>Allergien / Unverträglichkeiten</span><textarea name="allergies" rows="3" placeholder="Falls vorhanden, bitte hier angeben"></textarea></label>
             
             <% } else if (anlass.form_type === 'dorfturnier') { %>
-              <label><span>Teamname *</span><input type="text" name="team_name" required /></label>
+              <div class="form-row">
+                <label><span>Kategorie *</span>
+                  <select name="category" required>
+                    <option value="">Bitte wählen...</option>
+                    <option value="Firmen & Vereine (Kategorie A & B)">Firmen & Vereine (Kategorie A & B)</option>
+                    <option value="Dorfturnier (Kategorie Z)">Dorfturnier (Kategorie Z)</option>
+                    <option value="Schülerturnier (Kategorie C)">Schülerturnier (Kategorie C)</option>
+                  </select>
+                </label>
+                <label><span>Teamname *</span><input type="text" name="team_name" required /></label>
+              </div>
               <div class="form-row">
                 <label><span>Kontaktperson *</span><input type="text" name="contact_name" required /></label>
                 <label><span>E-Mail *</span><input type="email" name="contact_email" required /></label>

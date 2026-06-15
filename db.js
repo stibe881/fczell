@@ -155,6 +155,8 @@ async function initDb() {
 
     CREATE TABLE IF NOT EXISTS registrations_dorfturnier (
       id INT AUTO_INCREMENT PRIMARY KEY,
+      anlass_id INT,
+      category VARCHAR(255),
       team_name VARCHAR(255) NOT NULL,
       contact_name VARCHAR(255) NOT NULL,
       contact_email VARCHAR(255) NOT NULL,

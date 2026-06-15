@@ -377,19 +377,19 @@ app.post('/anlaesse/:slug/anmelden', async (req, res) => {
     }).catch(err => console.error('E-Mail Fehler:', err));
 
   } else if (anlass.form_type === 'dorfturnier') {
-    const { team_name, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
-    if (!team_name || !contact_name || !contact_email || !contact_phone) {
+    const { team_name, category, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
+    if (!team_name || !category || !contact_name || !contact_email || !contact_phone) {
       req.session.flash = { type: 'error', msg: 'Bitte alle Pflichtfelder ausfüllen.' };
       return res.redirect('/anlaesse#' + anlass.slug);
     }
     await db.query(`
-      INSERT INTO registrations_dorfturnier (team_name, contact_name, contact_email, contact_phone, player_count, notes)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [team_name, contact_name, contact_email, contact_phone, player_count || 0, notes || '']);
+      INSERT INTO registrations_dorfturnier (anlass_id, category, team_name, contact_name, contact_email, contact_phone, player_count, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `, [anlass.id, category, team_name, contact_name, contact_email, contact_phone, player_count || 0, notes || '']);
     
     sendRegistrationConfirmation({
       to: contact_email, type: 'dorfturnier', name: contact_name,
-      details: { 'Teamname': team_name, 'Kontaktperson': contact_name, 'E-Mail': contact_email, 'Telefon': contact_phone, 'Anzahl Spieler': player_count || '-', 'Bemerkungen': notes || '-' }
+      details: { 'Kategorie': category, 'Teamname': team_name, 'Kontaktperson': contact_name, 'E-Mail': contact_email, 'Telefon': contact_phone, 'Anzahl Spieler': player_count || '-', 'Bemerkungen': notes || '-' }
     }).catch(err => console.error('E-Mail Fehler:', err));
 
   } else {
@@ -809,7 +809,7 @@ app.get('/admin/anlaesse/:id/registrations', requireRole('content'), async (req,
     const [regs] = await db.query(`SELECT * FROM registrations_juniorenlager ORDER BY created_at DESC`);
     registrations = regs;
   } else if (anlass.form_type === 'dorfturnier') {
-    const [regs] = await db.query(`SELECT * FROM registrations_dorfturnier ORDER BY created_at DESC`);
+    const [regs] = await db.query(`SELECT * FROM registrations_dorfturnier WHERE anlass_id = ? ORDER BY created_at DESC`, [anlass.id]);
     registrations = regs;
   } else {
     const [regs] = await db.query(`SELECT * FROM registrations_standard WHERE anlass_id = ? ORDER BY created_at DESC`, [anlass.id]);
@@ -837,11 +837,11 @@ app.post('/admin/registrations/:type/new', requireRole('content'), async (req, r
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `, [child_name, child_birthdate || '', parent_name, parent_email, parent_phone, address || '', allergies || '', notes || '']);
     } else if (type === 'dorfturnier') {
-      const { team_name, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
+      const { team_name, category, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
       await db.query(`
-        INSERT INTO registrations_dorfturnier (team_name, contact_name, contact_email, contact_phone, player_count, notes)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `, [team_name, contact_name, contact_email, contact_phone, player_count, notes || '']);
+        INSERT INTO registrations_dorfturnier (anlass_id, category, team_name, contact_name, contact_email, contact_phone, player_count, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `, [anlassId, category, team_name, contact_name, contact_email, contact_phone, player_count, notes || '']);
     } else {
       const { name, email, phone, notes } = req.body;
       await db.query(`
@@ -885,12 +885,12 @@ app.post('/admin/registrations/:type/:regId/edit', requireRole('content'), async
         WHERE id=?
       `, [child_name, child_birthdate, parent_name, parent_email, parent_phone, address, allergies, notes, regId]);
     } else if (type === 'dorfturnier') {
-      const { team_name, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
+      const { team_name, category, contact_name, contact_email, contact_phone, player_count, notes } = req.body;
       await db.query(`
         UPDATE registrations_dorfturnier 
-        SET team_name=?, contact_name=?, contact_email=?, contact_phone=?, player_count=?, notes=? 
+        SET anlass_id=?, category=?, team_name=?, contact_name=?, contact_email=?, contact_phone=?, player_count=?, notes=? 
         WHERE id=?
-      `, [team_name, contact_name, contact_email, contact_phone, player_count, notes, regId]);
+      `, [anlassId, category, team_name, contact_name, contact_email, contact_phone, player_count, notes, regId]);
     } else {
       const { name, email, phone, notes } = req.body;
       await db.query(`
