@@ -398,11 +398,79 @@
     <p style="font-size: 1.2rem; color: var(--fcz-gray-600);">An unsere grosszügigen Sponsoren und Gönner</p>
   </div>
   
-  <div style="text-align: center; max-width: 900px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 2px dashed #ccc;">
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-    <h3 style="color: #666; margin-bottom: 0.5rem;">Sponsorentafel Neubau</h3>
-    <p style="color: #999;">Hier wird demnächst ein aktuelles Foto der Sponsorentafel eingefügt.</p>
+  <div style="text-align: center; max-width: 1000px; margin: 0 auto;">
+    <div style="display: inline-block; padding: 12px; background: #fff; border: 3px solid var(--fcz-red); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: pointer;" onclick="document.getElementById('sponsorentafelOverlay').style.display='flex'">
+      <img src="/images/sponsorentafel-neubau.jpg" alt="Sponsorentafel Neubau Clubhaus 2021" loading="lazy" style="width: 100%; display: block; border-radius: 8px;" />
+    </div>
+    <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--fcz-gray-400);">Zum Vergrössern anklicken</p>
   </div>
+
+  <!-- Lightbox with magnifier -->
+  <div id="sponsorentafelOverlay" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; padding: 1rem;">
+    <button onclick="closeSponsorLightbox()" style="position: absolute; top: 1rem; right: 1.5rem; background: none; border: none; color: #fff; font-size: 2.5rem; cursor: pointer; z-index: 10002; line-height: 1;">&times;</button>
+    <div id="sponsorZoomWrap" style="position: relative; max-width: 95%; max-height: 92vh; cursor: none;">
+      <img id="sponsorImg" src="/images/sponsorentafel-neubau.jpg" alt="Sponsorentafel" style="max-width: 100%; max-height: 92vh; display: block; border-radius: 6px;" />
+      <div id="sponsorLens" style="display: none; position: absolute; width: 180px; height: 180px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4); background-repeat: no-repeat; pointer-events: none; z-index: 10001;"></div>
+    </div>
+    <p style="position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 0.8rem;">Bewege den Cursor über das Bild zum Zoomen</p>
+  </div>
+
+  <script>
+  (function() {
+    var overlay = document.getElementById('sponsorentafelOverlay');
+    var wrap = document.getElementById('sponsorZoomWrap');
+    var img = document.getElementById('sponsorImg');
+    var lens = document.getElementById('sponsorLens');
+    var zoom = 3;
+    var lensSize = 180;
+
+    function showLens(px, py) {
+      var rect = img.getBoundingClientRect();
+      var x = px - rect.left;
+      var y = py - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        lens.style.display = 'none';
+        return;
+      }
+      lens.style.display = 'block';
+      lens.style.left = (x - lensSize / 2) + 'px';
+      lens.style.top = (y - lensSize / 2) + 'px';
+      // Use natural image dimensions for crisp rendering
+      var ratioX = img.naturalWidth / rect.width;
+      var ratioY = img.naturalHeight / rect.height;
+      var bgW = img.naturalWidth * zoom / ratioX;
+      var bgH = img.naturalHeight * zoom / ratioY;
+      var natX = x * ratioX;
+      var natY = y * ratioY;
+      var bgX = -(natX * zoom / ratioX - lensSize / 2);
+      var bgY = -(natY * zoom / ratioY - lensSize / 2);
+      lens.style.backgroundImage = 'url(' + img.src + ')';
+      lens.style.backgroundSize = bgW + 'px ' + bgH + 'px';
+      lens.style.backgroundPosition = bgX + 'px ' + bgY + 'px';
+    }
+
+    wrap.addEventListener('mousemove', function(e) { showLens(e.clientX, e.clientY); });
+    wrap.addEventListener('mouseleave', function() { lens.style.display = 'none'; });
+    wrap.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      var t = e.touches[0];
+      showLens(t.clientX, t.clientY);
+    }, { passive: false });
+    wrap.addEventListener('touchend', function() { lens.style.display = 'none'; });
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeSponsorLightbox();
+    });
+
+    window.closeSponsorLightbox = function() {
+      overlay.style.display = 'none';
+      lens.style.display = 'none';
+    };
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.style.display === 'flex') closeSponsorLightbox();
+    });
+  })();
+  </script>
 </div>
   <!-- Bandenwerber -->
   <div style="margin-top: 4rem;">
