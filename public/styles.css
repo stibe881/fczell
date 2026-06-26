@@ -59,9 +59,18 @@ img, svg {
 a {
   color: var(--fcz-red);
   text-decoration: none;
-  transition: color var(--transition);
+  transition: color var(--transition), box-shadow 0.2s ease;
 }
 a:hover { color: var(--fcz-red-dark); }
+/* WCAG Focus Indicators */
+:focus-visible {
+  outline: 3px solid var(--fcz-red);
+  outline-offset: 2px;
+}
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--fcz-red);
+  outline-offset: 2px;
+}
 
 h1, h2, h3, h4 {
   font-family: 'Bebas Neue', 'Inter', sans-serif;
@@ -81,14 +90,19 @@ p { margin: 0 0 1em; }
 /* Skip link for accessibility */
 .skip-link {
   position: absolute;
-  top: -100px;
+  top: -1000px;
   left: 0;
   background: var(--fcz-red);
   color: #fff;
   padding: 0.75rem 1rem;
-  z-index: 1000;
+  z-index: 10000;
+  transition: top 0.2s ease;
 }
-.skip-link:focus { top: 0; }
+.skip-link:focus, .skip-link:focus-visible { 
+  top: 0; 
+  outline: 3px solid var(--fcz-black);
+  outline-offset: 0;
+}
 
 .sr-only {
   position: absolute;

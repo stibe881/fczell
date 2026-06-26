@@ -461,6 +461,11 @@ app.get('/impressum', async (req, res) => {
   res.render('impressum', { page: 'impressum', impressum });
 });
 
+// --- Barrierefreiheit ---
+app.get('/barrierefreiheit', (req, res) => {
+  res.render('barrierefreiheit', { page: 'barrierefreiheit' });
+});
+
 // --- Jobs ---
 app.get('/jobs', async (req, res) => {
   const [jobs] = await db.query(`SELECT * FROM jobs WHERE is_active = 1 ORDER BY created_at DESC`);
