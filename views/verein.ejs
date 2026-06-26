@@ -380,7 +380,7 @@
       <div class="sponsorentafel-gallery">
         <% sponsorentafelPhotos.forEach(photo => { %>
           <div class="sponsorentafel-photo" onclick="openLightbox('<%= photo.image_path %>')">
-            <img src="<%= photo.image_path %>" alt="<%= photo.caption || 'Sponsorentafel' %>" loading="lazy" />
+            <img src="<%= photo.image_path %>" alt="<%= photo.alt_text || photo.caption || 'Sponsorentafel' %>" loading="lazy" />
             <% if (photo.caption) { %>
               <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--fcz-gray-500);"><%= photo.caption %></p>
             <% } %>

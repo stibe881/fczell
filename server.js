@@ -1550,6 +1550,18 @@ app.post('/admin/gallery/:id/photos/bulk-delete', requireRole('content'), async 
   res.redirect(`/admin/gallery/${req.params.id}/edit`);
 });
 
+// --- Gallery Photo Alt-Text Update (AJAX) ---
+app.post('/admin/gallery/:id/photos/:photoId/alt-text', requireRole('content'), async (req, res) => {
+  try {
+    const { alt_text } = req.body;
+    await db.query(`UPDATE gallery_photos SET alt_text = ? WHERE id = ? AND gallery_id = ?`, [alt_text || null, req.params.photoId, req.params.id]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error('Alt-Text Update Error:', e);
+    res.json({ success: false, error: e.message });
+  }
+});
+
 app.post('/admin/gallery/:id/photos/:photoId/delete', requireRole('content'), async (req, res) => {
   await db.query(`DELETE FROM gallery_photos WHERE id = ? AND gallery_id = ?`, [req.params.photoId, req.params.id]);
   req.session.flash = { type: 'success', msg: 'Foto gelöscht.' };

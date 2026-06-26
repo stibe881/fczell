@@ -357,7 +357,7 @@
           <div class="gallery-grid">
             <% g.photos.forEach(photo => { %>
               <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
-                <img src="<%= photo.image_path %>" alt="<%= photo.caption || '' %>" loading="lazy" />
+                <img src="<%= photo.image_path %>" alt="<%= photo.alt_text || photo.caption || ('Foto aus ' + g.name) %>" loading="lazy" />
               </figure>
             <% }) %>
           </div>
@@ -698,7 +698,7 @@
                       <div class="gallery-grid">
                         <% g.photos.forEach(photo => { %>
                           <figure class="gallery-item" onclick="openAnlassLightbox('<%= photo.image_path %>')">
-                            <img src="<%= photo.image_path %>" alt="" loading="lazy" />
+                            <img src="<%= photo.image_path %>" alt="<%= photo.alt_text || photo.caption || ('Foto aus ' + g.name) %>" loading="lazy" />
                           </figure>
                         <% }) %>
                       </div>
