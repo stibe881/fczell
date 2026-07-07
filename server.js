@@ -347,9 +347,9 @@ app.get('/anlaesse', async (req, res) => {
 
 // --- Anlässe Registrations ---
 app.post('/anlaesse/:slug/anmelden', async (req, res) => {
-  if (req.body.website_url) {
-    req.session.flash = { type: 'success', msg: 'Anmeldung erfolgreich! Du erhältst in Kürze eine Bestätigung per E-Mail.' };
-    return res.redirect('/anlaesse#' + req.params.slug);
+  if (req.body.website_url || req.body.fcz_token !== 'fcz_real_user_2026') {
+    req.session.flash = { type: 'success', msg: 'Anmeldung erfolgreich! Du erhältst in Kürze eine Bestätigung.' };
+    return res.redirect(`/anlaesse/${req.params.slug}`);
   }
 
   const [rows] = await db.query('SELECT * FROM anlaesse WHERE slug = ?', [req.params.slug]);
@@ -424,7 +424,13 @@ app.get('/kontakt', async (req, res) => {
 });
 
 app.post('/kontakt', async (req, res) => {
-  if (req.body.website_url) {
+  if (req.body.website_url || req.body.fcz_token !== 'fcz_real_user_2026') {
+    req.session.flash = { type: 'success', msg: 'Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze!' };
+    return res.redirect('/kontakt');
+  }
+
+  const msgLower = (req.body.message || '').toLowerCase();
+  if (msgLower.includes('http://') || msgLower.includes('https://') || msgLower.includes('<a href')) {
     req.session.flash = { type: 'success', msg: 'Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze!' };
     return res.redirect('/kontakt');
   }

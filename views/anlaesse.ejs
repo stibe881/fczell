@@ -109,7 +109,8 @@
               <li>Erwähnung auf Plakaten</li>
             </ul>
             <form action="/anlaesse/<%= anlass.id %>/matchballspende" method="POST" class="anlass-form-block">
-              <input type="text" name="website_url" class="honeypot-field" style="display:none !important" tabindex="-1" autocomplete="off" />
+              <input type="text" name="website_url" class="honeypot-field" style="position: absolute; left: -9999px;" tabindex="-1" autocomplete="off" />
+              <input type="hidden" name="fcz_token" class="fcz_token" value="">
               <div class="form-group" style="margin-bottom: 1rem;">
                 <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">Vorname *</label>
                 <input type="text" name="firstname" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
@@ -218,7 +219,8 @@
           </div>
         <% } else { %>
           <form method="POST" action="/anlaesse/<%= anlass.slug %>/anmelden" class="anlass-form">
-            <input type="text" name="website_url" class="honeypot-field" style="display:none !important" tabindex="-1" autocomplete="off" />
+            <input type="text" name="website_url" class="honeypot-field" style="position: absolute; left: -9999px;" tabindex="-1" autocomplete="off" />
+            <input type="hidden" name="fcz_token" class="fcz_token" value="">
             
             <% if (anlass.form_type === 'juniorenlager') { %>
               <div class="form-row">
@@ -1344,6 +1346,16 @@ document.addEventListener('keydown', function(e) {
   window.addEventListener('scroll', updateActive, { passive: true });
   updateActive();
 })();
+
+// ---------- Spam Protection ----------
+document.querySelectorAll('form.anlass-form-block, form.anlass-form').forEach(form => {
+  form.addEventListener('submit', function() {
+    const tokenInput = this.querySelector('.fcz_token');
+    if (tokenInput) {
+      tokenInput.value = 'fcz_real_user_2026';
+    }
+  });
+});
 </script>
 
 <%- include('partials/footer') %>

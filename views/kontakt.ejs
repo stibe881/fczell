@@ -44,7 +44,8 @@
       <div class="card">
         <h3>Kontaktformular</h3>
         <form class="contact-form" method="post" action="/kontakt" id="contactForm">
-          <input type="text" name="website_url" class="honeypot-field" style="display:none !important" tabindex="-1" autocomplete="off" />
+          <input type="text" name="website_url" class="honeypot-field" style="position: absolute; left: -9999px;" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="fcz_token" id="fcz_token" value="">
           <div class="form-group">
             <label class="form-label" for="cf-grund">Grund der Anfrage *</label>
             <select class="form-control" id="cf-grund" name="subject" required>
@@ -127,6 +128,13 @@
 
   grundSelect.addEventListener('change', updateFields);
   updateFields();
+
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function() {
+      document.getElementById('fcz_token').value = 'fcz_real_user_2026';
+    });
+  }
 </script>
 
 <%- include('partials/footer') %>
