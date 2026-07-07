@@ -26,8 +26,9 @@
       <% news.forEach(n => { %>
         <a href="/news/<%= n.id %>" class="news-card" data-category="<%= n.category || '' %>">
           <% if (n.image) { %>
-          <div style="width:100%; aspect-ratio:16/9; background:var(--fcz-gray-100); display:flex; align-items:center; justify-content:center;">
-            <img src="<%= n.image %>" alt="<%= n.title %>" style="width:100%; height:100%; object-fit:contain; display:block;" />
+          <div style="width:100%; aspect-ratio:16/9; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--fcz-gray-800, #1f2937);">
+            <div style="position:absolute; top:-20px; left:-20px; right:-20px; bottom:-20px; background-image:url('<%= n.image %>'); background-size:cover; background-position:center; filter:blur(15px); opacity:0.6; z-index:1;"></div>
+            <img src="<%= n.image %>" alt="<%= n.title %>" style="position:relative; z-index:2; width:100%; height:100%; object-fit:contain; display:block;" />
           </div>
         <% } else { %>
           <div style="width:100%; aspect-ratio:16/9; background:var(--fcz-gray-200); display:block;"></div>
