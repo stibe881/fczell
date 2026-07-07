@@ -347,6 +347,11 @@ app.get('/anlaesse', async (req, res) => {
 
 // --- Anlässe Registrations ---
 app.post('/anlaesse/:slug/anmelden', async (req, res) => {
+  if (req.body.website_url) {
+    req.session.flash = { type: 'success', msg: 'Anmeldung erfolgreich! Du erhältst in Kürze eine Bestätigung per E-Mail.' };
+    return res.redirect('/anlaesse#' + req.params.slug);
+  }
+
   const [rows] = await db.query('SELECT * FROM anlaesse WHERE slug = ?', [req.params.slug]);
   const anlass = rows[0];
   if (!anlass || !anlass.has_form) {
@@ -419,6 +424,11 @@ app.get('/kontakt', async (req, res) => {
 });
 
 app.post('/kontakt', async (req, res) => {
+  if (req.body.website_url) {
+    req.session.flash = { type: 'success', msg: 'Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze!' };
+    return res.redirect('/kontakt');
+  }
+
   const { subject, name, email, phone, message, alte_adresse, neue_adresse, datum, personen, anlass } = req.body;
 
   if (!subject || !name || !email || !message) {
@@ -630,6 +640,8 @@ app.post('/admin/news/:id/edit', requireRole('news'), uploadAny.any(), async (re
   if (file) {
     imageQuery = ', image=?';
     imageParam = ['/images/news/' + file.filename];
+  } else if (req.body.delete_image === 'true') {
+    imageQuery = ', image=NULL';
   }
 
   await db.query(

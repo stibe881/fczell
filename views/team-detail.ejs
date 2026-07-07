@@ -64,7 +64,7 @@
               <dd>
                 <%= s.name %>
                 <% if (s.phone) { %> <br><a href="tel:<%= s.phone.replace(/\s/g,'') %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.phone %></a><% } %>
-                <% if (s.email) { %> <br><a href="mailto:<%= s.email %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
+                <% if (s.email) { %> <br><a href="#" class="enc-email" data-user="<%= s.email.split('@')[0] %>" data-domain="<%= s.email.split('@')[1] %>" style="color:var(--fcz-gray-600); text-decoration:none; font-size:0.9em;"><%= s.email %></a><% } %>
               </dd>
             </div>
           <% }) %>
@@ -77,7 +77,7 @@
             <dt>Kontakt</dt>
             <dd>
               <% if (team.contact_phone) { %><a href="tel:<%= team.contact_phone.replace(/\s/g, '') %>" style="color:var(--fcz-gray-600); text-decoration:none;"><%= team.contact_phone %></a><br><% } %>
-              <% if (team.contact_email) { %><a href="mailto:<%= team.contact_email %>" style="color:var(--fcz-gray-600); text-decoration:none;"><%= team.contact_email %></a><% } %>
+              <% if (team.contact_email) { %><a href="#" class="enc-email" data-user="<%= team.contact_email.split('@')[0] %>" data-domain="<%= team.contact_email.split('@')[1] %>" style="color:var(--fcz-gray-600); text-decoration:none;"><%= team.contact_email %></a><% } %>
             </dd>
           </div>
         <% } %>

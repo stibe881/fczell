@@ -15,7 +15,7 @@
         <address>
           Postfach<br>
           6144 Zell LU<br><br>
-          <a href="mailto:info@fczell.ch">info@fczell.ch</a>
+          <a href="#" class="enc-email" data-user="info" data-domain="fczell.ch">info@fczell.ch</a>
         </address>
       </div>
 
@@ -32,7 +32,7 @@
               <li>
                 <strong><%= v.name %></strong><% if (v.role) { %> – <%= v.role %><% } %>
                 <% if (v.phone) { %><br><a href="tel:<%= v.phone %>"><%= v.phone %></a><% } %>
-                <% if (v.email) { %><br><a href="mailto:<%= v.email %>"><%= v.email %></a><% } %>
+                <% if (v.email) { %><br><a href="#" class="enc-email" data-user="<%= v.email.split('@')[0] %>" data-domain="<%= v.email.split('@')[1] %>"><%= v.email %></a><% } %>
               </li>
             <% }) %>
           </ul>
@@ -44,6 +44,7 @@
       <div class="card">
         <h3>Kontaktformular</h3>
         <form class="contact-form" method="post" action="/kontakt" id="contactForm">
+          <input type="text" name="website_url" class="honeypot-field" style="display:none !important" tabindex="-1" autocomplete="off" />
           <div class="form-group">
             <label class="form-label" for="cf-grund">Grund der Anfrage *</label>
             <select class="form-control" id="cf-grund" name="subject" required>

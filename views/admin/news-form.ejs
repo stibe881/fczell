@@ -51,40 +51,127 @@
 
     <div class="form-group" style="margin-top: 1rem;">
       <label>Beitragsbild (Featured Image)</label>
-      <div class="admin-image-upload full-width">
-        <% if (item && item.image) { %>
-          <div class="admin-image-preview" id="image-preview-container">
-            <img id="image-preview" src="<%= item.image %>" alt="Aktuelles Bild" />
-            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('image-preview').src=''; document.getElementById('image-preview-container').style.display='none';">✕ Entfernen</button>
+      <div class="modern-dropzone" id="modern-dropzone">
+        <input type="file" name="image" id="image-input" accept="image/*" class="modern-dropzone-input" />
+        
+        <div class="modern-dropzone-content" id="dropzone-content" style="<%= item && item.image ? 'display: none;' : 'display: flex;' %>">
+          <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          <span class="dropzone-text">Bild hierher ziehen oder <strong>klicken</strong></span>
+          <small class="dropzone-hint">Erlaubt: JPG, PNG, WEBP, GIF</small>
+        </div>
+
+        <div class="modern-dropzone-preview" id="dropzone-preview" style="<%= item && item.image ? 'display: block;' : 'display: none;' %>">
+          <img id="image-preview" src="<%= item && item.image ? item.image : '' %>" alt="Vorschau" />
+          <div class="dropzone-overlay">
+            <button type="button" class="dropzone-remove-btn" id="remove-image-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              Entfernen
+            </button>
           </div>
-        <% } else { %>
-          <div class="admin-image-preview" id="image-preview-container" style="display: none;">
-            <img id="image-preview" src="" alt="Vorschau" />
-            <button type="button" class="admin-image-delete-btn" onclick="document.getElementById('image-preview').src=''; document.getElementById('image-preview-container').style.display='none'; document.getElementById('image-input').value=''; document.getElementById('image-filename').textContent='Neues Bild auswählen...';">✕ Entfernen</button>
-          </div>
-        <% } %>
-        <label class="admin-image-label" onclick="document.getElementById('image-input').click()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span id="image-filename">Neues Bild auswählen...</span>
-        </label>
-        <input type="file" name="image" id="image-input" accept="image/*" class="admin-image-input" onchange="
-          const file = this.files[0];
-          const nameSpan = document.getElementById('image-filename');
-          const previewCont = document.getElementById('image-preview-container');
-          const previewImg = document.getElementById('image-preview');
-          if(file) {
-            nameSpan.textContent = file.name;
-            previewCont.style.display = 'flex';
-            previewImg.src = URL.createObjectURL(file);
-          } else {
-            nameSpan.textContent = 'Neues Bild auswählen...';
-            previewCont.style.display = '<%- item && item.image ? 'flex' : 'none' %>';
-            previewImg.src = '<%- item && item.image ? item.image : '' %>';
-          }
-        " />
-        <small class="muted" style="margin-top: 0.25rem;">Erlaubt: JPG, PNG, WEBP, GIF. Ein neues Bild überschreibt das bestehende.</small>
+        </div>
       </div>
     </div>
+
+    <style>
+      .modern-dropzone {
+        position: relative;
+        width: 100%;
+        min-height: 240px;
+        border: 2px dashed var(--fcz-gray-300, #cbd5e1);
+        border-radius: 12px;
+        background-color: var(--fcz-gray-50, #f8fafc);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+      .modern-dropzone:hover, .modern-dropzone.dragover {
+        border-color: var(--fcz-primary, #0f172a);
+        background-color: rgba(15, 23, 42, 0.02);
+      }
+      .modern-dropzone-input {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 10;
+      }
+      .modern-dropzone-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        pointer-events: none;
+        padding: 2rem;
+        text-align: center;
+      }
+      .dropzone-icon {
+        color: var(--fcz-gray-400, #94a3b8);
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+      }
+      .modern-dropzone:hover .dropzone-icon, .modern-dropzone.dragover .dropzone-icon {
+        color: var(--fcz-primary, #0f172a);
+      }
+      .dropzone-text {
+        font-size: 1.1rem;
+        color: var(--fcz-gray-700, #334155);
+      }
+      .dropzone-text strong {
+        color: var(--fcz-primary, #0f172a);
+      }
+      .dropzone-hint {
+        color: var(--fcz-gray-500, #64748b);
+        font-size: 0.85rem;
+      }
+      .modern-dropzone-preview {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0; left: 0;
+        z-index: 20;
+        background: var(--fcz-gray-100, #f1f5f9);
+      }
+      .modern-dropzone-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      .dropzone-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .modern-dropzone-preview:hover .dropzone-overlay {
+        opacity: 1;
+      }
+      .dropzone-remove-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s, background 0.2s;
+      }
+      .dropzone-remove-btn:hover {
+        background: #dc2626;
+        transform: scale(1.05);
+      }
+    </style>
 
     <div class="form-group">
       <label>Inhalt *</label>
@@ -121,6 +208,85 @@
         ['link', 'image']
       ]
     }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const dropzone = document.getElementById('modern-dropzone');
+    const input = document.getElementById('image-input');
+    const content = document.getElementById('dropzone-content');
+    const previewContainer = document.getElementById('dropzone-preview');
+    const previewImg = document.getElementById('image-preview');
+    const removeBtn = document.getElementById('remove-image-btn');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length) {
+        input.files = files;
+        handleFiles(files[0]);
+      }
+    });
+
+    input.addEventListener('change', function() {
+      if (this.files.length) {
+        handleFiles(this.files[0]);
+      }
+    });
+
+    function handleFiles(file) {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          content.style.display = 'none';
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent triggering file dialog
+      input.value = '';
+      
+      // If there is an existing database image URL that we are removing, 
+      // we need to set a hidden field so the server knows to delete it.
+      // But since we don't have that yet, at least we visually clear it.
+      // We will create a hidden input for removed image logic if needed,
+      // but standard is just removing the visually uploaded file.
+      previewImg.src = '';
+      content.style.display = 'flex';
+      previewContainer.style.display = 'none';
+      
+      // Add a hidden input to signify deletion of existing image
+      let deleteInput = document.getElementById('delete-image-input');
+      if (!deleteInput) {
+        deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = 'delete_image';
+        deleteInput.value = 'true';
+        deleteInput.id = 'delete-image-input';
+        dropzone.appendChild(deleteInput);
+      }
+    });
   });
 </script>
 

@@ -7,7 +7,7 @@
       <address>
         Postfach<br>
         6144 Zell<br>
-        <a href="mailto:info@fczell.ch">info@fczell.ch</a>
+        <a href="#" class="enc-email" data-user="info" data-domain="fczell.ch">info@fczell.ch</a>
       </address>
       <div class="footer-social">
         <a href="https://www.facebook.com/fczell.ch/" aria-label="Facebook" target="_blank" rel="noopener">Facebook</a>
@@ -93,6 +93,24 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Nach oben">↑</button>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.enc-email').forEach(el => {
+      const revealEmail = function(e) {
+        if (this.getAttribute('href') === '#') {
+          if (e && e.type === 'click') e.preventDefault();
+          const email = this.dataset.user + '@' + this.dataset.domain;
+          this.href = 'mailto:' + email;
+          this.innerHTML = email;
+          if (e && e.type === 'click') window.location.href = this.href;
+        }
+      };
+      el.addEventListener('mouseover', revealEmail);
+      el.addEventListener('click', revealEmail);
+    });
+  });
+</script>
   <%- include('cookie-banner') %>
 </body>
 </html>
