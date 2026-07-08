@@ -104,6 +104,11 @@
             <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
           </div>
 
+          <div class="form-group">
+            <label class="form-label" for="cf-captcha"><%= captchaText %></label>
+            <input type="number" class="form-control" id="cf-captcha" name="captcha" required placeholder="Ergebnis als Zahl">
+          </div>
+
           <button type="submit" class="btn btn-primary btn-lg">Nachricht senden</button>
         </form>
       </div>

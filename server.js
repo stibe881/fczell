@@ -420,12 +420,22 @@ app.post('/anlaesse/:slug/anmelden', async (req, res) => {
 app.get('/kontakt', async (req, res) => {
   const [vorstand] = await db.query(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`);
   const preselect = req.query.grund || '';
-  res.render('kontakt', { page: 'kontakt', vorstand, preselect });
+  const num1 = Math.floor(Math.random() * 9) + 1;
+  const num2 = Math.floor(Math.random() * 9) + 1;
+  req.session.captcha = num1 + num2;
+  const captchaText = `Sicherheitsfrage: Was ist ${num1} + ${num2}? *`;
+  res.render('kontakt', { page: 'kontakt', vorstand, preselect, captchaText });
 });
 
 app.post('/kontakt', async (req, res) => {
   if (req.body.website_url || req.body.fcz_token !== 'fcz_real_user_2026') {
     req.session.flash = { type: 'success', msg: 'Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze!' };
+    return res.redirect('/kontakt');
+  }
+
+  const userCaptcha = parseInt(req.body.captcha, 10);
+  if (userCaptcha !== req.session.captcha) {
+    req.session.flash = { type: 'error', msg: 'Die Sicherheitsfrage wurde falsch beantwortet. Bitte versuche es erneut.' };
     return res.redirect('/kontakt');
   }
 
