@@ -416,15 +416,59 @@ app.post('/anlaesse/:slug/anmelden', async (req, res) => {
   res.redirect('/anlaesse#' + anlass.slug);
 });
 
+app.post('/anlaesse/:id/matchballspende', async (req, res) => {
+  const anlassId = req.params.id;
+
+  try {
+    const [rows] = await db.query('SELECT slug FROM anlaesse WHERE id = ?', [anlassId]);
+    const anlass = rows[0];
+    const redirectUrl = anlass ? '/anlaesse#' + anlass.slug : '/anlaesse';
+
+    if (req.body.website_url || req.body.fcz_token !== 'fcz_real_user_2026') {
+      req.session.flash = { type: 'success', msg: 'Vielen Dank für deine Matchballspende!' };
+      return res.redirect(redirectUrl);
+    }
+
+    const { firstname, lastname, amount, remarks } = req.body;
+    if (!firstname || !lastname || !amount) {
+      req.session.flash = { type: 'error', msg: 'Bitte alle Pflichtfelder ausfüllen.' };
+      return res.redirect(redirectUrl);
+    }
+
+    const fullName = firstname + ' ' + lastname;
+    const email = 'keine@email.angegeben';
+
+    await db.query(`
+      INSERT INTO registrations_matchballspende (anlass_id, name, email, amount, notes)
+      VALUES (?, ?, ?, ?, ?)
+    `, [anlassId, fullName, email, amount, remarks || '']);
+
+    sendRegistrationConfirmation({
+      to: 'NO_CONFIRMATION',
+      type: 'matchballspende',
+      name: firstname + ' ' + lastname,
+      details: {
+        'Vorname': firstname,
+        'Nachname': lastname,
+        'Betrag (CHF)': amount,
+        'Bemerkungen': remarks || '-'
+      }
+    }).catch(err => console.error('E-Mail Fehler:', err));
+
+    req.session.flash = { type: 'success', msg: 'Vielen Dank für deine Matchballspende!' };
+    res.redirect(redirectUrl);
+  } catch (err) {
+    console.error(err);
+    req.session.flash = { type: 'error', msg: 'Es gab ein Problem. Bitte versuche es später nochmals.' };
+    res.redirect('/anlaesse');
+  }
+});
+
 // --- Kontakt ---
 app.get('/kontakt', async (req, res) => {
   const [vorstand] = await db.query(`SELECT * FROM vorstand ORDER BY sort_order ASC, id ASC`);
   const preselect = req.query.grund || '';
-  const num1 = Math.floor(Math.random() * 9) + 1;
-  const num2 = Math.floor(Math.random() * 9) + 1;
-  req.session.captcha = num1 + num2;
-  const captchaText = `Sicherheitsfrage: Was ist ${num1} + ${num2}? *`;
-  res.render('kontakt', { page: 'kontakt', vorstand, preselect, captchaText });
+  res.render('kontakt', { page: 'kontakt', vorstand, preselect });
 });
 
 app.post('/kontakt', async (req, res) => {
@@ -433,9 +477,30 @@ app.post('/kontakt', async (req, res) => {
     return res.redirect('/kontakt');
   }
 
-  const userCaptcha = parseInt(req.body.captcha, 10);
-  if (userCaptcha !== req.session.captcha) {
-    req.session.flash = { type: 'error', msg: 'Die Sicherheitsfrage wurde falsch beantwortet. Bitte versuche es erneut.' };
+  const turnstileResponse = req.body['cf-turnstile-response'];
+  if (!turnstileResponse) {
+    req.session.flash = { type: 'error', msg: 'Bitte bestätige, dass du kein Roboter bist (Captcha fehlt).' };
+    return res.redirect('/kontakt');
+  }
+
+  try {
+    const cfVerify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret: '0x4AAAAAADx1Rh6OqMIis2T-HAbEVsQbJxw',
+        response: turnstileResponse
+      })
+    });
+    const cfData = await cfVerify.json();
+    
+    if (!cfData.success) {
+      req.session.flash = { type: 'error', msg: 'Spam-Schutz Prüfung fehlgeschlagen. Bitte lade die Seite neu und versuche es erneut.' };
+      return res.redirect('/kontakt');
+    }
+  } catch (err) {
+    console.error('Turnstile verification error:', err);
+    req.session.flash = { type: 'error', msg: 'Systemfehler bei der Spam-Prüfung. Bitte später erneut versuchen.' };
     return res.redirect('/kontakt');
   }
 
@@ -1675,7 +1740,18 @@ app.post('/admin/users/:id/delete', requireRole('admin'), async (req, res) => {
 });
 
 // 404
+const fs = require('fs');
+const path = require('path');
+
 app.use(async (req, res) => {
+  if (req.method === 'POST') {
+    try {
+      const logEntry = `[${new Date().toISOString()}] 404 POST an ${req.originalUrl}\nBody: ${JSON.stringify(req.body)}\n\n`;
+      fs.appendFileSync(path.join(__dirname, 'lost_forms.log'), logEntry);
+    } catch (e) {
+      console.error('Fehler beim Loggen des verlorenen Formulars:', e);
+    }
+  }
   res.status(404).render('404', { page: '404' });
 });
 

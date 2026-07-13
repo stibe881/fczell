@@ -191,19 +191,23 @@ async function sendRegistrationConfirmation(data) {
   const adminText = `Neue Anmeldung: ${typeName}\n\n${Object.entries(details).map(([k, v]) => `${k}: ${v}`).join('\n')}`;
 
   try {
-    await transporter.sendMail({
-      from: fromAddr, to: to,
-      subject: `Anmeldebestätigung – ${typeName}`,
-      html: confirmHtml, text: confirmText
-    });
-    console.log('Confirmation sent to:', to);
+    if (to !== 'NO_CONFIRMATION') {
+      await transporter.sendMail({
+        from: fromAddr, to: to,
+        subject: `Anmeldebestätigung – ${typeName}`,
+        html: confirmHtml, text: confirmText
+      });
+      console.log('Confirmation sent to:', to);
+    }
 
-    await transporter.sendMail({
-      from: fromAddr, to: adminRecipients, replyTo: to,
-      subject: `Neue Anmeldung: ${typeName}`,
-      html: adminHtml, text: adminText
-    });
-    console.log('Admin notification sent to:', adminRecipients);
+    if (adminRecipients && adminRecipients.length > 0) {
+      await transporter.sendMail({
+        from: fromAddr, to: adminRecipients, replyTo: to !== 'NO_CONFIRMATION' ? to : undefined,
+        subject: `Neue Anmeldung: ${typeName}`,
+        html: adminHtml, text: adminText
+      });
+      console.log('Admin notification sent to:', adminRecipients);
+    }
     return true;
   } catch (err) {
     console.error('Error sending registration email:', err);
