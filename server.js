@@ -429,27 +429,29 @@ app.post('/anlaesse/:id/matchballspende', async (req, res) => {
       return res.redirect(redirectUrl);
     }
 
-    const { firstname, lastname, amount, remarks } = req.body;
-    if (!firstname || !lastname || !amount) {
+    const { firstname, lastname, email, street, zip, city, amount, remarks } = req.body;
+    if (!firstname || !lastname || !email || !amount || !street || !zip || !city) {
       req.session.flash = { type: 'error', msg: 'Bitte alle Pflichtfelder ausfüllen.' };
       return res.redirect(redirectUrl);
     }
 
     const fullName = firstname + ' ' + lastname;
-    const email = 'keine@email.angegeben';
+    const address = `${street}, ${zip} ${city}`;
 
     await db.query(`
-      INSERT INTO registrations_matchballspende (anlass_id, name, email, amount, notes)
-      VALUES (?, ?, ?, ?, ?)
-    `, [anlassId, fullName, email, amount, remarks || '']);
+      INSERT INTO registrations_matchballspende (anlass_id, name, email, address, amount, notes)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [anlassId, fullName, email, address, amount, remarks || '']);
 
     sendRegistrationConfirmation({
-      to: 'NO_CONFIRMATION',
+      to: email,
       type: 'matchballspende',
       name: firstname + ' ' + lastname,
       details: {
         'Vorname': firstname,
         'Nachname': lastname,
+        'Adresse': address,
+        'E-Mail': email,
         'Betrag (CHF)': amount,
         'Bemerkungen': remarks || '-'
       }
@@ -1740,8 +1742,6 @@ app.post('/admin/users/:id/delete', requireRole('admin'), async (req, res) => {
 });
 
 // 404
-const fs = require('fs');
-const path = require('path');
 
 app.use(async (req, res) => {
   if (req.method === 'POST') {

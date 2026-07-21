@@ -183,6 +183,7 @@ async function initDb() {
       company VARCHAR(255),
       email VARCHAR(255) NOT NULL,
       phone VARCHAR(255),
+      address VARCHAR(255) NOT NULL,
       notes TEXT,
       amount DECIMAL(10,2) DEFAULT 100.00,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP

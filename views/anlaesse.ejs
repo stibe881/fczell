@@ -120,6 +120,24 @@
                 <input type="text" name="lastname" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
               </div>
               <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">Strasse *</label>
+                <input type="text" name="street" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+              </div>
+              <div style="display:flex; gap:1rem; margin-bottom: 1rem;">
+                <div class="form-group" style="flex:1;">
+                  <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">PLZ *</label>
+                  <input type="text" id="mb-zip" name="zip" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;" maxlength="4">
+                </div>
+                <div class="form-group" style="flex:2;">
+                  <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">Ort *</label>
+                  <input type="text" id="mb-city" name="city" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">E-Mail *</label>
+                <input type="email" name="email" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+              </div>
+              <div class="form-group" style="margin-bottom: 1rem;">
                 <label style="display:block; font-weight:bold; margin-bottom:0.5rem;">Betrag (CHF) *</label>
                 <input type="number" name="amount" min="1" required style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
               </div>
@@ -1356,6 +1374,28 @@ document.querySelectorAll('form.anlass-form-block, form.anlass-form').forEach(fo
     }
   });
 });
+
+// ---------- PLZ Auto-Suggest ----------
+const zipInput = document.getElementById('mb-zip');
+const cityInput = document.getElementById('mb-city');
+if (zipInput && cityInput) {
+  zipInput.addEventListener('input', function() {
+    const zip = this.value.trim();
+    if (zip.length === 4 && !isNaN(zip)) { // Swiss ZIPs have 4 digits
+      fetch(`https://api.zippopotam.us/CH/${zip}`)
+        .then(response => {
+          if (response.ok) return response.json();
+          throw new Error('PLZ nicht gefunden');
+        })
+        .then(data => {
+          if (data && data.places && data.places.length > 0) {
+            cityInput.value = data.places[0]['place name'];
+          }
+        })
+        .catch(err => console.log(err));
+    }
+  });
+}
 </script>
 
 <%- include('partials/footer') %>

@@ -171,15 +171,27 @@ async function sendRegistrationConfirmation(data) {
   const typeName = typeNames[type] || type;
 
   // 1. Confirmation to the person
-  const confirmHtml = emailTemplate(`
-    <p style="margin: 0 0 16px;">Hallo ${name},</p>
-    <p style="margin: 0 0 20px;">Deine Anmeldung für <strong>${typeName}</strong> ist bei uns eingegangen. Hier deine Angaben zur Übersicht:</p>
-    ${detailsTable(details)}
-    <p style="margin: 20px 0 0;">Bei Fragen melde dich gerne bei uns.</p>
-    <p style="margin: 16px 0 0;">Sportliche Grüsse,<br>FC Zell</p>
-  `);
+  let confirmHtml, confirmText;
 
-  const confirmText = `Hallo ${name},\n\nDeine Anmeldung für ${typeName} ist bei uns eingegangen.\n\n${Object.entries(details).map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nBei Fragen melde dich gerne bei uns.\n\nSportliche Grüsse,\nFC Zell`;
+  if (type === 'matchballspende') {
+    confirmHtml = emailTemplate(`
+      <p style="margin: 0 0 16px;">Hallo ${name},</p>
+      <p style="margin: 0 0 20px;">Vielen herzlichen Dank für deine Matchballspende! Hier sind deine Angaben zur Übersicht:</p>
+      ${detailsTable(details)}
+      <p style="margin: 20px 0 0;">Wir wissen deine Unterstützung sehr zu schätzen.</p>
+      <p style="margin: 16px 0 0;">Sportliche Grüsse,<br>FC Zell</p>
+    `);
+    confirmText = `Hallo ${name},\n\nVielen herzlichen Dank für deine Matchballspende!\n\n${Object.entries(details).map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nWir wissen deine Unterstützung sehr zu schätzen.\n\nSportliche Grüsse,\nFC Zell`;
+  } else {
+    confirmHtml = emailTemplate(`
+      <p style="margin: 0 0 16px;">Hallo ${name},</p>
+      <p style="margin: 0 0 20px;">Deine Anmeldung für <strong>${typeName}</strong> ist bei uns eingegangen. Hier deine Angaben zur Übersicht:</p>
+      ${detailsTable(details)}
+      <p style="margin: 20px 0 0;">Bei Fragen melde dich gerne bei uns.</p>
+      <p style="margin: 16px 0 0;">Sportliche Grüsse,<br>FC Zell</p>
+    `);
+    confirmText = `Hallo ${name},\n\nDeine Anmeldung für ${typeName} ist bei uns eingegangen.\n\n${Object.entries(details).map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nBei Fragen melde dich gerne bei uns.\n\nSportliche Grüsse,\nFC Zell`;
+  }
 
   // 2. Admin notification
   const adminHtml = emailTemplate(`
