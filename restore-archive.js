@@ -1,3 +1,4 @@
+require('./env');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const TurndownService = require('turndown');
@@ -36,7 +37,7 @@ async function run() {
   const db = await mysql.createPool({
     host: process.env.DB_HOST || 'lguh.your-database.de',
     user: process.env.DB_USER || 'fczell',
-    password: process.env.DB_PASSWORD || '!LeliBist.1561!',
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'fczell',
     multipleStatements: true
   });

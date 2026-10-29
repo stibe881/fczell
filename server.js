@@ -1,3 +1,4 @@
+require('./env');
 const express = require('express');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
@@ -65,7 +66,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
     store: new MySQLStore({}, db),
-    secret: process.env.SESSION_SECRET || 'fczell-change-me-in-production',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 8, httpOnly: true, sameSite: 'lax' }
@@ -490,7 +491,7 @@ app.post('/kontakt', async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        secret: '0x4AAAAAADx1Rh6OqMIis2T-HAbEVsQbJxw',
+        secret: process.env.TURNSTILE_SECRET,
         response: turnstileResponse
       })
     });
