@@ -1,0 +1,48 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [claude/redesign-fczell-website-UxAgc]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: SSH einrichten
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      # Kein --delete: Uploads aus dem Admin-Bereich (public/images, public/uploads,
+      # public/documents) und die Datenbank auf dem Server bleiben unangetastet.
+      - name: Dateien hochladen
+        run: |
+          rsync -rlvz --checksum \
+            --exclude '.git/' --exclude '.github/' --exclude 'node_modules/' \
+            --exclude '*.db' --exclude '*.sqlite' --exclude '.env' --exclude 'tmp/' \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }}" \
+            ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Abhängigkeiten installieren (nur wenn package.json geändert)
+        if: contains(join(github.event.commits.*.modified, ','), 'package')
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.DEPLOY_PORT }}" \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "cd '${{ secrets.DEPLOY_PATH }}' && PUPPETEER_SKIP_DOWNLOAD=1 npm install --omit=dev --no-audit --no-fund"
+
+      - name: App neu starten (Passenger)
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.DEPLOY_PORT }}" \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "cd '${{ secrets.DEPLOY_PATH }}' && mkdir -p tmp && touch tmp/restart.txt"
