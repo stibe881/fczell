@@ -525,7 +525,7 @@ app.post('/kontakt', async (req, res) => {
     if (neue_adresse) extraFields['Neue Adresse'] = neue_adresse;
   }
   if (subject === 'Clubhausbuchung') {
-    if (datum) extraFields['Gewünschtes Datum'] = datum;
+    if (datum) extraFields['Gewünschtes Datum'] = formatDate(datum);
     if (personen) extraFields['Anzahl Personen'] = personen;
     if (anlass) extraFields['Anlass'] = anlass;
   }
